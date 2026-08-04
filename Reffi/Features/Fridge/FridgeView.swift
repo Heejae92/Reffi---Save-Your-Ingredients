@@ -33,6 +33,13 @@ struct FridgeView: View {
 
     private var sort: FridgeSort { FridgeSort(rawValue: sortRaw) ?? .expiry }
 
+    /// 카테고리 정렬 순서 — AddIngredientSheet.categoryOrder와 동일(§13.3 categoryLabel과 1:1).
+    private static let categoryOrder = ["Veg", "Fruit", "Meat", "Seafood", "Dairy", "Protein", "Grain", "Bakery", "Pantry", "Other"]
+    /// 카테고리 정렬 순위 — 알 수 없는 카테고리는 맨 뒤로 폴백.
+    private static func categoryRank(_ ingredient: Ingredient) -> Int {
+        categoryOrder.firstIndex(of: ingredient.glyph.categoryLabel) ?? categoryOrder.count
+    }
+
     /// 표시 순서 — 기본은 임박순(§8.1). 동률은 이름순으로 결정적.
     private var items: [Ingredient] {
         switch sort {
@@ -42,6 +49,21 @@ struct FridgeView: View {
             $0.boughtDaysAgo != $1.boughtDaysAgo
                 ? $0.boughtDaysAgo < $1.boughtDaysAgo : $0.daysLeft < $1.daysLeft
         }
+        case .category: store.ingredients.sorted {
+            Self.categoryRank($0) != Self.categoryRank($1)
+                ? Self.categoryRank($0) < Self.categoryRank($1)
+                : $0.expiresAt != $1.expiresAt ? $0.expiresAt < $1.expiresAt : $0.name < $1.name
+        }
+        }
+    }
+
+    /// 카테고리 섹션 — sort == .category에서만 쓰인다. AddIngredientSheet.categorySections와 동일 패턴(빈 카테고리는 스킵).
+    private var categorySections: [(category: String, items: [Ingredient])] {
+        var buckets: [String: [Ingredient]] = [:]
+        for ing in items { buckets[ing.glyph.categoryLabel, default: []].append(ing) }
+        return Self.categoryOrder.compactMap { cat in
+            guard let group = buckets[cat], !group.isEmpty else { return nil }
+            return (cat, group)
         }
     }
     private var accent: Color { items.first?.freshness.main ?? ReffiColor.fresh }
@@ -161,23 +183,12 @@ struct FridgeView: View {
                 summaryRow
                 if items.isEmpty {
                     emptyState
+                } else if compact {
+                    compactList
+                } else if sort == .category {
+                    categorizedStack
                 } else {
-                    if compact {
-                        compactList
-                    } else {
-                        VStack(spacing: overlap) {
-                            ForEach(Array(items.enumerated()), id: \.element.id) { i, ing in
-                                FridgeCard(ingredient: ing, depth: i, seed: i, height: cardHeight)
-                                    .matchedGeometryEffect(id: ing.id, in: ns)
-                                    .zIndex(Double(i))
-                                    .contentShape(Rectangle())
-                                    .onTapGesture { select(ing) }
-                                    .padding(.horizontal, cardInset)
-                                    .rotationEffect(.degrees(tilt(i)))
-                                    .offset(x: slip(i))
-                            }
-                        }
-                    }
+                    receiptStack(items)
                 }
             }
             .padding(.horizontal, ReffiGrid.margin)
@@ -186,17 +197,74 @@ struct FridgeView: View {
         }
     }
 
-    /// 간편보기 — 틸트·겹침 없는 납작한 영수증 행. 훑어보기(스캔)에 최적화.
-    private var compactList: some View {
-        LazyVStack(spacing: ReffiSpace.s2) {
-            ForEach(items) { ing in
-                FridgeCompactRow(ingredient: ing)
+    /// 종이 영수증 겹침 스택 — 틸트·슬립으로 흐트러진 더미(§13). 리스트를 통째로 받아 인덱스 0부터 그린다 —
+    /// 카테고리 섹션에 재사용하면 묶음마다 스택이 새로 시작해 시각적으로 분리된다.
+    private func receiptStack(_ list: [Ingredient]) -> some View {
+        VStack(spacing: overlap) {
+            ForEach(Array(list.enumerated()), id: \.element.id) { i, ing in
+                FridgeCard(ingredient: ing, depth: i, seed: i, height: cardHeight)
                     .matchedGeometryEffect(id: ing.id, in: ns)
+                    .zIndex(Double(i))
                     .contentShape(Rectangle())
                     .onTapGesture { select(ing) }
+                    .padding(.horizontal, cardInset)
+                    .rotationEffect(.degrees(tilt(i)))
+                    .offset(x: slip(i))
             }
         }
-        .padding(.horizontal, cardInset)
+    }
+
+    /// 카테고리별 묶음(§13) — 헤더 아래 그 카테고리 카드만 겹침 스택. sort == .category일 때만 렌더링된다.
+    private var categorizedStack: some View {
+        VStack(alignment: .leading, spacing: ReffiSpace.s7) {
+            ForEach(categorySections, id: \.category) { section in
+                VStack(alignment: .leading, spacing: ReffiSpace.s2) {
+                    categoryHeader(section.category)
+                        .padding(.horizontal, cardInset)
+                    receiptStack(section.items)
+                }
+            }
+        }
+    }
+
+    /// 간편보기 — 틸트·겹침 없는 납작한 영수증 행. 훑어보기(스캔)에 최적화.
+    @ViewBuilder
+    private var compactList: some View {
+        if sort == .category {
+            LazyVStack(alignment: .leading, spacing: ReffiSpace.s7) {
+                ForEach(categorySections, id: \.category) { section in
+                    VStack(alignment: .leading, spacing: ReffiSpace.s2) {
+                        categoryHeader(section.category)
+                        compactRows(section.items)
+                    }
+                }
+            }
+            .padding(.horizontal, cardInset)
+        } else {
+            LazyVStack(spacing: ReffiSpace.s2) {
+                compactRows(items)
+            }
+            .padding(.horizontal, cardInset)
+        }
+    }
+
+    private func compactRows(_ list: [Ingredient]) -> some View {
+        ForEach(list) { ing in
+            FridgeCompactRow(ingredient: ing)
+                .matchedGeometryEffect(id: ing.id, in: ns)
+                .contentShape(Rectangle())
+                .onTapGesture { select(ing) }
+        }
+    }
+
+    /// 카테고리 섹션 헤더 — AddIngredientSheet 픽커 섹션 라벨과 동일 문법(오더 티켓 올캡, §13.5)을 재사용한다.
+    /// 카테고리 영문 캐논은 그 자체로 브랜드 보이스 라벨이라 로컬라이즈하지 않는다 — AddIngredientSheet.sectionLabel과
+    /// 같은 근거(모든 §13.5 sectionLabel/monoEyebrow 라벨이 이 규칙을 따름). Localizable.xcstrings에 새 키를 추가하지 않는다.
+    private func categoryHeader(_ category: String) -> some View {
+        Text(verbatim: category.uppercased())
+            .reffiType(.sectionLabel)
+            .foregroundStyle(ReffiColor.ink2)
+            .accessibilityAddTraits(.isHeader)
     }
 
     // MARK: 펼친(Wallet) 레이아웃
@@ -467,6 +535,7 @@ enum FridgeSort: String, CaseIterable, Identifiable {
     case expiry    // 임박순(기본) — 위에서부터 먹어야 할 순서(§8.1)
     case freshest  // 신선한 순 — 여유 있는 재료부터
     case recent    // 최근 등록순 — 방금 사 온 것부터
+    case category  // 카테고리순 — 카테고리로 묶고, 묶음 안에서는 임박순
 
     var id: String { rawValue }
     /// 표시 라벨 — 저장값은 영문 식별자 그대로, 표시만 로컬라이즈.
@@ -475,6 +544,7 @@ enum FridgeSort: String, CaseIterable, Identifiable {
         case .expiry:   String(localized: "Expiring first")
         case .freshest: String(localized: "Freshest first")
         case .recent:   String(localized: "Recently added")
+        case .category: String(localized: "By category")
         }
     }
 }

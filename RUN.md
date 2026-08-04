@@ -49,7 +49,7 @@ xcrun simctl io booted screenshot reffi-home.png
 `-fridge.sortOpen` 정렬 드롭다운(`PaperDropdown`) 자동 오픈(스크린샷용) · `-fridgeEdit` 첫 재료 편집 시트 자동 표시(+`-loadSample`) ·
 `-resetOnboarding` 온보딩 초기화 · `-skipOnboarding` 온보딩 건너뛰고 곧장 게이트 통과 ·
 `-skipAuth` 게스트로 게이트 통과 · `-authGate` 게스트 해제 ·
-`-fridge.compact YES` 간편보기 · `-fridge.sort recent|freshest|expiry` 정렬 ·
+`-fridge.compact YES` 간편보기 · `-fridge.sort recent|freshest|expiry|category` 정렬 ·
 `-loadSample` 샘플 시드 · `-previewCarousel` 캐러셀 바로 열기(`-previewAIBadge` 동시 지정 시 AI 배지 티켓도 얹음) ·
 `-cookTicket` 샘플로 강제 발주 후 조리 티켓(CookingStepsView) 바로 열기 ·
 `-shareCardPreview` 공유용 레시피 영수증 카드(RecipeShareCard) 미리보기 ·

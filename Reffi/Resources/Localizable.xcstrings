@@ -611,6 +611,16 @@
         }
       }
     },
+    "By category": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "카테고리순"
+          }
+        }
+      }
+    },
     "Cancel": {
       "localizations": {
         "ko": {
