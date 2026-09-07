@@ -17,8 +17,12 @@ final class AuthStore {
     static let anonKey = "sb_publishable_RolVTNQCWTf9t9XBEcCz1w_HcEeYquc"
 
     /// Supabase 클라이언트 — publishable key는 클라이언트 임베드용 공개 키(RLS로 보호).
+    /// `flowType: .pkce`는 라이브러리 기본값과 같지만 **명시**한다 — 콜백 URL(`reffi://`)은 어느 앱이나
+    /// 가로챌 수 있는 커스텀 스킴이라, 인증 코드가 이 앱 Keychain의 verifier 없이는 교환되지 않는다는
+    /// PKCE 보장이 로그인 보안의 핵심이다. 기본값이 바뀌거나 디버깅 중 `.implicit`로 돌리면 URL의
+    /// 토큰이 그대로 세션이 돼 임의 계정 주입이 가능해지므로, 이 한 줄이 그 실수를 막는다.
     static let client = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: anonKey,
-        options: .init(auth: .init(emitLocalSessionAsInitialSession: true)))
+        options: .init(auth: .init(flowType: .pkce, emitLocalSessionAsInitialSession: true)))
 
     /// 인증 진단 로그(FridgeStore.log와 같은 서브시스템). 화면에 못 내보내는 서버 원문이 여기로 간다.
     static let log = Logger(subsystem: "com.reffi.app", category: "auth")
@@ -37,6 +41,23 @@ final class AuthStore {
     private(set) var busy = false
     private(set) var availability = AuthAvailability()
     var needsPasswordReset = false
+
+    /// 루트(ReffiApp)가 종이 다이얼로그로 띄우는 알림 — 로그인 시트 없이 도착하는 결과들. 확인·재설정
+    /// 링크는 대개 콜드 런치로 오고(시트 안 `errorMessage`는 그때 아무도 안 본다), 비밀번호 변경 확인은
+    /// 재설정 시트가 닫힌 **뒤에** 보여야 한다. 문구는 뷰 층(ReffiApp)이 케이스별로 든다.
+    enum RootNotice: Equatable {
+        /// 링크 교환 실패(만료·재사용·형식 오류) — 새 링크가 필요하다.
+        case linkInvalid
+        /// 교환 중 네트워크 실패 — 링크는 아직 유효할 수 있으니 다시 탭하면 된다. 새 링크를 권하면
+        /// 복구 메일 발송 한도만 태운다.
+        case linkOffline
+        /// 재설정 시트에서 비밀번호를 바꿨다.
+        case passwordUpdated
+    }
+    var rootNotice: RootNotice?
+    /// 로그인 시트(AuthView)가 화면에 있는 동안은 콜백 실패를 시트 안 `errorMessage`로 보낸다 —
+    /// 루트 다이얼로그는 `.overlay`라 시트 **뒤에** 그려져 보이지 않는다. AuthView가 onAppear/onDisappear로 켠다.
+    var authViewVisible = false
 
     func refreshAvailability() async {
         var request = URLRequest(url: Self.supabaseURL.appendingPathComponent("auth/v1/settings"))
@@ -168,10 +189,75 @@ final class AuthStore {
         }
     }
 
-    /// OAuth 콜백 URL 처리(onOpenURL) — 외부 브라우저로 돌아온 경우의 안전망.
+    /// 인증 콜백 URL 처리(onOpenURL) — 이메일 확인·비밀번호 재설정 링크와 외부 브라우저 OAuth 복귀.
+    /// 스킴만이 아니라 host까지 `redirectURL`과 대조한다 — `reffi://` 아래 다른 경로가 생겨도 인증 코드
+    /// 교환 경로로 흘러들지 않게. 실패는 삼키지 않는다: 만료·재사용된 링크로 교환이 실패하면 사용자는
+    /// 아무 반응도 못 보고 메일을 거듭 요청하게 되고(발송 한도 소진), 진단 로그도 남지 않았다.
     func handleOpenURL(_ url: URL) {
-        guard url.scheme == "reffi" else { return }
-        Task { try? await Self.client.auth.session(from: url) }
+        guard url.scheme == Self.redirectURL.scheme,
+              url.host?.lowercased() == Self.redirectURL.host?.lowercased() else { return }
+        Task {
+            do {
+                try await Self.client.auth.session(from: url)
+                // PKCE 경로는 `.passwordRecovery`를 **내지 않는다**(supabase-swift 2.51: 그 이벤트는 implicit
+                // 전용이고 코드 교환은 `.signedIn`만 낸다). 재설정 링크도 그냥 로그인만 시키므로, 이 기기에서
+                // 최근에 재설정을 요청한 사실을 기억해 뒀다가 시트를 연다. 다른 기기에서 요청한 링크는
+                // 로그인만 된다 — 전용 재설정 콜백 URL(대시보드 허용 목록 추가 필요)이 후속 과제다.
+                if Self.isRecoveryCallback(url, requestedAt: recoveryRequestedAt, now: Date()) {
+                    recoveryRequestedAt = nil
+                    needsPasswordReset = true
+                }
+            } catch {
+                // 필드 진단용이라 `.public` — 기본 리댁션이면 TestFlight 콘솔에 <private>만 남는다.
+                // GoTrue 오류 문장에 비밀번호는 실리지 않는다.
+                Self.log.error("auth callback failed: \(String(describing: error), privacy: .public)")
+                // 이미 정식 세션이면 같은 확인 링크를 두 번 탭한 경우다 — 실패로 알릴 게 없다.
+                guard accountUserID == nil else { return }
+                let failure = Self.callbackFailure(for: error)
+                if authViewVisible {
+                    errorMessage = switch failure {
+                    case .linkOffline: String(localized: "Couldn't open that link.\nCheck your network connection and tap it again.")
+                    default: String(localized: "That link didn't work.\nRequest a new one and try again.")
+                    }
+                } else {
+                    rootNotice = failure
+                }
+            }
+        }
+    }
+
+    /// 재설정 링크 판정(순수 함수) — URL이 `type=recovery`를 실어 오면 그대로, 아니면 이 기기의 최근
+    /// 재설정 요청(`recoveryWindow` 안)으로 판단한다. 링크 만료(기본 1시간)보다 넉넉히 잡는다: 기억이
+    /// 남아 있을 때 확인 링크를 탭하면 재설정 시트가 한 번 더 뜨는 정도가 부작용이고, 취소하면 그만이다.
+    nonisolated static let recoveryWindow: TimeInterval = 24 * 60 * 60
+    nonisolated static func isRecoveryCallback(_ url: URL, requestedAt: Date?, now: Date,
+                                               window: TimeInterval = recoveryWindow) -> Bool {
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        if items.contains(where: { $0.name == "type" && $0.value == "recovery" }) { return true }
+        guard let requestedAt else { return false }
+        let age = now.timeIntervalSince(requestedAt)
+        return age >= 0 && age <= window
+    }
+
+    /// 콜백 실패 분류(순수 함수) — 네트워크 오류는 링크가 멀쩡할 수 있으니 "다시 탭", 그 외(만료·재사용·
+    /// 형식 오류·교환 거부)는 "새 링크".
+    nonisolated static func callbackFailure(for error: Error) -> RootNotice {
+        error is URLError ? .linkOffline : .linkInvalid
+    }
+
+    /// 이 기기에서 마지막으로 재설정 메일을 요청한 시각 — 프로세스가 죽어도 링크는 나중에 오므로 영속.
+    private var recoveryRequestedAt: Date? {
+        get {
+            let t = UserDefaults.standard.double(forKey: Key.recoveryRequestedAt)
+            return t > 0 ? Date(timeIntervalSince1970: t) : nil
+        }
+        set {
+            if let newValue {
+                UserDefaults.standard.set(newValue.timeIntervalSince1970, forKey: Key.recoveryRequestedAt)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Key.recoveryRequestedAt)
+            }
+        }
     }
 
     // MARK: - 게스트 · 로그아웃
@@ -194,6 +280,7 @@ final class AuthStore {
     func signOut() async {
         errorMessage = nil
         notice = nil
+        rootNotice = nil
         setLocalGuest(false)
         busy = true
         defer { busy = false }
@@ -214,6 +301,9 @@ final class AuthStore {
             try await Self.client.rpc("delete_own_account").execute()
             return true
         } catch {
+            // 화면 문구는 그대로 두되(서버 원문 비노출 계약), 원인은 로그에 남긴다 — RPC 미배포(404)와
+            // 일시적 네트워크 실패가 사용자에게는 같은 문장이라, 로그 없이는 영원한 "다시 시도"가 된다.
+            Self.log.error("delete_own_account failed: \(String(describing: error), privacy: .public)")
             errorMessage = String(localized: "Couldn't delete your account. Your data is still saved. Check your connection and try again.")
             return false
         }
@@ -222,6 +312,7 @@ final class AuthStore {
     func sendPasswordReset(email: String) async {
         await run {
             try await Self.client.auth.resetPasswordForEmail(email, redirectTo: Self.redirectURL)
+            recoveryRequestedAt = Date()
             notice = String(localized: "If this email has an account, a password reset link is on its way.")
         }
     }
@@ -230,7 +321,9 @@ final class AuthStore {
         await run {
             try await Self.client.auth.update(user: UserAttributes(password: password))
             needsPasswordReset = false
-            notice = String(localized: "Password updated.")
+            recoveryRequestedAt = nil
+            // 시트(PasswordResetView)는 `notice`를 그리지 않고 곧 닫히므로, 닫힌 뒤 루트가 알린다.
+            rootNotice = .passwordUpdated
         }
     }
 
@@ -252,14 +345,23 @@ final class AuthStore {
     }
 
     /// 서버 에러 → 사용자 문구(과도한 기술 노출 방지).
-    private static func friendly(_ error: Error) -> String {
+    static func friendly(_ error: Error) -> String {
         let raw = error.localizedDescription
         let lower = raw.lowercased()
         if lower.contains("invalid login credentials") { return String(localized: "Email or password doesn't match.") }
         if lower.contains("email not confirmed") { return String(localized: "Please verify your email first.\nCheck your inbox.") }
         if lower.contains("already registered") { return String(localized: "This email is already registered.\nTry logging in.") }
-        if lower.contains("at least 6 characters") || lower.contains("password should")
-            { return String(localized: "Password must be at least 6 characters.") }
+        // weak_password also covers length and character requirements. Only an explicit
+        // pwned reason (or the server's breach message) supports a breach warning.
+        if case let .weakPassword(_, reasons) = error as? AuthError, reasons.contains("pwned") {
+            return String(localized: "This password has appeared in a data breach.\nChoose a different one.")
+        }
+        if lower.contains("known to be weak") {
+            return String(localized: "This password has appeared in a data breach.\nChoose a different one.")
+        }
+        if (error as? AuthError)?.errorCode == .weakPassword || lower.contains("password should") {
+            return String(localized: "That password doesn't meet the requirements.\nTry a longer one with letters and numbers.")
+        }
         if lower.contains("invalid format") || lower.contains("validate email")
             { return String(localized: "Please check the email address.") }
         if lower.contains("network") || lower.contains("offline") || lower.contains("internet")
@@ -280,6 +382,7 @@ final class AuthStore {
 
     private enum Key {
         static let guest = "auth.guest"
+        static let recoveryRequestedAt = "auth.recoveryRequestedAt"
     }
 
     // MARK: - Apple nonce 헬퍼 (replay 방지)

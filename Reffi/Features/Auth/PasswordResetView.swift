@@ -12,14 +12,14 @@ struct PasswordResetView: View {
                     SecureField("New password", text: $password)
                         .textContentType(.newPassword)
                         .textFieldStyle(.roundedBorder)
-                    Text("Use at least 6 characters.").reffiType(.caption)
+                    Text("Use at least 8 characters.").reffiType(.caption)
                     if let error = auth.errorMessage {
                         Text(error).reffiType(.body).foregroundStyle(ReffiColor.urgentDark)
                     }
                     PaperButton(title: "Update password", isBusy: auth.busy) {
                         Task { await auth.updatePassword(password) }
                     }
-                    .disabled(password.count < 6 || auth.busy)
+                    .disabled(password.count < AuthView.PasswordRule.min || auth.busy)
                 }
                 .padding(ReffiSpace.s5)
             }

@@ -27,9 +27,23 @@ struct AuthView: View {
     private enum Entry { case apple, google, guest }
     @State private var pending: Entry?
 
+    /// 비밀번호 클라이언트 하한 — 서버 정책(대시보드 Authentication › Policies)과 같은 값으로 유지한다.
+    /// 클라이언트가 서버보다 엄한 건 무해하지만 느슨하면 서버가 거부할 비밀번호로 버튼이 켜진다.
+    /// 6은 Supabase 기본값이자 NIST 800-63B 권고(8+) 미만이라 8로 올린다. 플레이스홀더·재설정 화면·
+    /// 에러 문구가 이 한 곳을 보게 해 셋이 따로 놀지 않는다.
+    enum PasswordRule { static let min = 8 }
+
     private var isSignIn: Bool { mode == .signIn }
     private var canSubmit: Bool {
-        email.contains("@") && password.count >= 6 && !auth.busy && auth.availability.email
+        Self.canSubmit(email: email, password: password, isSignIn: isSignIn) && !auth.busy && auth.availability.email
+    }
+
+    /// 제출 판정(순수 함수, 테스트 고정) — 하한은 **가입에만** 건다. 로그인은 비어 있지만 않으면 서버에 묻는다:
+    /// 하한을 6→8로 올린 뒤에도 옛 비밀번호 계정이 들어올 수 있어야 하고, 맞는지는 서버가 판정한다.
+    /// (하한을 로그인에도 걸면 7자 계정은 요청조차 못 보내 에러 문구 없이 버튼만 영원히 꺼진다.)
+    static func canSubmit(email: String, password: String, isSignIn: Bool) -> Bool {
+        guard email.contains("@"), !password.isEmpty else { return false }
+        return isSignIn || password.count >= PasswordRule.min
     }
 
     var body: some View {
@@ -60,6 +74,10 @@ struct AuthView: View {
         // `.medium`을 함께 주면 절반 높이에서 CTA가 잘린다. 호출부(ProfileView)엔 중복 선언하지 않는다.
         .presentationDetents([.large])
         .task { await auth.refreshAvailability() }
+        // 콜백 실패의 표시 위치 결정 — 이 화면이 떠 있으면 루트 다이얼로그는 시트 뒤에 가려지므로
+        // `AuthStore`가 `errorMessage`(위 `feedback`)로 보낸다.
+        .onAppear { auth.authViewVisible = true }
+        .onDisappear { auth.authViewVisible = false }
         // 프로필에서 시트로 띄운 경우 — 정식(비익명) 세션이 생기면 자동 닫힘.
         // 게이트(루트)에서는 dismiss가 no-op이라 무해하다.
         .onChange(of: auth.session?.user.isAnonymous) { _, isAnon in
@@ -178,7 +196,7 @@ struct AuthView: View {
     }
 
     private var secureField: some View {
-        SecureField("Password (6+ characters)", text: $password)
+        SecureField(isSignIn ? "Password" : "Password (8+ characters)", text: $password)
             .reffiType(.body)
             .foregroundStyle(ReffiColor.ink)
             .focused($focus, equals: .password)

@@ -36,7 +36,7 @@ The exported build is a verification artifact. The server and privacy items belo
 
 ## Server deployment required
 
-Apply `supabase/migrations/0003_account_deletion.sql` after the existing migrations in the project `bzzpmaeitfbbunsmjvmd`. The application must not be released before this succeeds and deletion is verified using a disposable account.
+Apply `supabase/migrations/0003_account_deletion.sql` and then `supabase/migrations/0004_harden_client_grants.sql` after the existing migrations in the project `bzzpmaeitfbbunsmjvmd`. The application must not be released before this succeeds and deletion is verified using a disposable account. A live check on 2026-09-07 found 0003 not applied (`delete_own_account` returns 404) and `ai_try_consume` executable with the publishable key alone; 0004 closes the latter. Step-by-step instructions and verification queries are in `docs/AUTH_SETUP.md`.
 
 Verify the Supabase Auth redirect allowlist contains `reffi://auth-callback`. Verify email delivery, verification and password recovery using the release build. No test emails have been sent by this task.
 
@@ -64,7 +64,7 @@ xcodebuild -project Reffi.xcodeproj -scheme Reffi \
   -only-testing:ReffiUITests/CookTicketFlickUITests/testKitchenCopySheet_ChecksPersistAcrossOpenClose test
 ```
 
-The SQL test uses an in-memory PostgreSQL build with a minimal Supabase Auth schema. It executes all three real migrations and checks anonymous denial, caller isolation, account/data deletion, retry, deleted-JWT rejection, transaction rollback and the Apple revocation guard. This does not prove live server deployment or GoTrue integration.
+The SQL test uses an in-memory PostgreSQL build with a minimal Supabase Auth schema and Supabase's default privileges for `anon`/`authenticated`. It executes all four real migrations and checks anonymous denial, caller isolation, account/data deletion, retry, deleted-JWT rejection, transaction rollback, the Apple revocation guard, that 0004 revokes client-role access to `ai_try_consume`, `ai_usage`, `ai_config` and `analytics.local_day`, that `anon`/`authenticated` hold no privilege in `public`/`analytics` beyond an explicit allow-list, and that re-running all four migrations in order leaves the same state. This does not prove live server deployment or GoTrue integration.
 
 ```sh
 npm install --prefix /tmp/reffi-sql-validation --no-audit --no-fund @electric-sql/pglite@0.5.8
