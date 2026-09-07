@@ -24,6 +24,35 @@ Package.resolved
 build*.log
 build/
 
+# 시크릿(.env·API 키·인증서) — 어떤 경로의 .env도 커밋 금지. 값 없는 예시 파일만 허용
+# (.env.example, .env.local.example, .env.sample 등 *.example / *.sample 접미).
+.env
+.env.*
+*.env
+!.env.example
+!*.env.example
+!.env.*.example
+!*.env.*.example
+!.env.*.sample
+!*.env.*.sample
+!.env.sample
+# Xcode 빌드 설정에 키를 넣는 경우(Secrets.xcconfig 등) 실파일은 제외하고 예시만 허용
+*Secrets*.xcconfig
+!*Secrets*.example.xcconfig
+!*Secrets*.sample.xcconfig
+Secrets.plist
+GoogleService-Info.plist
+# 서명·인증 자료
+*.p8
+*.p12
+*.pem
+*.mobileprovision
+*.cer
+*.certSigningRequest
+# 로컬 도구 인증 파일
+.netrc
+.claude/settings.local.json
+
 # Supabase 로컬 개발 — 시크릿 담긴 env/임시 파일 커밋 금지(docs/AI_SETUP.md 5.1 참고)
 supabase/.env.local
 supabase/.temp/

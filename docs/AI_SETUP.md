@@ -124,8 +124,12 @@ supabase functions serve recipe-generate \
 토큰이 있어야 한다. 이미 확인된(이메일 인증 완료) 테스트 계정이 있다면:
 
 ```bash
+# PUBLISHABLE_KEY는 Reffi/Data/AuthStore.swift의 anonKey(현재 활성 키)를 그대로 쓴다 — 문서에 값을 박아두면 회수 뒤 stale해진다.
+# 저장소 어느 디렉토리에서 실행해도 되게 git 루트 기준으로 찾고, 못 찾으면 빈 apikey로 조용히 401이 나지 않게 즉시 멈춘다.
+PUBLISHABLE_KEY=$(grep -o 'sb_publishable_[A-Za-z0-9_-]*' "$(git rev-parse --show-toplevel)/Reffi/Data/AuthStore.swift" | head -1)
+[ -n "$PUBLISHABLE_KEY" ] || { echo "publishable key not found: run inside the Reffi git repo"; exit 1; }
 curl -s -X POST "https://bzzpmaeitfbbunsmjvmd.supabase.co/auth/v1/token?grant_type=password" \
-  -H "apikey: sb_publishable_G0kaRfSEKwS-qW4hAOscKA_x5DXA_bV" \
+  -H "apikey: $PUBLISHABLE_KEY" \
   -H "Content-Type: application/json" \
   -d '{"email":"you+test@example.com","password":"testpass123"}' \
   | tee /tmp/reffi_auth.json | jq -r .access_token
