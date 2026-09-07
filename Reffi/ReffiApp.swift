@@ -44,6 +44,13 @@ struct ReffiApp: App {
                 .environment(auth)
                 .tint(ReffiColor.blue)
                 .onOpenURL { auth.handleOpenURL($0) }
+                // 이메일 확인·재설정 링크의 교환 실패 — 링크는 대개 로그인 시트 없이 콜드 런치로 도착하므로
+                // 루트에서 띄운다(시트 안의 `errorMessage`만으로는 그 경우 아무것도 안 보인다).
+                .paperDialog(isPresented: $auth.callbackFailed,
+                             title: "That link didn't work",
+                             message: "It may have expired or already been used. Request a new one and try again.",
+                             seed: 3, backdropDismisses: true,
+                             primary: PaperDialogAction("OK") { auth.callbackFailed = false })
                 .sheet(isPresented: $auth.needsPasswordReset) { PasswordResetView() }
                 // 컬러 스킴은 시스템 설정을 따른다 — 시맨틱 토큰이 전부 적응형(ReffiColor.dynamic)이라
                 // 라이트/다크 어느 쪽으로도 팔레트가 스스로 뒤집힌다.

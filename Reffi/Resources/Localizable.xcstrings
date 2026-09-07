@@ -2018,6 +2018,16 @@
         }
       }
     },
+    "It may have expired or already been used. Request a new one and try again.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "만료됐거나 이미 사용된 링크일 수 있어요. 새 링크를 요청한 뒤 다시 시도해 주세요."
+          }
+        }
+      }
+    },
     "Italian": {
       "localizations": {
         "ko": {
@@ -3925,22 +3935,22 @@
         }
       }
     },
-    "That link didn't work.\nRequest a new one and try again.": {
+    "That link didn't work": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "링크가 작동하지 않았어요.\n새 링크를 요청한 뒤 다시 시도해 주세요."
+            "value": "링크가 작동하지 않았어요"
           }
         }
       }
     },
-    "That password is too weak.\nUse 8 or more characters with letters and numbers.": {
+    "That password doesn't meet the requirements.\nTry a longer one with letters and numbers.": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "비밀번호가 너무 약해요.\n영문과 숫자를 섞어 8자 이상으로 해 주세요."
+            "value": "비밀번호가 조건에 맞지 않아요.\n영문과 숫자를 섞어 더 길게 만들어 주세요."
           }
         }
       }
@@ -4013,6 +4023,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 기기의 데이터를 지우고 로그아웃해요.\n계정은 서버에 남아 있어요."
+          }
+        }
+      }
+    },
+    "This password has appeared in a data breach.\nChoose a different one.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "유출된 적 있는 비밀번호예요.\n다른 비밀번호를 골라 주세요."
           }
         }
       }
@@ -4385,7 +4405,6 @@
       }
     },
     "Use at least 8 characters.": {
-      "extractionState": "manual",
       "localizations": {
         "ko": {
           "stringUnit": {

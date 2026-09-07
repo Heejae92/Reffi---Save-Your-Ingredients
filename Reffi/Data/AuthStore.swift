@@ -41,6 +41,9 @@ final class AuthStore {
     private(set) var busy = false
     private(set) var availability = AuthAvailability()
     var needsPasswordReset = false
+    /// 이메일 링크 콜백의 교환 실패 — 루트(ReffiApp)가 다이얼로그로 띄운다. `errorMessage`는 로그인 시트가
+    /// 열려 있을 때만 보이는데, 확인·재설정 링크는 대개 시트 없이 콜드 런치로 도착하므로 별도 슬롯이 필요하다.
+    var callbackFailed = false
 
     func refreshAvailability() async {
         var request = URLRequest(url: Self.supabaseURL.appendingPathComponent("auth/v1/settings"))
@@ -177,12 +180,15 @@ final class AuthStore {
     /// 교환 경로로 흘러들지 않게. 실패는 삼키지 않는다: 만료·재사용된 링크로 교환이 실패하면 사용자는
     /// 아무 반응도 못 보고 메일을 거듭 요청하게 되고(발송 한도 소진), 진단 로그도 남지 않았다.
     func handleOpenURL(_ url: URL) {
-        guard url.scheme == Self.redirectURL.scheme, url.host == Self.redirectURL.host else { return }
+        guard url.scheme == Self.redirectURL.scheme,
+              url.host?.lowercased() == Self.redirectURL.host?.lowercased() else { return }
         Task {
             do { try await Self.client.auth.session(from: url) }
             catch {
-                Self.log.error("auth callback failed: \(String(describing: error))")
-                errorMessage = String(localized: "That link didn't work.\nRequest a new one and try again.")
+                // 필드 진단용이라 `.public` — 기본 리댁션이면 TestFlight 콘솔에 <private>만 남는다.
+                // GoTrue 오류 문장에 비밀번호는 실리지 않는다.
+                Self.log.error("auth callback failed: \(String(describing: error), privacy: .public)")
+                callbackFailed = true
             }
         }
     }
@@ -229,7 +235,7 @@ final class AuthStore {
         } catch {
             // 화면 문구는 그대로 두되(서버 원문 비노출 계약), 원인은 로그에 남긴다 — RPC 미배포(404)와
             // 일시적 네트워크 실패가 사용자에게는 같은 문장이라, 로그 없이는 영원한 "다시 시도"가 된다.
-            Self.log.error("delete_own_account failed: \(String(describing: error))")
+            Self.log.error("delete_own_account failed: \(String(describing: error), privacy: .public)")
             errorMessage = String(localized: "Couldn't delete your account. Your data is still saved. Check your connection and try again.")
             return false
         }
@@ -274,10 +280,14 @@ final class AuthStore {
         if lower.contains("invalid login credentials") { return String(localized: "Email or password doesn't match.") }
         if lower.contains("email not confirmed") { return String(localized: "Please verify your email first.\nCheck your inbox.") }
         if lower.contains("already registered") { return String(localized: "This email is already registered.\nTry logging in.") }
+        // 유출 비밀번호 거부("Password is known to be weak and easy to guess")는 길이 문제가 아니다 —
+        // 길이 조언을 주면 긴 비밀번호로 루프에 빠진다. 길이·구성 거부("Password should …")와 분리한다.
+        if lower.contains("known to be weak") || lower.contains("weak_password")
+            { return String(localized: "This password has appeared in a data breach.\nChoose a different one.") }
         // 최소 길이 숫자는 서버 정책이 쥔다 — 문구에 숫자를 박으면 대시보드에서 정책을 올리는 순간 거짓말이
-        // 된다. 클라이언트 자체 하한은 `AuthView.PasswordRule.min`이 먼저 걸러 이 분기는 서버가 더 엄할 때만 뜬다.
-        if lower.contains("password should") || lower.contains("weak")
-            { return String(localized: "That password is too weak.\nUse 8 or more characters with letters and numbers.") }
+        // 된다. 클라이언트 하한(`AuthView.PasswordRule.min`)이 먼저 걸러 이 분기는 서버가 더 엄할 때만 뜬다.
+        if lower.contains("password should")
+            { return String(localized: "That password doesn't meet the requirements.\nTry a longer one with letters and numbers.") }
         if lower.contains("invalid format") || lower.contains("validate email")
             { return String(localized: "Please check the email address.") }
         if lower.contains("network") || lower.contains("offline") || lower.contains("internet")

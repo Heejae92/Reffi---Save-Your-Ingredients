@@ -10,7 +10,7 @@ Email signup/login and local guest mode are the supported launch methods. Apple 
 
 ## Email verification and password recovery
 
-Add `reffi://auth-callback` to Authentication > URL Configuration > Redirect URLs, exactly and without wildcards. Signup, anonymous email upgrade and password recovery explicitly request this URL. Reffi handles the callback at the app root so the authentication sheet need not be open; it accepts only that scheme and host, and a failed code exchange is shown to the user and logged.
+Add `reffi://auth-callback` to Authentication > URL Configuration > Redirect URLs, exactly and without wildcards. Signup, anonymous email upgrade and password recovery explicitly request this URL. Reffi handles the callback at the app root so the authentication sheet need not be open; it accepts only that scheme and host, and a failed code exchange (expired or reused link) is shown as a dialog at the app root and logged under the `auth` category.
 
 The client pins `flowType: .pkce`. `reffi://` is a custom scheme any app can register, so the PKCE verifier kept in Reffi's own Keychain is what prevents an intercepted link from becoming a session. Do not switch to the implicit flow. A Universal Link (`https://<domain>/auth/callback`) should replace the custom scheme once the privacy-policy domain exists.
 
@@ -33,7 +33,7 @@ select grantee, table_name, privilege_type from information_schema.role_table_gr
    and grantee in ('anon','authenticated');
 ```
 
-Expected: `ai_try_consume` lists no `anon=`/`authenticated=` entry; `delete_own_account` and `has_active_account` list `authenticated=X`; the grant query returns only the `analytics_events` / `authenticated` / `INSERT` row. From outside, `POST /rest/v1/rpc/ai_try_consume` with the publishable key must now answer 401/42501 instead of 200. Also delete the probe row left by the 2026-09-07 check: `delete from public.ai_usage where user_id = '00000000-0000-0000-0000-000000000000';`.
+Expected: `ai_try_consume` lists no `anon=`/`authenticated=` entry; `delete_own_account` and `has_active_account` list `authenticated=X`; the grant query returns only the `analytics_events` / `authenticated` / `INSERT` row. From outside, `POST /rest/v1/rpc/ai_try_consume` with the publishable key must now answer 403 with `"code":"42501"` (or 404 from the schema cache) instead of 200. Also delete the probe row left by the 2026-09-07 check: `delete from public.ai_usage where user_id = '00000000-0000-0000-0000-000000000000';`.
 
 Locally, `scripts/test-account-deletion.mjs` reproduces the pre-0004 exposure and verifies the fix (see `docs/RELEASE_READINESS.md` for the command).
 

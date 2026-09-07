@@ -25,10 +25,11 @@ for (const file of ['0001_ai_recipe.sql','0002_analytics.sql','0003_account_dele
 }
 const probe='00000000-0000-0000-0000-0000000000ff';
 // 0004 이전 상태 재현(2026-09-07 실서버 실측과 동일): anon 키만으로 캡 RPC 실행·AI 테이블 SELECT 가능.
+// 관찰만 한다(단언 아님): 0001의 revoke를 나중에 고치면 여기가 false로 바뀌는 게 정상이다.
 await db.exec('set role anon');
-assert.equal((await db.query('select public.ai_try_consume($1, 5) as ok',[probe])).rows[0].ok, true,
-  'before 0004 anon can execute ai_try_consume (reproduces production)');
-assert.equal((await db.query('select * from public.ai_usage')).rows.length, 0, 'RLS hides rows but SELECT is granted');
+console.log('pre-0004 anon executes ai_try_consume:',
+  (await db.query('select public.ai_try_consume($1, 5) as ok',[probe])).rows[0].ok);
+console.log('pre-0004 anon selects ai_usage rows:', (await db.query('select * from public.ai_usage')).rows.length);
 await db.exec('reset role');
 await db.query('delete from public.ai_usage where user_id=$1',[probe]);
 await db.exec(await migration('0004_harden_client_grants.sql'));
@@ -41,6 +42,12 @@ for (const role of ['anon','authenticated']) {
 }
 await db.exec('set role service_role');
 assert.equal((await db.query('select public.ai_try_consume($1, 5) as ok',[probe])).rows[0].ok, true, 'service_role still consumes the cap');
+// 0004가 바꾼 건 ON CONFLICT 분기(search_path '')다 — 캡까지 증가하고 캡에서 false, 카운트는 캡을 넘지 않는다.
+for (let i=2;i<=5;i++) {
+  assert.equal((await db.query('select public.ai_try_consume($1, 5) as ok',[probe])).rows[0].ok, true, `call ${i} within cap`);
+}
+assert.equal((await db.query('select public.ai_try_consume($1, 5) as ok',[probe])).rows[0].ok, false, 'cap exceeded returns false');
+assert.equal((await db.query('select count from public.ai_usage where user_id=$1',[probe])).rows[0].count, 5, 'rejected call does not increment');
 await db.exec('reset role');
 await db.query('delete from public.ai_usage where user_id=$1',[probe]);
 const a='00000000-0000-0000-0000-000000000001';
