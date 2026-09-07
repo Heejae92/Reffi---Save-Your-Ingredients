@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reffi | Eat it today, waste nothing.</title>
+    <meta name="description" content="Reffi turns your grocery receipt into a fridge that counts down. Eat it today, waste nothing.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Story+Script&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Brand Colors */
+            --c-blue: #176AB0;
+            --c-cream: #F8F5EC;
+            --c-cocoa: #25211B;
+            --c-sage: #ADE393;
+            --c-amber: #F4C767;
+            --c-terracotta: #F68D70;
+            --c-white: #FFFFFF;
+            
+            /* Typography */
+            --font-body: 'Noto Sans KR', sans-serif;
+            --font-title: 'Story Script', cursive;
+            --font-num: 'Google Sans Flex', 'Noto Sans KR', sans-serif;
+            
+            /* Shadows & Layout */
+            --shadow-paper: 0 8px 24px rgba(37, 33, 27, 0.08);
+            --radius-paper: 3px 2px 4px 3px / 2px 4px 3px 4px;
+            --max-width: 1100px;
+            --header-height: 80px;
+        }
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: var(--header-height);
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--c-cocoa);
+            background-color: var(--c-cream);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            padding-top: var(--header-height);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: var(--font-body);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1.hero-title, h2.cta-title {
+            font-family: 'Story Script', cursive;
+            font-style: normal !important;
+            font-weight: 400 !important;
+            font-synthesis: none;
+            transform: none !important;
+            letter-spacing: 0;
+            line-height: 1.1;
+        }
+
+        h1.hero-title {
+            font-size: clamp(3rem, 7vw, 4.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        h2.cta-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        .eyebrow {
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--c-cocoa);
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+
+        .subline {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+        
+        .story-heading {
+            font-family: var(--font-title);
+            font-weight: 400;
+            line-height: 1.15;
+        }
+
+        /* Layout Container */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+        }
+
+        section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--c-blue);
+            color: var(--c-white);
+            border-radius: var(--radius-paper);
+            padding: 1rem 2rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(23, 106, 176, 0.3);
+            border: 1px solid rgba(37, 33, 27, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(23, 106, 176, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: var(--c-cream);
+            color: var(--c-cocoa);
+            border: 1px dashed rgba(37, 33, 27, 0.3);
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-paper);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 4px 8px rgba(37, 33, 27, 0.05);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px) rotate(-1deg);
+            box-shadow: 3px 6px 12px rgba(37, 33, 27, 0.08);
+            border-color: var(--c-cocoa);
+        }
+        
+        .hero .btn-secondary:hover,
+        .final-cta .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Paper & Receipt Effects */
+        .receipt-wrapper {
+            filter: drop-shadow(var(--shadow-paper));
+            transition: transform 0.3s ease;
+        }
+
+        .receipt-wrapper:hover {
+            transform: translateY(-4px) rotate(-1deg);
+        }
+        
+        .hero .receipt-wrapper:hover,
+        .final-cta .receipt-wrapper:hover {
+            transform: translateY(-4px);
+        }
+
+        .receipt-inner {
+            background-color: var(--c-cream);
+            padding: 2.5rem 1.5rem;
+            border: 1px solid rgba(37, 33, 27, 0.03);
+            border-top: none;
+            border-bottom: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .zigzag-edges {
+            clip-path: polygon(
+                0% 12px, 3% 0px, 6% 12px, 9% 0px, 12% 12px, 15% 0px, 
+                18% 12px, 21% 0px, 24% 12px, 27% 0px, 30% 12px, 33% 0px, 
+                36% 12px, 39% 0px, 42% 12px, 45% 0px, 48% 12px, 51% 0px, 
+                54% 12px, 57% 0px, 60% 12px, 63% 0px, 66% 12px, 69% 0px, 
+                72% 12px, 75% 0px, 78% 12px, 81% 0px, 84% 12px, 87% 0px, 
+                90% 12px, 93% 0px, 96% 12px, 100% 0px,
+                100% 100%, 96% calc(100% - 12px), 93% 100%, 90% calc(100% - 12px), 
+                87% 100%, 84% calc(100% - 12px), 81% 100%, 78% calc(100% - 12px), 
+                75% 100%, 72% calc(100% - 12px), 69% 100%, 66% calc(100% - 12px), 
+                63% 100%, 60% calc(100% - 12px), 57% 100%, 54% calc(100% - 12px), 
+                51% 100%, 48% calc(100% - 12px), 45% 100%, 42% calc(100% - 12px), 
+                39% 100%, 36% calc(100% - 12px), 33% 100%, 30% calc(100% - 12px), 
+                27% 100%, 24% calc(100% - 12px), 21% 100%, 18% calc(100% - 12px), 
+                15% 100%, 12% calc(100% - 12px), 9% 100%, 6% calc(100% - 12px), 
+                3% 100%, 0% calc(100% - 12px)
+            );
+        }
+
+        .iphone-frame {
+            border-radius: 36px;
+            background-color: var(--c-cocoa);
+            padding: 10px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 4px 12px rgba(37,33,27,0.15);
+            margin: 0 auto;
+            width: 300px;
+            max-width: 100%;
+        }
+
+        .app-motion { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 1206 / 2622; 
+            overflow: hidden; 
+            border-radius: 28px;
+        }
+
+        .app-motion img { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            width: 400%; 
+            height: 300%; 
+            max-width: none; 
+            display: block; 
+            animation: reffi-frames 2.4s steps(1, end) infinite; 
+        }
+
+        @keyframes reffi-frames { 
+            0% { transform: translate(0, 0); } 
+            8.33% { transform: translate(-25%, 0); } 
+            16.66% { transform: translate(-50%, 0); } 
+            25% { transform: translate(-75%, 0); } 
+            33.33% { transform: translate(0, -33.333%); } 
+            41.66% { transform: translate(-25%, -33.333%); } 
+            50% { transform: translate(-50%, -33.333%); } 
+            58.33% { transform: translate(-75%, -33.333%); } 
+            66.66% { transform: translate(0, -66.667%); } 
+            75% { transform: translate(-25%, -66.667%); } 
+            83.33% { transform: translate(-50%, -66.667%); } 
+            91.66% { transform: translate(-75%, -66.667%); } 
+            100% { transform: translate(-75%, -66.667%); } 
+        }
+
+        @media (prefers-reduced-motion: reduce) { 
+            .app-motion img { animation: none; } 
+        }
+
+        /* Tabs & Chips */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background-color: var(--c-cream);
+            border: 1px dashed rgba(37,33,27,0.3);
+            padding: 0.25rem 0.875rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--c-cocoa);
+            box-shadow: 0 2px 4px rgba(37,33,27,0.05);
+        }
+
+        .tab-fresh { background-color: var(--c-sage); border-color: transparent; }
+        .tab-soon { background-color: var(--c-amber); border-color: transparent; }
+        .tab-urgent { background-color: var(--c-terracotta); border-color: transparent; }
+
+        /* Decorative Background Ingredients */
+        .bg-deco {
+            display: none;
+            position: absolute;
+            opacity: 0.95;
+            pointer-events: none;
+            filter: drop-shadow(0 8px 24px rgba(37, 33, 27, 0.08));
+        }
+
+        section, footer {
+            overflow: visible;
+        }
+
+        /* Desktop sizing & positioning */
+        @media (min-width: 768px) {
+            .bg-deco.deco-inner {
+                display: block;
+                width: 110px;
+            }
+            .bg-deco.deco-inner.left {
+                left: 24px;
+            }
+            .bg-deco.deco-inner.right {
+                right: 24px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .footer .bg-deco.deco-inner {
+                width: 150px;
+            }
+        }
+
+        /* Outer gutter placement */
+        @media (min-width: 1384px) {
+            .bg-deco.deco-outer {
+                display: block;
+                width: 110px;
+            }
+            .bg-deco.deco-outer.left {
+                left: calc(50% - 550px - 32px - 110px);
+            }
+            .bg-deco.deco-outer.right {
+                right: calc(50% - 550px - 32px - 110px);
+            }
+        }
+
+        @media (min-width: 1464px) {
+            .bg-deco.deco-outer {
+                width: 150px;
+            }
+            .bg-deco.deco-outer.left {
+                left: calc(50% - 550px - 32px - 150px);
+            }
+            .bg-deco.deco-outer.right {
+                right: calc(50% - 550px - 32px - 150px);
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background-color: rgba(248, 245, 236, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 300;
+            border-bottom: 2px dashed rgba(37,33,27,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: none;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            border-width: 1px;
+        }
+
+        @media (min-width: 768px) {
+            .nav { gap: 2.5rem; }
+            .nav-links {
+                display: flex;
+                gap: 2rem;
+            }
+            .nav-links a {
+                font-weight: 500;
+                font-size: 0.95rem;
+            }
+            .nav-links a:hover {
+                text-decoration: underline;
+                text-decoration-style: dashed;
+                text-underline-offset: 4px;
+            }
+        }
+
+        /* Hero */
+        .hero {
+            padding: 4rem 0 6rem;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (min-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6rem;
+            }
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .hero-visual {
+            position: relative;
+        }
+
+        @media (max-width: 991px) {
+            .hero-visual {
+                margin-left: -1.5rem;
+                margin-right: -1.5rem;
+            }
+        }
+
+        /* Live Animation Stage */
+        .hero-stage {
+            position: relative;
+            height: 440px;
+            width: 100%;
+            background-color: var(--c-cream);
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .hero-stage::-webkit-scrollbar {
+            display: none;
+        }
+
+        @media (min-width: 992px) {
+            .hero-stage {
+                min-width: 560px;
+                overflow: hidden;
+            }
+        }
+
+        .pile-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-width: 560px;
+            opacity: 1;
+        }
+
+        .counter-line {
+            position: absolute;
+            bottom: 26px;
+            left: 2rem;
+            right: 2rem;
+            height: 1px;
+            border-top: 2px dashed rgba(37, 33, 27, 0.1);
+        }
+
+        .hero-stage.fade-out .pile-wrapper {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .food-piece {
+            position: absolute;
+            filter: drop-shadow(0 6px 14px rgba(37, 33, 27, 0.10));
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        .is-animating .food-piece {
+            animation: dropAndBounce 0.8s both;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes dropAndBounce {
+            0% {
+                transform: translateY(-120vh) rotate(0deg) scale(1);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+            }
+            68.75% {
+                transform: translateY(0px) rotate(var(--rot)) scale(1);
+                opacity: 1;
+                animation-timing-function: ease-out;
+            }
+            78% {
+                transform: translateY(0px) rotate(var(--rot)) scale(1.04);
+                opacity: 1;
+                animation-timing-function: ease-in-out;
+            }
+            89% {
+                transform: translateY(0px) rotate(var(--rot)) scale(0.96);
+                opacity: 1;
+                animation-timing-function: ease-in-out;
+            }
+            100% {
+                transform: translateY(0px) rotate(var(--rot)) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .food-piece, .is-animating .food-piece {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: translateY(0px) rotate(var(--rot)) scale(1) !important;
+            }
+            .hero-stage.fade-out .pile-wrapper {
+                opacity: 1 !important;
+                transition: none !important;
+            }
+        }
+
+        .hero-visual .receipt-wrapper {
+            max-width: 360px;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content > * {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .hero-content .eyebrow { animation-delay: 0.1s; }
+        .hero-content h1 { animation-delay: 0.2s; }
+        .hero-content .subline { animation-delay: 0.3s; }
+        .hero-content p { animation-delay: 0.4s; }
+        .hero-content .hero-actions { animation-delay: 0.5s; }
+
+        /* Stats Strip */
+        .stats {
+            background-color: rgba(248,245,236,0.6);
+            border-top: 2px dashed rgba(37,33,27,0.1);
+            border-bottom: 2px dashed rgba(37,33,27,0.1);
+            padding: 3rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem 1rem;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-num {
+            font-family: var(--font-num);
+            font-size: 2.75rem;
+            font-weight: 700;
+            color: var(--c-cocoa);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Sound Familiar */
+        .sound-familiar {
+            background-color: var(--c-cream);
+        }
+
+        .bubble-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        @media (min-width: 768px) {
+            .bubble-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .speech-bubble {
+            background: var(--c-cream);
+            border: 1px solid rgba(37,33,27,0.05);
+            border-radius: var(--radius-paper);
+            padding: 2rem;
+            position: relative;
+            box-shadow: var(--shadow-paper);
+            text-align: left;
+            height: 100%;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 30px;
+            border-width: 14px 18px 0 0;
+            border-style: solid;
+            border-color: var(--c-cream) transparent transparent transparent;
+            filter: drop-shadow(2px 2px 2px rgba(37,33,27,0.05));
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 30px;
+            border-width: 15px 19px 0 0;
+            border-style: solid;
+            border-color: rgba(37,33,27,0.05) transparent transparent transparent;
+            z-index: -1;
+        }
+
+        .closing-line {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        /* Features */
+        .feature-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4rem;
+            margin-bottom: 8rem;
+        }
+
+        .feature-row:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (min-width: 768px) {
+            .feature-row {
+                flex-direction: row;
+                gap: 6rem;
+            }
+            .feature-row.reversed {
+                flex-direction: row-reverse;
+            }
+            .feature-text, .feature-image {
+                flex: 1;
+                width: 50%;
+            }
+        }
+
+        .feature-image .receipt-wrapper {
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        /* Core Values */
+        .values-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        @media (min-width: 768px) {
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .dashed-divider {
+            border-top: 2px dashed rgba(37,33,27,0.15);
+            margin: 1rem 0 1.5rem;
+        }
+
+        /* FAQ */
+        .faq-list {
+            max-width: 800px;
+            margin: 4rem auto 0;
+        }
+
+        .faq-item {
+            border-bottom: 2px dashed rgba(37,33,27,0.15);
+            padding: 2rem 0;
+        }
+
+        .faq-item:first-child {
+            border-top: 2px dashed rgba(37,33,27,0.15);
+        }
+        
+        .faq-q {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Final CTA */
+        .final-cta .receipt-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .final-cta .receipt-inner {
+            padding: 4rem 2rem;
+            align-items: center;
+        }
+
+        .cta-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 2px dashed rgba(37,33,27,0.15);
+            padding: 5rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer .logo-img {
+            height: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            font-weight: 500;
+            text-decoration: underline;
+            text-decoration-style: dashed;
+            text-underline-offset: 4px;
+        }
+
+        .footer-copy {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo-link" aria-label="Reffi Home">
+                <img src="resources/amE_138rZ2C58vVnuHm4PX.png" alt="Reffi Logo" class="logo-img">
+            </a>
+            <nav class="nav">
+                <div class="nav-links">
+                    <a href="#how-it-works">How it works</a>
+                    <a href="#features">Features</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-content">
+                        <span class="eyebrow">IPHONE APP FOR YOUR FRIDGE</span>
+                        <h1 class="hero-title">Eat it today,<br>waste nothing.</h1>
+                        <p class="subline">Start free on iPhone.</p>
+                        <p>Reffi turns your grocery receipt into a fridge that counts down. When something is about to turn, it hands you recipe tickets that use it first.</p>
+                        <div class="hero-actions">
+                            <a href="#" class="btn-primary">Join the iPhone beta</a>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-visual">
+                        <div class="hero-stage" id="hero-stage">
+                            <div class="pile-wrapper">
+                                <div class="counter-line"></div>
+                                <img src="resources/9zmerpH2zUScmto_Orokgj.png" class="food-piece" style="--delay: 0s; width: 105px; left: 50%; margin-left: -222px; bottom: 26px; --rot: -2deg; z-index: 1;" alt="Tomato">
+                                <img src="resources/aDPBmEky3-u3BYiUjT__Q6.png" class="food-piece" style="--delay: 0.18s; width: 105px; left: 50%; margin-left: -109px; bottom: 26px; --rot: 2deg; z-index: 2;" alt="Mushroom">
+                                <img src="resources/8I3fBUc04FwcLg-5J8HOHp.png" class="food-piece" style="--delay: 0.36s; width: 105px; left: 50%; margin-left: 4px; bottom: 26px; --rot: -2deg; z-index: 3;" alt="Broccoli">
+                                <img src="resources/9IppLhIJkeF3rMv8NaY4cU.png" class="food-piece" style="--delay: 0.54s; width: 105px; left: 50%; margin-left: 117px; bottom: 26px; --rot: 3deg; z-index: 4;" alt="Avocado">
+                                
+                                <img src="resources/9rwB6e4hXh-fe1H21xS__y.png" class="food-piece" style="--delay: 0.72s; width: 105px; left: 50%; margin-left: -165.5px; bottom: 135px; --rot: -3deg; z-index: 5;" alt="Meat">
+                                <img src="resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="food-piece" style="--delay: 0.90s; width: 105px; left: 50%; margin-left: -52.5px; bottom: 139px; --rot: -3deg; z-index: 6;" alt="Apple">
+                                <img src="resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="food-piece" style="--delay: 1.08s; width: 105px; left: 50%; margin-left: 60.5px; bottom: 166px; --rot: 4deg; z-index: 7;" alt="Pepper">
+                                
+                                <img src="resources/95gAVfTJv-kcfvWnV_C4J7.png" class="food-piece" style="--delay: 1.26s; width: 105px; left: 50%; margin-left: -52.5px; bottom: 252px; --rot: -2deg; z-index: 8;" alt="Eggplant">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Strip -->
+        <section class="stats" aria-label="Reffi Statistics">
+            <div class="container stats-grid">
+                <div class="stat-item">
+                    <div class="stat-num">128</div>
+                    <div class="stat-label">built-in recipes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">12</div>
+                    <div class="stat-label">cuisines</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">279</div>
+                    <div class="stat-label">ingredients in the dictionary</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">2</div>
+                    <div class="stat-label">languages, English and Korean</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sound Familiar Section -->
+        <section id="how-it-works" class="sound-familiar">
+            <div class="container text-center">
+                <img src="resources/9rwB6e4hXh-fe1H21xS__y.png" class="bg-deco deco-inner left" style="top: 0; transform: rotate(-12deg);" alt="" aria-hidden="true">
+                <h2 class="story-heading">Sound familiar?</h2>
+                <p class="subline">Groceries you forgot are money in the trash.</p>
+                
+                <div class="bubble-grid">
+                    <div class="speech-bubble">
+                        <span class="eyebrow">Living alone</span>
+                        <p>I buy for the week and cook twice.</p>
+                    </div>
+                    <div class="speech-bubble">
+                        <span class="eyebrow">Busy couples</span>
+                        <p>Nobody knows what is in the back of the fridge.</p>
+                    </div>
+                    <div class="speech-bubble">
+                        <span class="eyebrow">Students</span>
+                        <p>Typing every item into an app never lasts a week.</p>
+                    </div>
+                </div>
+                
+                <p class="closing-line">Stop guessing. Reffi logs, ranks and reminds, in one place.</p>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <img src="resources/9zmerpH2zUScmto_Orokgj.png" class="bg-deco deco-outer right" style="top: 96px; transform: rotate(15deg);" alt="" aria-hidden="true">
+            <div class="container">
+                
+                <!-- Feature 1 -->
+                <div class="feature-row">
+                    <div class="feature-text">
+                        <h2 class="story-heading">Log it like a receipt</h2>
+                        <div class="tabs">
+                            <span class="tab">Receipt scan</span>
+                            <span class="tab">Photo</span>
+                            <span class="tab">By hand</span>
+                        </div>
+                        <p>Snap the receipt. Groceries land in your fridge with use-by dates filled in. Everything is read on this device. Nothing is uploaded.</p>
+                    </div>
+                    <div class="feature-image">
+                        <div class="receipt-wrapper">
+                            <div class="receipt-inner zigzag-edges">
+                                <div class="iphone-frame">
+                                    <div class="app-motion">
+                                        <img src="resources/aRFk1sXmNqBa1Y-Dqvxkfs.png" alt="Scan a receipt sheet">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-row reversed">
+                    <div class="feature-text">
+                        <h2 class="story-heading">A countdown you can see</h2>
+                        <div class="tabs">
+                            <span class="tab tab-fresh">Fresh</span>
+                            <span class="tab tab-soon">Soon</span>
+                            <span class="tab tab-urgent">Urgent</span>
+                        </div>
+                        <p>Sage means fresh, amber means soon, terracotta means today. Every color comes with a day count.</p>
+                    </div>
+                    <div class="feature-image">
+                        <div class="receipt-wrapper">
+                            <div class="receipt-inner zigzag-edges">
+                                <div class="iphone-frame">
+                                    <div class="app-motion">
+                                        <img src="resources/bMFAjghSshieNMpbBYT_Cs.png" alt="Fridge In stock list">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-row">
+                    <div class="feature-text">
+                        <h2 class="story-heading">Tickets for what expires first</h2>
+                        <div class="tabs">
+                            <span class="tab">Ticket deck</span>
+                            <span class="tab">Cooking ticket</span>
+                            <span class="tab">How to cook</span>
+                        </div>
+                        <p>Tap Start cooking and a deck of kitchen tickets appears, ranked by what spoils first. Flick right to cook, left to pass.</p>
+                    </div>
+                    <div class="feature-image">
+                        <div class="receipt-wrapper">
+                            <div class="receipt-inner zigzag-edges">
+                                <div class="iphone-frame">
+                                    <div class="app-motion">
+                                        <img src="resources/bzDFQ9z393a5DkeG5n-4w4.png" alt="The ticket deck">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-row reversed">
+                    <div class="feature-text">
+                        <h2 class="story-heading">Your weekly tally</h2>
+                        <div class="tabs">
+                            <span class="tab">Daily chips</span>
+                            <span class="tab">Waste rate</span>
+                            <span class="tab">Streak</span>
+                        </div>
+                        <p>A chip a day. Green is what you ate. See your eaten rate against last week and what you toss most.</p>
+                    </div>
+                    <div class="feature-image">
+                        <div class="receipt-wrapper">
+                            <div class="receipt-inner zigzag-edges">
+                                <div class="iphone-frame">
+                                    <div class="app-motion">
+                                        <img src="resources/8vJJ098PN6t8sPYMCCr4Fa.png" alt="Kitchen ledger history screen">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-row">
+                    <div class="feature-text">
+                        <h2 class="story-heading">One quiet alert a day</h2>
+                        <div class="tabs">
+                            <span class="tab">Morning alert</span>
+                            <span class="tab">Tomorrow</span>
+                            <span class="tab">Freezer</span>
+                        </div>
+                        <p>Once a day, only when something is expiring. Default 9 AM, yours to change.</p>
+                    </div>
+                    <div class="feature-image">
+                        <div class="receipt-wrapper">
+                            <div class="receipt-inner zigzag-edges">
+                                <div class="iphone-frame">
+                                    <div class="app-motion">
+                                        <img src="resources/90rZqIy65CSdJ5AsLFQ_76.png" alt="Home screen with the Morning alerts card">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Core Values Section -->
+        <section id="values" class="values">
+            <div class="container text-center">
+                <img src="resources/8I3fBUc04FwcLg-5J8HOHp.png" class="bg-deco deco-inner left" style="top: -40px; transform: rotate(5deg);" alt="" aria-hidden="true">
+                <h2 class="story-heading">Core values</h2>
+                
+                <div class="values-grid">
+                    <div class="receipt-wrapper">
+                        <div class="receipt-inner zigzag-edges" style="text-align: left;">
+                            <h3>Waste nothing</h3>
+                            <div class="dashed-divider"></div>
+                            <p>Food you already bought is the first ingredient.</p>
+                        </div>
+                    </div>
+                    <div class="receipt-wrapper">
+                        <div class="receipt-inner zigzag-edges" style="text-align: left;">
+                            <h3>Act today</h3>
+                            <div class="dashed-divider"></div>
+                            <p>One clear thing to do now beats a long list for later.</p>
+                        </div>
+                    </div>
+                    <div class="receipt-wrapper">
+                        <div class="receipt-inner zigzag-edges" style="text-align: left;">
+                            <h3>Clarity and honesty</h3>
+                            <div class="dashed-divider"></div>
+                            <p>Color means freshness, and every color comes with a label.</p>
+                        </div>
+                    </div>
+                    <div class="receipt-wrapper">
+                        <div class="receipt-inner zigzag-edges" style="text-align: left;">
+                            <h3>Your data stays with you</h3>
+                            <div class="dashed-divider"></div>
+                            <p>Receipts are read on the phone and nothing is uploaded.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="faq">
+            <div class="container">
+                <img src="resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="bg-deco deco-inner right" style="top: -60px; transform: rotate(-15deg);" alt="" aria-hidden="true">
+                <h2 class="text-center story-heading">FAQ</h2>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <h3 class="faq-q">Which phones?</h3>
+                        <p>iPhone with iOS 18 or later.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-q">Is it free?</h3>
+                        <p>The beta is free on TestFlight.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-q">Do I need an account?</h3>
+                        <p>No, guest mode works without one.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="faq-q">Where do the recipes come from?</h3>
+                        <p>A curated library of 128 recipes from 12 cuisines plus your own, ranked by what spoils first. Reffi does not generate recipes with AI.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Call to Action -->
+        <section class="final-cta">
+            <img src="resources/95gAVfTJv-kcfvWnV_C4J7.png" class="bg-deco deco-outer left" style="top: 96px; transform: rotate(12deg);" alt="" aria-hidden="true">
+            <div class="container">
+                <div class="receipt-wrapper">
+                    <div class="receipt-inner zigzag-edges text-center">
+                        <h2 class="cta-title">Start with the fridge you already have.</h2>
+                        <p>Join the iPhone beta and cook what is about to turn.</p>
+                        
+                        <div class="cta-actions">
+                            <a href="#" class="btn-primary">Join the iPhone beta</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <img src="resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="bg-deco deco-inner right" style="top: 0; transform: rotate(-5deg);" alt="" aria-hidden="true">
+            <img src="resources/amE_138rZ2C58vVnuHm4PX.png" alt="Reffi Logo" class="logo-img" style="margin: 0 auto 1rem;">
+            <p class="subline" style="margin-bottom: 0;">Eat it today, waste nothing.</p>
+            
+            <div class="footer-links">
+                <a href="#" target="_blank" title="Receipts and fridge data stay on your device.">Privacy</a>
+            </div>
+            
+            <span class="eyebrow footer-copy">Copyright Reffi</span>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const stage = document.getElementById('hero-stage');
+            if (!stage) return;
+            
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            
+            if (!prefersReducedMotion) {
+                function playHeroAnimation() {
+                    // Reset animation state
+                    stage.classList.remove('is-animating', 'fade-out');
+                    void stage.offsetWidth; // Force reflow
+                    
+                    // Start sequence
+                    stage.classList.add('is-animating');
+                    
+                    // Fade out pieces after 3s of resting (last piece settles ~2.06s)
+                    setTimeout(() => {
+                        stage.classList.add('fade-out');
+                    }, 5060);
+                    
+                    // Restart loop after fade out completes
+                    setTimeout(playHeroAnimation, 5460);
+                }
+                
+                // Initialize loop with a small delay for smoother page load
+                setTimeout(playHeroAnimation, 100);
+            } else {
+                // Show settled pile without animation
+                stage.classList.add('is-animating');
+            }
+        });
+    </script>
+</body>
+</html>
