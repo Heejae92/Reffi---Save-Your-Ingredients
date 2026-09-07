@@ -8,7 +8,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Story+Script&display=swap" rel="stylesheet">
     
     <style>
@@ -23,9 +23,9 @@
             --c-white: #FFFFFF;
             
             /* Typography */
-            --font-body: 'Noto Sans KR', sans-serif;
-            --font-title: 'Story Script', cursive;
-            --font-num: 'Google Sans Flex', 'Noto Sans KR', sans-serif;
+            --font-body: 'Google Sans Flex', 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', system-ui, sans-serif;
+            --font-title: 'Story Script', 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', system-ui, cursive;
+            --font-num: 'Google Sans Flex', 'Pretendard Variable', Pretendard, system-ui, sans-serif;
             
             /* Shadows & Layout */
             --shadow-paper: 0 8px 24px rgba(37, 33, 27, 0.08);
@@ -612,6 +612,7 @@
 
         .stat-num {
             font-family: var(--font-num);
+            font-variant-numeric: tabular-nums lining-nums;
             font-size: 2.75rem;
             font-weight: 700;
             color: var(--c-cocoa);
