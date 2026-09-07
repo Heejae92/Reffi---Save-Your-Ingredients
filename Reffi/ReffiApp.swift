@@ -5,6 +5,8 @@ struct ReffiApp: App {
     @State private var store: FridgeStore
     @State private var profile: ProfileStore
     @State private var auth: AuthStore
+    /// 루트 알림의 마지막 내용 — 닫힘 페이드 동안 문구가 비지 않게 붙들어 둔다(`rootNotice`는 닫는 순간 nil).
+    @State private var lastRootNotice: AuthStore.RootNotice?
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
@@ -44,13 +46,16 @@ struct ReffiApp: App {
                 .environment(auth)
                 .tint(ReffiColor.blue)
                 .onOpenURL { auth.handleOpenURL($0) }
-                // 이메일 확인·재설정 링크의 교환 실패 — 링크는 대개 로그인 시트 없이 콜드 런치로 도착하므로
-                // 루트에서 띄운다(시트 안의 `errorMessage`만으로는 그 경우 아무것도 안 보인다).
-                .paperDialog(isPresented: $auth.callbackFailed,
-                             title: "That link didn't work",
-                             message: "It may have expired or already been used. Request a new one and try again.",
+                // 루트 알림 — 이메일 링크의 교환 실패(대개 로그인 시트 없이 콜드 런치로 도착)와 비밀번호
+                // 변경 확인(재설정 시트가 닫힌 뒤). 로그인 시트가 떠 있을 땐 AuthStore가 시트 안으로 보낸다
+                // (이 다이얼로그는 오버레이라 시트 뒤에 그려진다).
+                .onChange(of: auth.rootNotice) { _, notice in if let notice { lastRootNotice = notice } }
+                .paperDialog(isPresented: Binding(get: { auth.rootNotice != nil },
+                                                  set: { if !$0 { auth.rootNotice = nil } }),
+                             title: (auth.rootNotice ?? lastRootNotice)?.title ?? "",
+                             message: (auth.rootNotice ?? lastRootNotice)?.message,
                              seed: 3, backdropDismisses: true,
-                             primary: PaperDialogAction("OK") { auth.callbackFailed = false })
+                             primary: PaperDialogAction("OK") { auth.rootNotice = nil })
                 .sheet(isPresented: $auth.needsPasswordReset) { PasswordResetView() }
                 // 컬러 스킴은 시스템 설정을 따른다 — 시맨틱 토큰이 전부 적응형(ReffiColor.dynamic)이라
                 // 라이트/다크 어느 쪽으로도 팔레트가 스스로 뒤집힌다.
@@ -114,6 +119,24 @@ struct ReffiApp: App {
         }
     }
     #endif
+}
+
+/// 루트 알림 문구 — 케이스는 `AuthStore`가 정하고 카피는 뷰 층이 든다.
+private extension AuthStore.RootNotice {
+    var title: LocalizedStringKey {
+        switch self {
+        case .linkInvalid: "That link didn't work"
+        case .linkOffline: "Couldn't open that link"
+        case .passwordUpdated: "Password updated"
+        }
+    }
+    var message: LocalizedStringKey {
+        switch self {
+        case .linkInvalid: "It may have expired or already been used. Request a new one and try again."
+        case .linkOffline: "Check your network connection and tap the link again."
+        case .passwordUpdated: "You're logged in with your new password."
+        }
+    }
 }
 
 /// 진입 게이트 — 온보딩(기기당 1회) → 로그인(세션/게스트 없으면) → 메인.

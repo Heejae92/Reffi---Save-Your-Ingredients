@@ -8,35 +8,19 @@
 -- 일일 캡을 소진시키고 ai_usage에 행을 무한정 넣을 수 있는 상태였다(security definer라 RLS 우회).
 -- ai_usage/ai_config도 같은 이유로 테이블 GRANT가 남아 있었다(RLS 정책 0개라 행은 안 보이지만
 -- 권한 거부가 아니라 빈 배열 200이 돌아온다 — RLS 한 겹만 남은 상태).
--- 0002(analytics_events)·0003(delete_own_account)은 처음부터 `from public, anon, authenticated` 꼴로
--- 올바르게 회수했고, 0001만 불완전했다. CREATE OR REPLACE는 기존 ACL을 보존하므로 0001 재실행으로는
+-- 0002(analytics_events 테이블은 `from anon, authenticated`, analytics.* 함수는 `from public, anon,
+-- authenticated`)·0003(`from public, anon` 뒤 authenticated에만 grant)은 명시 롤을 지정해 올바르게
+-- 회수했고, 0001만 PUBLIC 하나였다. CREATE OR REPLACE는 기존 ACL을 보존하므로 0001 재실행으로는
 -- 고쳐지지 않는다 — 명시적 revoke가 필요하다.
 
 begin;
 
 -- 1. AI 캡 RPC — Edge Function(service_role)만 호출한다.
---    본문은 0001과 같되 search_path를 비우고 참조를 스키마 한정한다(0002/0003과 같은 관례).
-create or replace function public.ai_try_consume(p_user uuid, p_cap int)
-returns boolean
-language plpgsql
-security definer
-set search_path = ''
-as $$
-declare
-  v_count int;
-begin
-  if p_cap <= 0 then
-    return false;
-  end if;
-  insert into public.ai_usage (user_id, day, count)
-  values (p_user, current_date, 1)
-  on conflict (user_id, day)
-  do update set count = ai_usage.count + 1
-    where ai_usage.count < p_cap
-  returning count into v_count;
-  return v_count is not null;
-end;
-$$;
+--    본문은 0001 그대로 두고(이미 public. 한정 참조) search_path만 비운다(0002/0003과 같은 관례).
+--    주의: 0001을 다시 실행하면 CREATE OR REPLACE가 search_path를 public으로 되돌린다(ACL은 보존).
+--    마이그레이션의 재실행 계약은 "전부를 순서대로"이므로 0004가 뒤따르면 다시 닫힌다 —
+--    scripts/test-account-deletion.mjs가 이 재실행 순서를 그대로 검증한다.
+alter function public.ai_try_consume(uuid, int) set search_path = '';
 
 revoke all on function public.ai_try_consume(uuid, int) from public, anon, authenticated;
 grant execute on function public.ai_try_consume(uuid, int) to service_role;
@@ -45,6 +29,10 @@ grant execute on function public.ai_try_consume(uuid, int) to service_role;
 --    정책 하나가 잘못 추가되거나 RLS가 꺼져도 anon/authenticated는 여전히 권한 거부).
 revoke all on table public.ai_config from anon, authenticated;
 revoke all on table public.ai_usage  from anon, authenticated;
+
+-- 3. analytics.local_day — 0002가 revoke 없이 만들어 Postgres 기본값(PUBLIC EXECUTE)이 남아 있다.
+--    스키마 USAGE가 회수돼 있어 클라이언트가 닿진 못하지만, 하네스의 권한 스캔이 잡는 잔여물이라 닫는다.
+revoke all on function analytics.local_day(timestamptz) from public, anon, authenticated;
 
 commit;
 

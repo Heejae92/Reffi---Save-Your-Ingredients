@@ -64,7 +64,7 @@ xcodebuild -project Reffi.xcodeproj -scheme Reffi \
   -only-testing:ReffiUITests/CookTicketFlickUITests/testKitchenCopySheet_ChecksPersistAcrossOpenClose test
 ```
 
-The SQL test uses an in-memory PostgreSQL build with a minimal Supabase Auth schema and Supabase's default privileges for `anon`/`authenticated`. It executes all four real migrations and checks anonymous denial, caller isolation, account/data deletion, retry, deleted-JWT rejection, transaction rollback, the Apple revocation guard, and that 0004 revokes client-role access to `ai_try_consume`, `ai_usage` and `ai_config`. This does not prove live server deployment or GoTrue integration.
+The SQL test uses an in-memory PostgreSQL build with a minimal Supabase Auth schema and Supabase's default privileges for `anon`/`authenticated`. It executes all four real migrations and checks anonymous denial, caller isolation, account/data deletion, retry, deleted-JWT rejection, transaction rollback, the Apple revocation guard, that 0004 revokes client-role access to `ai_try_consume`, `ai_usage`, `ai_config` and `analytics.local_day`, that `anon`/`authenticated` hold no privilege in `public`/`analytics` beyond an explicit allow-list, and that re-running all four migrations in order leaves the same state. This does not prove live server deployment or GoTrue integration.
 
 ```sh
 npm install --prefix /tmp/reffi-sql-validation --no-audit --no-fund @electric-sql/pglite@0.5.8

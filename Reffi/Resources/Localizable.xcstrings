@@ -945,6 +945,16 @@
         }
       }
     },
+    "Check your network connection and tap the link again.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인터넷 연결을 확인한 뒤 링크를 다시 눌러 주세요."
+          }
+        }
+      }
+    },
     "Check your network connection.": {
       "localizations": {
         "ko": {
@@ -1192,6 +1202,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 기기의 데이터를 지우지 못했어요. 다시 시도해 주세요."
+          }
+        }
+      }
+    },
+    "Couldn't open that link": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "링크를 열지 못했어요"
+          }
+        }
+      }
+    },
+    "Couldn't open that link.\nCheck your network connection and tap it again.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "링크를 열지 못했어요.\n인터넷 연결을 확인한 뒤 다시 눌러 주세요."
           }
         }
       }
@@ -2823,6 +2853,16 @@
         }
       }
     },
+    "Password": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비밀번호"
+          }
+        }
+      }
+    },
     "Password (8+ characters)": {
       "localizations": {
         "ko": {
@@ -2833,13 +2873,12 @@
         }
       }
     },
-    "Password updated.": {
-      "extractionState": "manual",
+    "Password updated": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "비밀번호를 변경했어요."
+            "value": "비밀번호를 바꿨어요"
           }
         }
       }
@@ -3945,6 +3984,16 @@
         }
       }
     },
+    "That link didn't work.\nRequest a new one and try again.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "링크가 작동하지 않았어요.\n새 링크를 요청한 뒤 다시 시도해 주세요."
+          }
+        }
+      }
+    },
     "That password doesn't meet the requirements.\nTry a longer one with letters and numbers.": {
       "localizations": {
         "ko": {
@@ -4699,6 +4748,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "이용자는 적용 법령에 따라 개인정보의 열람, 정정, 삭제, 처리정지와 선택적 동의 철회를 요청할 수 있으며, 법정대리인이나 적법한 위임을 받은 대리인을 통해 권리를 행사할 수 있습니다. 기기의 입력값은 앱에서 수정하고, 설정에서 사용 기록 공유를 끄거나 계정 및 기기 데이터 삭제 기능을 이용할 수 있습니다. 서버 기록에 관한 요청은 위에 기재한 개인정보 문의 이메일을 통해 처리하며, 정보 보호를 위해 필요한 범위에서 본인 확인이 요구될 수 있습니다. 요청을 거절하거나 제한하는 경우에는 적용되는 법적 근거와 이유를 안내해야 합니다. 거주 국가의 개인정보 감독기관에 구제를 신청할 수도 있습니다."
+          }
+        }
+      }
+    },
+    "You're logged in with your new password.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새 비밀번호로 로그인되어 있어요."
           }
         }
       }

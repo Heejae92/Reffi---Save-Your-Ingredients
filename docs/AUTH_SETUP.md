@@ -10,7 +10,9 @@ Email signup/login and local guest mode are the supported launch methods. Apple 
 
 ## Email verification and password recovery
 
-Add `reffi://auth-callback` to Authentication > URL Configuration > Redirect URLs, exactly and without wildcards. Signup, anonymous email upgrade and password recovery explicitly request this URL. Reffi handles the callback at the app root so the authentication sheet need not be open; it accepts only that scheme and host, and a failed code exchange (expired or reused link) is shown as a dialog at the app root and logged under the `auth` category.
+Add `reffi://auth-callback` to Authentication > URL Configuration > Redirect URLs, exactly and without wildcards. Signup, anonymous email upgrade and password recovery explicitly request this URL. Reffi handles the callback at the app root so the authentication sheet need not be open; it accepts only that scheme and host. A failed code exchange is logged under the `auth` category and shown to the user: inside the sign-in sheet when it is open, otherwise as a dialog at the app root. A network failure asks the user to tap the link again; any other failure asks for a new link. Tapping an already-used confirmation link while signed in shows nothing.
+
+Password recovery with PKCE signs the user in but does not emit a recovery event (supabase-swift 2.51 emits `.passwordRecovery` only in the implicit flow), so the app remembers the last reset request on this device (24 hours) and opens the new-password sheet after the link signs in. A recovery link opened on a different device only signs the user in. A dedicated recovery redirect URL would remove that limitation and needs a new allowlist entry.
 
 The client pins `flowType: .pkce`. `reffi://` is a custom scheme any app can register, so the PKCE verifier kept in Reffi's own Keychain is what prevents an intercepted link from becoming a session. Do not switch to the implicit flow. A Universal Link (`https://<domain>/auth/callback`) should replace the custom scheme once the privacy-policy domain exists.
 
@@ -21,7 +23,7 @@ Verify email confirmation and recovery on a physical iPhone, including a cold la
 Verified against the live project on 2026-09-07 with the publishable key only: email sign-in responds correctly, but `rpc/delete_own_account` returns 404 (migration 0003 is not applied) and `rpc/ai_try_consume` is executable by the anonymous role (migration 0001's `revoke ... from public` does not remove the explicit grants Supabase gives `anon`/`authenticated` through default privileges). Both are fixed by applying two migrations in order, as the database owner, from Dashboard > SQL Editor:
 
 1. `supabase/migrations/0003_account_deletion.sql` (account deletion RPC, deleted-JWT insert guard, analytics FK).
-2. `supabase/migrations/0004_harden_client_grants.sql` (revokes `anon`/`authenticated` from `ai_try_consume`, `ai_usage`, `ai_config`).
+2. `supabase/migrations/0004_harden_client_grants.sql` (revokes `anon`/`authenticated` from `ai_try_consume`, `ai_usage`, `ai_config` and `analytics.local_day`; pins the RPC's `search_path`).
 
 Both files are idempotent. Then confirm in the SQL Editor:
 
@@ -45,7 +47,7 @@ The RPC rejects Apple identities until server-side Apple token revocation is imp
 
 ## Password policy
 
-The client requires at least 8 characters (`AuthView.PasswordRule.min`) on signup and password reset. Set the same minimum in Authentication > Policies (Supabase defaults to 6) and require letters and digits; enable leaked-password protection if the plan allows it. Keep the client constant and the dashboard value in the same change.
+The client requires at least 8 characters (`AuthView.PasswordRule.min`) on signup and password reset. Sign-in only requires a non-empty password so accounts created under the old 6-character minimum can still log in; the server decides. Set the same minimum in Authentication > Policies (Supabase defaults to 6) and require letters and digits; enable leaked-password protection if the plan allows it. Keep the client constant and the dashboard value in the same change.
 
 ## Dashboard checklist before public release
 
