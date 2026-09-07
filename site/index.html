@@ -69,6 +69,9 @@
             transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
+        .beta-status { flex-basis: 100%; margin: 0; font-size: .95rem; }
+        a:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 5px; }
+
         /* Typography */
         h1, h2, h3, h4 {
             font-family: var(--font-body);
@@ -803,12 +806,12 @@
         }
     </style>
 </head>
-<body>
+<body id="top">
 
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <a href="#" class="logo-link" aria-label="Reffi Home">
+            <a href="#top" class="logo-link" aria-label="Reffi Home">
                 <img src="resources/amE_138rZ2C58vVnuHm4PX.png" alt="Reffi Logo" class="logo-img">
             </a>
             <nav class="nav">
@@ -829,10 +832,11 @@
                     <div class="hero-content">
                         <span class="eyebrow">IPHONE APP FOR YOUR FRIDGE</span>
                         <h1 class="hero-title">Eat it today,<br>waste nothing.</h1>
-                        <p class="subline">Start free on iPhone.</p>
+                        <p class="subline">An iPhone beta is in development.</p>
                         <p>Reffi turns your grocery receipt into a fridge that counts down. When something is about to turn, it hands you recipe tickets that use it first.</p>
                         <div class="hero-actions">
-                            <a href="#" class="btn-primary">Join the iPhone beta</a>
+                            <a href="#how-it-works" class="btn-primary">See how Reffi works</a>
+                            <p class="beta-status">Public beta link coming soon.</p>
                         </div>
                     </div>
                     
@@ -919,7 +923,7 @@
                             <span class="tab">Photo</span>
                             <span class="tab">By hand</span>
                         </div>
-                        <p>Snap the receipt. Groceries land in your fridge with use-by dates filled in. Everything is read on this device. Nothing is uploaded.</p>
+                        <p>Snap the receipt. Groceries land in your fridge with use-by dates filled in. Receipt text is read on this device. Receipt images are not uploaded.</p>
                     </div>
                     <div class="feature-image">
                         <div class="receipt-wrapper">
@@ -1063,9 +1067,9 @@
                     </div>
                     <div class="receipt-wrapper">
                         <div class="receipt-inner zigzag-edges" style="text-align: left;">
-                            <h3>Your data stays with you</h3>
+                            <h3>Your fridge stays on your phone</h3>
                             <div class="dashed-divider"></div>
-                            <p>Receipts are read on the phone and nothing is uploaded.</p>
+                            <p>Receipt images stay on your phone. Signing in and optional usage sharing involve separate server processing.</p>
                         </div>
                     </div>
                 </div>
@@ -1085,7 +1089,7 @@
                     </div>
                     <div class="faq-item">
                         <h3 class="faq-q">Is it free?</h3>
-                        <p>The beta is free on TestFlight.</p>
+                        <p>The beta is free. The public TestFlight link will be added here when it is available.</p>
                     </div>
                     <div class="faq-item">
                         <h3 class="faq-q">Do I need an account?</h3>
@@ -1106,10 +1110,11 @@
                 <div class="receipt-wrapper">
                     <div class="receipt-inner zigzag-edges text-center">
                         <h2 class="cta-title">Start with the fridge you already have.</h2>
-                        <p>Join the iPhone beta and cook what is about to turn.</p>
+                        <p>See how Reffi helps you cook what is about to turn.</p>
                         
                         <div class="cta-actions">
-                            <a href="#" class="btn-primary">Join the iPhone beta</a>
+                            <a href="#how-it-works" class="btn-primary">See how Reffi works</a>
+                            <p class="beta-status">Public beta link coming soon.</p>
                         </div>
                     </div>
                 </div>
@@ -1125,7 +1130,7 @@
             <p class="subline" style="margin-bottom: 0;">Eat it today, waste nothing.</p>
             
             <div class="footer-links">
-                <a href="#" title="Receipts and fridge data stay on your device.">Privacy</a>
+                <a href="privacy.html">App privacy policy (review draft)</a>
             </div>
             
             <span class="eyebrow footer-copy">Copyright Reffi</span>
