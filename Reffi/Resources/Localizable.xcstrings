@@ -2813,22 +2813,12 @@
         }
       }
     },
-    "Password (6+ characters)": {
+    "Password (8+ characters)": {
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "비밀번호 (6자 이상)"
-          }
-        }
-      }
-    },
-    "Password must be at least 6 characters.": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "비밀번호는 6자 이상이어야 해요."
+            "value": "비밀번호 (8자 이상)"
           }
         }
       }
@@ -3935,6 +3925,26 @@
         }
       }
     },
+    "That link didn't work.\nRequest a new one and try again.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "링크가 작동하지 않았어요.\n새 링크를 요청한 뒤 다시 시도해 주세요."
+          }
+        }
+      }
+    },
+    "That password is too weak.\nUse 8 or more characters with letters and numbers.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비밀번호가 너무 약해요.\n영문과 숫자를 섞어 8자 이상으로 해 주세요."
+          }
+        }
+      }
+    },
     "The app uses encrypted HTTPS connections for server requests and separates local data by account. Server data access is restricted by authentication and database access rules. Recipe matching and receipt text recognition run on your device. This version does not send your fridge, allergy entries or receipt images to an external generative AI service or use them to train a Reffi AI model. Recommendations do not determine legal rights or access to essential services. Keep your device locked and review its backup settings to protect local information.": {
       "localizations": {
         "en": {
@@ -4374,13 +4384,13 @@
         }
       }
     },
-    "Use at least 6 characters.": {
+    "Use at least 8 characters.": {
       "extractionState": "manual",
       "localizations": {
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "6자 이상 입력해 주세요."
+            "value": "8자 이상 입력해 주세요."
           }
         }
       }

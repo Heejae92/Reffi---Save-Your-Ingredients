@@ -17,8 +17,12 @@ final class AuthStore {
     static let anonKey = "sb_publishable_RolVTNQCWTf9t9XBEcCz1w_HcEeYquc"
 
     /// Supabase 클라이언트 — publishable key는 클라이언트 임베드용 공개 키(RLS로 보호).
+    /// `flowType: .pkce`는 라이브러리 기본값과 같지만 **명시**한다 — 콜백 URL(`reffi://`)은 어느 앱이나
+    /// 가로챌 수 있는 커스텀 스킴이라, 인증 코드가 이 앱 Keychain의 verifier 없이는 교환되지 않는다는
+    /// PKCE 보장이 로그인 보안의 핵심이다. 기본값이 바뀌거나 디버깅 중 `.implicit`로 돌리면 URL의
+    /// 토큰이 그대로 세션이 돼 임의 계정 주입이 가능해지므로, 이 한 줄이 그 실수를 막는다.
     static let client = SupabaseClient(supabaseURL: supabaseURL, supabaseKey: anonKey,
-        options: .init(auth: .init(emitLocalSessionAsInitialSession: true)))
+        options: .init(auth: .init(flowType: .pkce, emitLocalSessionAsInitialSession: true)))
 
     /// 인증 진단 로그(FridgeStore.log와 같은 서브시스템). 화면에 못 내보내는 서버 원문이 여기로 간다.
     static let log = Logger(subsystem: "com.reffi.app", category: "auth")
@@ -168,10 +172,19 @@ final class AuthStore {
         }
     }
 
-    /// OAuth 콜백 URL 처리(onOpenURL) — 외부 브라우저로 돌아온 경우의 안전망.
+    /// 인증 콜백 URL 처리(onOpenURL) — 이메일 확인·비밀번호 재설정 링크와 외부 브라우저 OAuth 복귀.
+    /// 스킴만이 아니라 host까지 `redirectURL`과 대조한다 — `reffi://` 아래 다른 경로가 생겨도 인증 코드
+    /// 교환 경로로 흘러들지 않게. 실패는 삼키지 않는다: 만료·재사용된 링크로 교환이 실패하면 사용자는
+    /// 아무 반응도 못 보고 메일을 거듭 요청하게 되고(발송 한도 소진), 진단 로그도 남지 않았다.
     func handleOpenURL(_ url: URL) {
-        guard url.scheme == "reffi" else { return }
-        Task { try? await Self.client.auth.session(from: url) }
+        guard url.scheme == Self.redirectURL.scheme, url.host == Self.redirectURL.host else { return }
+        Task {
+            do { try await Self.client.auth.session(from: url) }
+            catch {
+                Self.log.error("auth callback failed: \(String(describing: error))")
+                errorMessage = String(localized: "That link didn't work.\nRequest a new one and try again.")
+            }
+        }
     }
 
     // MARK: - 게스트 · 로그아웃
@@ -214,6 +227,9 @@ final class AuthStore {
             try await Self.client.rpc("delete_own_account").execute()
             return true
         } catch {
+            // 화면 문구는 그대로 두되(서버 원문 비노출 계약), 원인은 로그에 남긴다 — RPC 미배포(404)와
+            // 일시적 네트워크 실패가 사용자에게는 같은 문장이라, 로그 없이는 영원한 "다시 시도"가 된다.
+            Self.log.error("delete_own_account failed: \(String(describing: error))")
             errorMessage = String(localized: "Couldn't delete your account. Your data is still saved. Check your connection and try again.")
             return false
         }
@@ -258,8 +274,10 @@ final class AuthStore {
         if lower.contains("invalid login credentials") { return String(localized: "Email or password doesn't match.") }
         if lower.contains("email not confirmed") { return String(localized: "Please verify your email first.\nCheck your inbox.") }
         if lower.contains("already registered") { return String(localized: "This email is already registered.\nTry logging in.") }
-        if lower.contains("at least 6 characters") || lower.contains("password should")
-            { return String(localized: "Password must be at least 6 characters.") }
+        // 최소 길이 숫자는 서버 정책이 쥔다 — 문구에 숫자를 박으면 대시보드에서 정책을 올리는 순간 거짓말이
+        // 된다. 클라이언트 자체 하한은 `AuthView.PasswordRule.min`이 먼저 걸러 이 분기는 서버가 더 엄할 때만 뜬다.
+        if lower.contains("password should") || lower.contains("weak")
+            { return String(localized: "That password is too weak.\nUse 8 or more characters with letters and numbers.") }
         if lower.contains("invalid format") || lower.contains("validate email")
             { return String(localized: "Please check the email address.") }
         if lower.contains("network") || lower.contains("offline") || lower.contains("internet")

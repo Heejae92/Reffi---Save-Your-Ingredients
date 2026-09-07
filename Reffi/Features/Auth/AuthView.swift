@@ -27,9 +27,15 @@ struct AuthView: View {
     private enum Entry { case apple, google, guest }
     @State private var pending: Entry?
 
+    /// 비밀번호 클라이언트 하한 — 서버 정책(대시보드 Authentication › Policies)과 같은 값으로 유지한다.
+    /// 클라이언트가 서버보다 엄한 건 무해하지만 느슨하면 서버가 거부할 비밀번호로 버튼이 켜진다.
+    /// 6은 Supabase 기본값이자 NIST 800-63B 권고(8+) 미만이라 8로 올린다. 플레이스홀더·재설정 화면·
+    /// 에러 문구가 이 한 곳을 보게 해 셋이 따로 놀지 않는다.
+    enum PasswordRule { static let min = 8 }
+
     private var isSignIn: Bool { mode == .signIn }
     private var canSubmit: Bool {
-        email.contains("@") && password.count >= 6 && !auth.busy && auth.availability.email
+        email.contains("@") && password.count >= PasswordRule.min && !auth.busy && auth.availability.email
     }
 
     var body: some View {
@@ -178,7 +184,7 @@ struct AuthView: View {
     }
 
     private var secureField: some View {
-        SecureField("Password (6+ characters)", text: $password)
+        SecureField("Password (8+ characters)", text: $password)
             .reffiType(.body)
             .foregroundStyle(ReffiColor.ink)
             .focused($focus, equals: .password)

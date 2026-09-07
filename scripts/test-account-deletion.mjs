@@ -13,10 +13,36 @@ await db.exec(`
   create function auth.role() returns text language sql stable as
     $$ select current_setting('request.jwt.claim.role', true) $$;
   grant usage on schema auth to authenticated, anon;
+  grant usage on schema public to anon, authenticated, service_role;
+  -- Supabase 프로젝트 기본값 재현: public 스키마의 새 테이블·함수에 anon/authenticated/service_role 명시 GRANT.
+  -- 이 한 줄이 없으면 0001의 \`revoke ... from public\`만으로 닫힌 것처럼 보여 실서버와 어긋난다.
+  alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
+  alter default privileges in schema public grant execute on functions to anon, authenticated, service_role;
 `);
+const migration = (file) => readFile(new URL(`../supabase/migrations/${file}`, import.meta.url), 'utf8');
 for (const file of ['0001_ai_recipe.sql','0002_analytics.sql','0003_account_deletion.sql']) {
-  await db.exec(await readFile(new URL(`../supabase/migrations/${file}`, import.meta.url), 'utf8'));
+  await db.exec(await migration(file));
 }
+const probe='00000000-0000-0000-0000-0000000000ff';
+// 0004 이전 상태 재현(2026-09-07 실서버 실측과 동일): anon 키만으로 캡 RPC 실행·AI 테이블 SELECT 가능.
+await db.exec('set role anon');
+assert.equal((await db.query('select public.ai_try_consume($1, 5) as ok',[probe])).rows[0].ok, true,
+  'before 0004 anon can execute ai_try_consume (reproduces production)');
+assert.equal((await db.query('select * from public.ai_usage')).rows.length, 0, 'RLS hides rows but SELECT is granted');
+await db.exec('reset role');
+await db.query('delete from public.ai_usage where user_id=$1',[probe]);
+await db.exec(await migration('0004_harden_client_grants.sql'));
+for (const role of ['anon','authenticated']) {
+  await db.exec(`set role ${role}`);
+  await assert.rejects(db.query('select public.ai_try_consume($1, 5)',[probe]),{code:'42501'},`${role} must not execute ai_try_consume`);
+  await assert.rejects(db.query('select * from public.ai_usage'),{code:'42501'},`${role} must not read ai_usage`);
+  await assert.rejects(db.query('select * from public.ai_config'),{code:'42501'},`${role} must not read ai_config`);
+  await db.exec('reset role');
+}
+await db.exec('set role service_role');
+assert.equal((await db.query('select public.ai_try_consume($1, 5) as ok',[probe])).rows[0].ok, true, 'service_role still consumes the cap');
+await db.exec('reset role');
+await db.query('delete from public.ai_usage where user_id=$1',[probe]);
 const a='00000000-0000-0000-0000-000000000001';
 const b='00000000-0000-0000-0000-000000000002';
 const c='00000000-0000-0000-0000-000000000003';
@@ -62,4 +88,4 @@ await assert.rejects(db.query('select public.delete_own_account()'));
 await db.exec('reset role');
 assert.equal((await db.query('select count(*)::int as n from auth.users')).rows[0].n,2);
 await db.close();
-console.log('PASS: anonymous denial, caller isolation, own data deletion, retry, deleted-JWT rejection, transaction rollback, Apple revocation guard');
+console.log('PASS: anonymous denial, caller isolation, own data deletion, retry, deleted-JWT rejection, transaction rollback, Apple revocation guard, 0004 client-role grant revocation');
