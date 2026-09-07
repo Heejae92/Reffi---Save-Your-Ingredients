@@ -24,14 +24,22 @@ Package.resolved
 build*.log
 build/
 
-# 시크릿(.env·API 키·인증서) — 어떤 경로의 .env도 커밋 금지. 값 없는 예시 파일(.env.example)만 허용.
+# 시크릿(.env·API 키·인증서) — 어떤 경로의 .env도 커밋 금지. 값 없는 예시 파일만 허용
+# (.env.example, .env.local.example, .env.sample 등 *.example / *.sample 접미).
 .env
 .env.*
 *.env
 !.env.example
 !*.env.example
+!.env.*.example
+!*.env.*.example
+!.env.*.sample
+!*.env.*.sample
+!.env.sample
 # Xcode 빌드 설정에 키를 넣는 경우(Secrets.xcconfig 등) 실파일은 제외하고 예시만 허용
 *Secrets*.xcconfig
+!*Secrets*.example.xcconfig
+!*Secrets*.sample.xcconfig
 Secrets.plist
 GoogleService-Info.plist
 # 서명·인증 자료

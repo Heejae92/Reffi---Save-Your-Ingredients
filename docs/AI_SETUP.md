@@ -125,7 +125,9 @@ supabase functions serve recipe-generate \
 
 ```bash
 # PUBLISHABLE_KEY는 Reffi/Data/AuthStore.swift의 anonKey(현재 활성 키)를 그대로 쓴다 — 문서에 값을 박아두면 회수 뒤 stale해진다.
-PUBLISHABLE_KEY=$(grep -o 'sb_publishable_[A-Za-z0-9_-]*' Reffi/Data/AuthStore.swift | head -1)
+# 저장소 어느 디렉토리에서 실행해도 되게 git 루트 기준으로 찾고, 못 찾으면 빈 apikey로 조용히 401이 나지 않게 즉시 멈춘다.
+PUBLISHABLE_KEY=$(grep -o 'sb_publishable_[A-Za-z0-9_-]*' "$(git rev-parse --show-toplevel)/Reffi/Data/AuthStore.swift" | head -1)
+[ -n "$PUBLISHABLE_KEY" ] || { echo "publishable key not found: run inside the Reffi git repo"; exit 1; }
 curl -s -X POST "https://bzzpmaeitfbbunsmjvmd.supabase.co/auth/v1/token?grant_type=password" \
   -H "apikey: $PUBLISHABLE_KEY" \
   -H "Content-Type: application/json" \
