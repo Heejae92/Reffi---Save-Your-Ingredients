@@ -57,4 +57,34 @@ struct AuthPolicyTests {
         #expect(AuthStore.callbackFailure(for: expired) == .linkInvalid)
         #expect(AuthStore.callbackFailure(for: AuthError.sessionMissing) == .linkInvalid)
     }
+
+    @MainActor
+    @Test(arguments: [["length"], ["characters"], ["length", "characters"], []])
+    func passwordPolicyFailureDoesNotClaimABreach(reasons: [String]) {
+        let error = AuthError.weakPassword(message: "Password does not meet policy", reasons: reasons)
+        #expect(AuthStore.friendly(error) == String(localized: "That password doesn't meet the requirements.\nTry a longer one with letters and numbers."))
+    }
+
+    @MainActor
+    @Test func confirmedBreachedPasswordGetsSpecificGuidance() {
+        let error = AuthError.weakPassword(message: "Weak password", reasons: ["pwned"])
+        #expect(AuthStore.friendly(error) == String(localized: "This password has appeared in a data breach.\nChoose a different one."))
+    }
+
+    @MainActor
+    @Test func legacyBreachMessageStillGetsSpecificGuidance() {
+        let error = AuthError.api(message: "Password is known to be weak and easy to guess", errorCode: .weakPassword,
+                                  underlyingData: Data(),
+                                  underlyingResponse: HTTPURLResponse(url: URL(string: "https://example.com")!, statusCode: 422, httpVersion: nil, headerFields: nil)!)
+        #expect(AuthStore.friendly(error) == String(localized: "This password has appeared in a data breach.\nChoose a different one."))
+    }
+
+    @MainActor
+    @Test func genericWeakPasswordCodeDoesNotClaimABreach() {
+        let error = AuthError.api(message: "Password should contain a digit", errorCode: .weakPassword,
+                                  underlyingData: Data(),
+                                  underlyingResponse: HTTPURLResponse(url: URL(string: "https://example.com")!, statusCode: 422, httpVersion: nil, headerFields: nil)!)
+        #expect(AuthStore.friendly(error) == String(localized: "That password doesn't meet the requirements.\nTry a longer one with letters and numbers."))
+    }
+
 }

@@ -345,21 +345,23 @@ final class AuthStore {
     }
 
     /// 서버 에러 → 사용자 문구(과도한 기술 노출 방지).
-    private static func friendly(_ error: Error) -> String {
+    static func friendly(_ error: Error) -> String {
         let raw = error.localizedDescription
         let lower = raw.lowercased()
         if lower.contains("invalid login credentials") { return String(localized: "Email or password doesn't match.") }
         if lower.contains("email not confirmed") { return String(localized: "Please verify your email first.\nCheck your inbox.") }
         if lower.contains("already registered") { return String(localized: "This email is already registered.\nTry logging in.") }
-        // 유출 비밀번호 거부("Password is known to be weak and easy to guess")는 길이 문제가 아니다 —
-        // 길이 조언을 주면 긴 비밀번호로 루프에 빠진다. 코드는 `errorCode`에만 실리고(`errorDescription`은
-        // 서버 message뿐), 문장은 버전에 따라 바뀔 수 있어 둘 다 본다.
-        if (error as? AuthError)?.errorCode == .weakPassword || lower.contains("known to be weak")
-            { return String(localized: "This password has appeared in a data breach.\nChoose a different one.") }
-        // 최소 길이 숫자는 서버 정책이 쥔다 — 문구에 숫자를 박으면 대시보드에서 정책을 올리는 순간 거짓말이
-        // 된다. 클라이언트 하한(`AuthView.PasswordRule.min`)이 먼저 걸러 이 분기는 서버가 더 엄할 때만 뜬다.
-        if lower.contains("password should")
-            { return String(localized: "That password doesn't meet the requirements.\nTry a longer one with letters and numbers.") }
+        // weak_password also covers length and character requirements. Only an explicit
+        // pwned reason (or the server's breach message) supports a breach warning.
+        if case let .weakPassword(_, reasons) = error as? AuthError, reasons.contains("pwned") {
+            return String(localized: "This password has appeared in a data breach.\nChoose a different one.")
+        }
+        if lower.contains("known to be weak") {
+            return String(localized: "This password has appeared in a data breach.\nChoose a different one.")
+        }
+        if (error as? AuthError)?.errorCode == .weakPassword || lower.contains("password should") {
+            return String(localized: "That password doesn't meet the requirements.\nTry a longer one with letters and numbers.")
+        }
         if lower.contains("invalid format") || lower.contains("validate email")
             { return String(localized: "Please check the email address.") }
         if lower.contains("network") || lower.contains("offline") || lower.contains("internet")
