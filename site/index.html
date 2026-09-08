@@ -507,9 +507,15 @@
         }
 
         @media (min-width: 992px) {
+            /* wider hero so the 1.4x OkDandan headline stays on two lines: text column gets the larger share */
+            .hero .container {
+                max-width: 1240px;
+                /* keep the text column's left edge aligned with the 1100px nav/section container */
+                padding-left: calc(1.5rem + clamp(0px, (100vw - 1100px) / 2, 70px));
+            }
             .hero-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 6rem;
+                grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+                gap: 4rem;
             }
         }
 
