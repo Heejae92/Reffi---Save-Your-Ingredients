@@ -48,13 +48,14 @@ struct RootTabView: View {
             // 그대로 다시 그렸다. 그래서 셋 다 `isActive`를 받아 **비활성이면 본문을 세우지
             // 않는다** — @State·@AppStorage·시트는 뷰가 살아 있는 한 그대로다(메인의 물리 씬은
             // 여전히 여기서 일시정지된다).
-            pane(MainView(isActive: tab == .home, onOpenToBuy: { openFridge(.toBuy) }), visible: tab == .home)
+            pane(MainView(isActive: tab == .home, onOpenToBuy: { openFridge(.toBuy) }, onOpenFridge: { openFridge(.stock) }), visible: tab == .home)
             pane(FridgeView(isActive: tab == .fridge, pendingPane: $fridgePane), visible: tab == .fridge)
             pane(ProfileView(isActive: tab == .profile), visible: tab == .profile)
 
             CapsuleNav(tab: $tab, onAdd: { showAdd = true })
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .safeAreaInset(edge: .top) { if store.hasSaveError { SaveErrorNotice().padding(.horizontal) } }
         // 탭 노출 기록(64차) — 냉장고는 패인(재고·장보기·이력)이 각자 화면이라 `FridgeView`가 직접 올린다.
         .onChange(of: tab, initial: true) { _, t in
             switch t {
@@ -116,6 +117,9 @@ struct RootTabView: View {
         // UI 테스트 결정적 상태 — 기기에 남은 사용자 데이터와 무관하게 샘플 냉장고로 고정.
         // (-loadSample은 첫 실행(isPristine)에만 시드하므로 테스트엔 강제 리셋 인자가 따로 필요.)
         .onAppear {
+            if ProcessInfo.processInfo.arguments.contains("-uiTestEmptyFridge") {
+                store.resetAllData()
+            }
             if ProcessInfo.processInfo.arguments.contains("-uiTestSampleFridge") {
                 store.loadSampleData()
                 // 냉장고 보기 프리퍼런스도 기본값으로 — 직전 테스트가 중간에 죽어도 오염이 남지 않게.

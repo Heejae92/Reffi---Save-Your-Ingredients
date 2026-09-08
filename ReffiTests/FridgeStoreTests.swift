@@ -209,6 +209,37 @@ struct FridgeStoreTests {
         #expect(store.activeCook == nil)
     }
 
+    @Test func smallLeftoversSurviveSnapshotAndUndo() throws {
+        for unit in [IngredientUnit.kilogram, .liter] {
+            let item = Ingredient(name: "Small stock", category: "Other", daysLeft: 3,
+                                  quantity: Quantity(value: 0.1, unit: unit), glyph: .generic)
+            let store = FridgeStore(ingredients: [item], recipes: [], history: [])
+            let recipe = Recipe.userRecipe(name: "Test", ingredientNames: [item.name], minutes: 5)
+            store.cook(RecipeRecommender.result(for: recipe, ingredients: store.sorted))
+            store.finishCooking(leftovers: [item.id])
+            #expect(store.ingredients.first?.quantity == Quantity(value: 0.05, unit: unit))
+            let data = try JSONEncoder().encode(store.snapshot)
+            let loaded = try #require(FridgeStore.decodeSnapshot(data))
+            #expect(loaded.ingredients.first?.quantity.value == 0.05)
+            store.undoPending()
+            #expect(store.ingredients.first?.quantity == item.quantity)
+            #expect(store.activeCook?.usedIDs == [item.id])
+        }
+    }
+
+    @Test func invalidQuantityCannotBeAddedOrReplaceExistingStock() {
+        let store = makeStore()
+        let count = store.ingredients.count
+        var item = store.ingredients[0]
+        for value in [0.0, -1, .infinity, .nan] {
+            item.quantity.value = value
+            store.add(item)
+            #expect(store.ingredients.count == count)
+            store.update(item)
+            #expect(store.ingredients[0].quantity.value == 2)
+        }
+    }
+
     @Test func cancelCookingReleasesReservation() {
         let store = makeStore()
         let recipe = Recipe.userRecipe(name: "Test", ingredientNames: ["Item0"], minutes: 10, steps: [])

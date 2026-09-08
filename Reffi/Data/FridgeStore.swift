@@ -121,6 +121,7 @@ final class FridgeStore {
     /// 이력 없이도 만들어진다 — 파생 제안이 원천적으로 못 뜨는 그 자리를 메모가 채운다).
     var isPristine: Bool { ingredients.isEmpty && history.isEmpty && manualToBuy.isEmpty }
 
+    private(set) var hasSaveError = false
     private let persists: Bool
     private var storageURL = DataOwner.storageURL()
     private let counterCapacity = 6
@@ -216,6 +217,22 @@ final class FridgeStore {
         for i in history.indices where history[i].canonicalID == nil {
             history[i].canonicalID = lex.canonicalID(for: history[i].name)
         }
+        // Artwork follows the current lexicon for existing inventory, history and shopping notes.
+        // IDs, quantities, dates and user category choices remain the saved values.
+        for i in ingredients.indices {
+            if let id = ingredients[i].canonicalID, let entry = lex.entry(id: id),
+               let glyph = FoodGlyph(rawValue: entry.glyph) { ingredients[i].glyph = glyph }
+        }
+        for i in history.indices {
+            if let id = history[i].canonicalID, let entry = lex.entry(id: id),
+               let glyph = FoodGlyph(rawValue: entry.glyph) { history[i].glyph = glyph }
+        }
+        for i in manualToBuy.indices {
+            if let id = manualToBuy[i].canonicalID ?? lex.canonicalID(for: manualToBuy[i].name),
+               let entry = lex.entry(id: id), let glyph = FoodGlyph(rawValue: entry.glyph) {
+                manualToBuy[i].glyph = glyph
+            }
+        }
     }
 
     /// dismissedToBuy 저장값 → matchKey 정규화. 캐논 ID로 저장된 값은 그대로, 그 외는 이름으로 해석
@@ -275,29 +292,36 @@ final class FridgeStore {
         }
     }
 
-    /// 디스크 쓰기 직렬 큐 — 순서 보장(FIFO), 메인 스레드에서 IO를 떼어낸다.
+    /// 디스크 쓰기 직렬 큐. 저장 성공을 확인할 때는 동기적으로 완료를 기다린다.
     private static let ioQueue = DispatchQueue(label: "com.reffi.app.store-io", qos: .utility)
 
-    /// 스냅샷 저장(+기본으로 임박 알림 재스케줄). 인코드는 메인에서 값을 캡처하고 쓰기는 직렬 큐로.
+    /// 원자적 저장 결과를 호출부에 반환한다. 실패한 스냅샷은 메모리에 남아 재시도할 수 있다.
     /// 재료가 안 바뀌는 변이(작업대 교체·쇼핑 skip·커스텀 레시피)는 `reschedulesAlerts: false`로
     /// 알림 재구성을 건너뛴다 — 판정 제스처의 메인 스레드 비용을 줄인다.
     /// 메모리 전용 스토어(프리뷰·테스트)는 아무것도 하지 않는다.
-    private func persist(reschedulesAlerts: Bool = true) {
-        guard persists else { return }
+    @discardableResult
+    private func persist(reschedulesAlerts: Bool = true) -> Bool {
+        guard persists else { return true }
         trimHistoryIfNeeded()
         if reschedulesAlerts { ExpiryNotifier.reschedule(for: ingredients) }
         let snap = snapshot
         do {
             let data = try JSONEncoder().encode(snap)
             let url = storageURL
-            Self.ioQueue.async {
-                do { try data.write(to: url, options: .atomic) }
-                catch { Self.log.error("persist write failed: \(String(describing: error))") }
-            }
+            // Confirm the atomic write before the UI announces success. Keep the current
+            // in-memory snapshot on failure so retry can save every pending change.
+            try Self.ioQueue.sync { try data.write(to: url, options: .atomic) }
+            hasSaveError = false
+            return true
         } catch {
-            Self.log.error("persist encode failed: \(String(describing: error))")
+            hasSaveError = true
+            Self.log.error("persist failed: \(String(describing: error))")
+            return false
         }
     }
+
+    @discardableResult
+    func retrySave() -> Bool { persist() }
 
     var snapshot: Snapshot {
         Snapshot(schemaVersion: Self.currentSchemaVersion,
@@ -406,22 +430,25 @@ final class FridgeStore {
     /// 재료 추가 — 어느 입구(메인 ＋, 네비 ＋, 재입고)로 들어와도 작업대에 함께 올라온다
     /// (직접 추가는 보충 목표 6을 일시 초과할 수 있다 — 방금 넣은 한 개를 바로 작업대에서 보이게).
     /// 재입고는 '이번엔 안 사기'를 해제한다.
-    func add(_ ingredient: Ingredient, source: AnalyticsEvent.AddSource = .manual) {
+    @discardableResult
+    func add(_ ingredient: Ingredient, source: AnalyticsEvent.AddSource = .manual) -> Bool {
         insert([ingredient], capsCounter: false, source: source)
     }
 
     /// 일괄 추가(영수증 스캔) — N개를 넣어도 스냅샷 기록·알림 재스케줄은 1회만. 직접 추가와 달리
     /// 작업대는 상한(6)까지만 채운다 — 스캔 한 번에 15개가 쏟아져도 작업대가 넘치지 않게, 최임박 재료부터
     /// 올리고 나머지는 냉장고에만 둔다(빈 자리가 나면 replenishCounter가 다음 임박 재료로 자연 보충).
-    func add(contentsOf newItems: [Ingredient], source: AnalyticsEvent.AddSource = .receipt) {
+    @discardableResult
+    func add(contentsOf newItems: [Ingredient], source: AnalyticsEvent.AddSource = .receipt) -> Bool {
         insert(newItems, capsCounter: true, source: source)
     }
 
     /// 추가 공통 — 캐논 승격·재입고 스킵 해제는 두 경로 동일. 작업대 등재만 다르다:
     /// 직접 추가(`capsCounter=false`)는 일시 초과 허용(무조건 등재), 일괄 스캔(`capsCounter=true`)은
     /// 상한까지만 — replenishCounter가 available(임박순, counterEligible 적용)로 빈 자리를 채운다.
-    private func insert(_ newItems: [Ingredient], capsCounter: Bool, source: AnalyticsEvent.AddSource) {
-        guard !newItems.isEmpty else { return }
+    private func insert(_ newItems: [Ingredient], capsCounter: Bool, source: AnalyticsEvent.AddSource) -> Bool {
+        let newItems = newItems.filter { $0.quantity.isValid }
+        guard !newItems.isEmpty else { return false }
         let lex = IngredientLexicon.shared
         var known = 0   // 사전 캐논에 붙은 수 — 미등재 비율이 곧 사전 커버리지 지표
         for item in newItems {
@@ -430,7 +457,9 @@ final class FridgeStore {
                 ingredient.canonicalID = lex.canonicalID(for: ingredient.name)
             }
             if ingredient.canonicalID != nil { known += 1 }
-            ingredients.append(ingredient)
+            if let existing = ingredients.firstIndex(where: { $0.id == ingredient.id }) {
+                ingredients[existing] = ingredient
+            } else { ingredients.append(ingredient) }
             if !capsCounter, !counterIDs.contains(ingredient.id) {
                 counterIDs.append(ingredient.id)   // 직접 추가 — 일시 초과 허용
             }
@@ -443,13 +472,16 @@ final class FridgeStore {
             manualToBuy.removeAll { satisfied.contains($0.matchKey) }
         }
         if capsCounter { replenishCounter() }   // 스캔 — 상한(6)까지 최임박 우선 등재, 나머지는 냉장고에
-        persist()
+        guard persist() else { return false }
         track(.ingredientAdd(source: source, count: newItems.count, known: known))
+        return true
     }
 
     /// 편집 저장 — 같은 id를 찾아 교체. 이름이 바뀌면 글리프·카테고리도 다시 매칭(파생값 동기화).
-    func update(_ ingredient: Ingredient) {
-        guard let i = ingredients.firstIndex(where: { $0.id == ingredient.id }) else { return }
+    @discardableResult
+    func update(_ ingredient: Ingredient) -> Bool {
+        guard ingredient.quantity.isValid else { return false }
+        guard let i = ingredients.firstIndex(where: { $0.id == ingredient.id }) else { return false }
         var updated = ingredient
         let renamed = ingredients[i].name != ingredient.name
         if renamed {
@@ -458,8 +490,9 @@ final class FridgeStore {
             updated.canonicalID = IngredientLexicon.shared.canonicalID(for: ingredient.name)   // 이름 바뀌면 캐논 키 재해석
         }
         ingredients[i] = updated
-        persist()
+        guard persist() else { return false }
         track(.ingredientEdit(renamed: renamed))
+        return true
     }
 
     // MARK: - 개봉 라이프사이클(44차 오너 결정)
@@ -658,8 +691,16 @@ final class FridgeStore {
     /// `leftovers`에 담긴 재료는 남은 것 — 수량을 절반으로 줄이고 냉장고에 남긴다.
     /// v1 세션(usedIDs 없음 — 발주 시점에 이미 소비됨)은 세션만 닫는다.
     /// `at`은 테스트 결정론용 주입(기본 실시각) — recentCooked의 감점·상한이 날짜 함수라서다.
-    func finishCooking(leftovers: Set<UUID> = [], at now: Date = Date()) {
-        guard let cook = activeCook else { return }
+    @discardableResult
+    func finishCooking(leftovers: Set<UUID> = [], remaining: [UUID: Quantity] = [:], at now: Date = Date()) -> Bool {
+        guard let cook = activeCook else { return false }
+        let reserved = Set(cook.usedIDs ?? [])
+        // Validate all input before changing any stock or closing the session.
+        for (id, amount) in remaining {
+            guard reserved.contains(id), let original = ingredients.first(where: { $0.id == id }),
+                  amount.isValid, let converted = amount.converted(to: original.quantity.unit),
+                  converted.value <= original.quantity.value else { return false }
+        }
         dismissStaleFireUndo()   // 발주 토스트가 완료 뒤까지 살아남아 가짜 원복을 하지 않게
         // "방금 해먹은" 기록(48차 E4) — rank의 변화 감점 소스. recipeID 없는 구세션(v1)은 남길
         // 키가 없어 건너뛴다(감점을 못 받을 뿐 — 안전한 실패). undo는 이 기록을 되돌리지 않는다:
@@ -674,9 +715,9 @@ final class FridgeStore {
         var leftoverOriginals: [Ingredient] = []
         for id in cook.usedIDs ?? [] {
             guard let i = ingredients.firstIndex(where: { $0.id == id }) else { continue }
-            if leftovers.contains(id) {
+            if leftovers.contains(id) || remaining[id] != nil {
                 leftoverOriginals.append(ingredients[i])   // undo용 원본(절반 전) 보존
-                ingredients[i].quantity = ingredients[i].quantity.halved
+                ingredients[i].quantity = remaining[id]?.converted(to: ingredients[i].quantity.unit) ?? ingredients[i].quantity.halved
             } else {
                 logIDs.append(removeLogging(ingredients[i], wasted: false, via: cook.recipeName).id)
             }
@@ -688,11 +729,12 @@ final class FridgeStore {
                       logIDs: logIDs, counterSnapshot: counterBefore,
                       leftoverSnapshots: leftoverOriginals, previousSession: cook)
         }
-        persist()
+        let saved = persist()
         track(.cookFinish(recipe: cook.recipeID.map(AnalyticsEvent.recipeKey) ?? "unknown",
                           used: logIDs.count, leftovers: leftoverOriginals.count,
                           stepsDone: cook.completedSteps?.count ?? 0, stepsTotal: cook.steps?.count ?? 0,
                           minutes: Int(now.timeIntervalSince(cook.startedAt) / 60)))
+        return saved
     }
 
     /// 조리 포기 — 예약 해제. 재료는 그대로 냉장고·작업대로 돌아온다(기록 없음).

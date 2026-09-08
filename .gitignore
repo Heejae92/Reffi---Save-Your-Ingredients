@@ -45,3 +45,9 @@ Reffi.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
 
 # OKTICON permits app embedding but not standalone font redistribution.
 Reffi/Resources/Fonts/OkDanDan-Bold.ttf
+
+# Local validation artifacts and duplicate working copies
+/output/
+/scripts/prepare-font 2.py
+/scripts/test-account-deletion 2.mjs
+/supabase/migrations/0003_account_deletion 2.sql

@@ -46,23 +46,32 @@ struct RecipeVideoSearchTests {
 
     @Test func ingredientHelperAppendsRecipeKeyword() {
         // 재료 브리지는 "<재료> recipe" 한 가지 모양만 만든다(조리 화면의 레시피명 경로와 같은 꼴).
-        #expect(RecipeVideoSearch.urlForIngredient("두부") == RecipeVideoSearch.url(query: "두부 recipe"))
+        #expect(RecipeVideoSearch.urlForIngredient("두부", language: .en) == RecipeVideoSearch.url(query: "두부 recipe"))
     }
 
     @Test func ingredientsHelperCoversEveryNameTheCopySpeaks() throws {
         // 문구가 두 재료를 호명하면 버튼도 둘 다 책임진다 — 첫 번째만 열면 두 번째엔 침묵이 남는다.
-        let url = RecipeVideoSearch.urlForIngredients(["두부", "계란"])
+        let url = RecipeVideoSearch.urlForIngredients(["두부", "계란"], language: .en)
         #expect(url == RecipeVideoSearch.url(query: "두부 계란 recipe"))
         let comps = try #require(URLComponents(url: url, resolvingAgainstBaseURL: false))
         #expect(comps.queryItems?.first?.value == "두부 계란 recipe")
         // 공백뿐인 이름은 검색어를 더럽히지 않고 빠진다.
-        #expect(RecipeVideoSearch.urlForIngredients(["두부", "  "]) == RecipeVideoSearch.url(query: "두부 recipe"))
+        #expect(RecipeVideoSearch.urlForIngredients(["두부", "  "], language: .en) == RecipeVideoSearch.url(query: "두부 recipe"))
     }
 
     @Test func ingredientsHelperFallsBackToHomeWhenNothingToSay() {
         // 부를 이름이 없으면 "recipe"뿐인 무의미한 검색 대신 홈으로 — 죽은 버튼은 만들지 않는다.
         #expect(RecipeVideoSearch.urlForIngredients([]) == RecipeVideoSearch.home)
         #expect(RecipeVideoSearch.urlForIngredients([" ", ""]) == RecipeVideoSearch.home)
+    }
+
+    @Test func videoSearchUsesSelectedLanguageWithoutRestart() {
+        #expect(RecipeVideoSearch.urlForRecipe("김치찌개", language: .ko)
+                == RecipeVideoSearch.url(query: "김치찌개 레시피"))
+        #expect(RecipeVideoSearch.urlForRecipe("Kimchi Stew", language: .en)
+                == RecipeVideoSearch.url(query: "Kimchi Stew recipe"))
+        #expect(RecipeVideoSearch.urlForIngredients(["두부", "계란"], language: .ko)
+                == RecipeVideoSearch.url(query: "두부 계란 레시피"))
     }
 
     @Test func emptyQueryStillReturnsAUsableURL() {

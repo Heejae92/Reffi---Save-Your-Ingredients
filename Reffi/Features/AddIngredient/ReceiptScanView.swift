@@ -15,6 +15,7 @@ import PhotosUI
 struct ReceiptScanView: View {
     @Environment(FridgeStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    var isFirstIngredient = false
 
     enum Phase {
         case pick                          // 소스 선택(카메라/사진)
@@ -42,6 +43,9 @@ struct ReceiptScanView: View {
     @State private var addedHaptic = 0
 
     private var cameraAvailable: Bool { VNDocumentCameraViewController.isSupported }
+    private var hasInvalidSelection: Bool {
+        candidates.contains { selected.contains($0.id) && !$0.quantity.isValid }
+    }
 
     var body: some View {
         content
@@ -76,10 +80,11 @@ struct ReceiptScanView: View {
                 CandidateEditSheet(candidate: candidate,
                                    title: candidate.isManual ? "Add by hand" : "Edit item") { updated in
                     if updated.isManual {
-                        addManual(updated)
+                        return addManual(updated)
                     } else if let idx = candidates.firstIndex(where: { $0.id == updated.id }) {
                         candidates[idx] = updated
                     }
+                    return true
                 }
             }
             .onChange(of: photoItems) { _, items in
@@ -128,7 +133,7 @@ struct ReceiptScanView: View {
 
     /// 시트 헤더 — SheetHeader 공용 컴포넌트(좌측 타이틀·.heading, 룰②③). 이전 중앙정렬·.subhead ZStack을 통일했다.
     private var header: some View {
-        SheetHeader(title: "Scan a receipt", showsClose: true) { dismiss() }
+        SheetHeader(title: isFirstIngredient ? "Add first ingredient" : "Scan a receipt", showsClose: true) { dismiss() }
     }
 
     // MARK: - 소스 선택
@@ -143,17 +148,25 @@ struct ReceiptScanView: View {
     private var pickSource: some View {
         VStack(spacing: ReffiSheet.blockGap) {
             VStack(spacing: ReffiSheet.itemGap) {
-                ReffiIcon.receipt.reffi(44).foregroundStyle(ReffiColor.blueDark)
-                Text("Scan your receipt.\nCheck the items, then add them.")
+                (isFirstIngredient ? ReffiIcon.fridge : ReffiIcon.receipt)
+                    .reffi(44).foregroundStyle(ReffiColor.blueDark)
+                Text(isFirstIngredient
+                     ? "Start with something in your fridge.\nAdd its name and quantity, then check the date."
+                     : "Scan your receipt.\nCheck the items, then add them.")
                     .reffiType(.body).foregroundStyle(ReffiColor.ink2)
                     .multilineTextAlignment(.center)
             }
 
             VStack(spacing: ReffiSheet.ctaGap) {
+                if isFirstIngredient {
+                    PaperButton(title: "Add by hand") {
+                        editingCandidate = EditableCandidate(manualDraft: true)
+                    }
+                }
                 if cameraAvailable {
                     // 라벨은 짧게(62차 owner), 전체 뜻은 accessibilityLabel이 맡는다(`CookingStepsView`
                     // "Videos" 선례와 같은 문법).
-                    PaperButton(title: "Scan") { showCamera = true }
+                    PaperButton(title: "Scan", kind: isFirstIngredient ? .secondary : .primary) { showCamera = true }
                         .accessibilityLabel(Text("Scan with camera"))
                 }
                 // Button이 아닌 컨트롤에도 CTA 표면을 공용 킷에서 가져온다(`PaperButtonLabel` + `.paperPress`).
@@ -172,8 +185,10 @@ struct ReceiptScanView: View {
                 // 종이 CTA로 세우면 스캔과 같은 무게가 돼, 이 화면이 무엇을 권하는지가 흐려진다.
                 // 라벨은 목적지 시트 제목("Add by hand")과 같은 낱말이다(42차) — 진입점과 도착지가
                 // 다른 이름이면 누를 때마다 화면이 스스로를 개명하는 것으로 읽힌다.
-                QuietButton(title: "Add by hand", icon: ReffiIcon.manual) {
-                    editingCandidate = EditableCandidate(manualDraft: true)
+                if !isFirstIngredient {
+                    QuietButton(title: "Add by hand", icon: ReffiIcon.manual) {
+                        editingCandidate = EditableCandidate(manualDraft: true)
+                    }
                 }
                 if scanFailed {
                     // 표지형 블록 안의 문장이라 중앙이다(61차 — 옛 "페이지 마진 컬럼의 읽는 문장 = 좌측"은
@@ -256,8 +271,15 @@ struct ReceiptScanView: View {
             // 확정 CTA는 도킹한다(§14.4) — 목록 꼬리에 딸리지 않고 safe-area 하단에 붙어 본문만 스크롤한다.
             // 옛 구성(맨 패딩 12/12)은 마지막 행이 버튼 바로 위에서 딱 끊겼다.
             .dockedCTA(over: ReffiColor.canvas, inset: ReffiSheet.inset, bottomInset: ReffiSheet.bottom) {
-                PaperButton(title: "Add \(selected.count) items") { add() }
-                    .disabled(selected.isEmpty)   // 디밍은 PaperButton이 §7.2로 처리 — 여기서 겹치면 곱해진다.
+                VStack(spacing: ReffiSpace.s3) {
+                    if store.hasSaveError { SaveErrorNotice() }
+                    if hasInvalidSelection {
+                        Text("Check the quantities of the selected items before adding.")
+                            .reffiType(.caption).foregroundStyle(ReffiColor.urgentDark)
+                    }
+                    PaperButton(title: "Add \(selected.count) items") { add() }
+                        .disabled(selected.isEmpty || hasInvalidSelection)
+                }   // 디밍은 PaperButton이 §7.2로 처리 — 여기서 겹치면 곱해진다.
             }
         }
     }
@@ -422,38 +444,40 @@ struct ReceiptScanView: View {
     /// 선택 항목 일괄 등록 — 소비기한·보관·구매처는 각 후보의 편집 상태(기본 사전값 또는 사용자 편집)를
     /// 그대로 쓴다. 배치 API로 스냅샷 기록·알림 재스케줄을 1회만 수행한다.
     private func add() {
+        guard !selected.isEmpty, !hasInvalidSelection else { return }
         let items = candidates.filter { selected.contains($0.id) }.map { c -> Ingredient in
             let glyph = FoodGlyph.match(c.name)   // 편집으로 이름이 바뀌었으면 여기서 새로 해석
-            return Ingredient(name: c.name,
+            return Ingredient(id: c.id, name: c.name,
                               category: glyph.categoryLabel,
                               expiresAt: c.expiresAt,
                               quantity: c.quantity,
                               glyph: glyph,
                               place: c.place,
                               storage: c.storage,
-                              canonicalID: c.canonicalID)
+                              canonicalID: c.canonicalID, expiryIsEstimated: !c.expiryTouched)
         }
-        store.add(contentsOf: items, source: .receipt)
+        guard store.add(contentsOf: items, source: .receipt) else { return }
         addedHaptic += 1
         dismiss()
     }
 
     /// 직접 입력 한 건 등록 — 일괄 스캔과 달리 단건 `store.add`다(작업대 상한을 잠시 넘겨서라도
     /// 방금 적은 하나를 바로 보이게 한다). 피드백·닫힘은 스캔 경로와 같은 두 줄.
-    private func addManual(_ draft: EditableCandidate) {
+    private func addManual(_ draft: EditableCandidate) -> Bool {
         let name = draft.name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { return }   // 저장 버튼이 이미 막지만, 등록 경로도 스스로 지킨다
+        guard !name.isEmpty, draft.quantity.isValid else { return false }
         let glyph = FoodGlyph.match(name)
-        store.add(Ingredient(name: name,
+        guard store.add(Ingredient(id: draft.id, name: name,
                              category: glyph.categoryLabel,
                              expiresAt: draft.expiresAt,
                              quantity: draft.quantity,
                              glyph: glyph,
                              place: draft.place,
                              storage: draft.storage,
-                             canonicalID: draft.canonicalID))
+                             canonicalID: draft.canonicalID, expiryIsEstimated: !draft.expiryTouched)) else { return false }
         addedHaptic += 1
         dismiss()
+        return true
     }
 }
 
@@ -500,7 +524,7 @@ private struct EditableCandidate: Identifiable {
     /// 추정 기한 배지 노출 조건 — 미매칭(D+3 폴백) 또는 매칭돼도 해당 보관 shelfLife 데이터가 전혀 없음.
     /// 사용자가 날짜를 직접 편집하면 더는 "추정"이 아니므로 숨긴다.
     var showsEstimateBadge: Bool {
-        !expiryTouched && IngredientLexicon.shared.shelfLifeDays(for: name, storage: storage) == nil
+        !expiryTouched
     }
 }
 
@@ -514,7 +538,16 @@ private struct CandidateEditSheet: View {
     /// 같은 폼이 두 일을 한다 — 스캔 후보 고치기("Edit item")와 직접 입력("Add by hand").
     /// 제목만 출처를 말하고, 칸·규칙·저장 버튼은 한 벌 그대로다.
     var title: LocalizedStringKey = "Edit item"
-    var onSave: (EditableCandidate) -> Void
+    var onSave: (EditableCandidate) -> Bool
+    @Environment(FridgeStore.self) private var store
+    @State private var quantityInput: String
+
+    init(candidate: EditableCandidate, title: LocalizedStringKey, onSave: @escaping (EditableCandidate) -> Bool) {
+        _candidate = State(initialValue: candidate)
+        _quantityInput = State(initialValue: candidate.quantity.inputText)
+        self.title = title
+        self.onSave = onSave
+    }
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var openDropdown: OpenDropdown?
@@ -573,7 +606,10 @@ private struct CandidateEditSheet: View {
                 isDirty = true
             }
         }
-        .onChange(of: candidate.quantity.value) { _, _ in isDirty = true }
+        .onChange(of: quantityInput) { _, value in
+            candidate.quantity.value = Quantity.inputValue(value) ?? 0
+            isDirty = true
+        }
         .onChange(of: candidate.quantity.unit) { _, _ in isDirty = true }
         .onChange(of: candidate.place) { _, _ in isDirty = true }
         // 40차 — 팝업 전수 종이화(§14.7 개정).
@@ -620,7 +656,8 @@ private struct CandidateEditSheet: View {
             HStack {
                 Text("Quantity").reffiType(.body).foregroundStyle(ReffiColor.ink)
                 Spacer()
-                TextField("1", value: $candidate.quantity.value, format: .number)
+                TextField("1", text: $quantityInput)
+                    .accessibilityIdentifier("ingredient.quantity")
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     // §3.4 숫자는 tabular·lining — 같은 역할의 `IngredientEditView` 수량 필드와 같은 롤.
@@ -635,6 +672,11 @@ private struct CandidateEditSheet: View {
                     .accessibilityLabel(Text("Unit: \(candidate.quantity.unit.label)"))
             }
             .frame(minHeight: ReffiChrome.tapMin)
+
+            if !candidate.quantity.isValid {
+                Text("Enter a quantity greater than 0.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.urgentDark)
+            }
 
             ReffiRule(.ticket)
 
@@ -651,7 +693,7 @@ private struct CandidateEditSheet: View {
             ReffiRule(.ticket)
 
             HStack {
-                Text("Use by").reffiType(.body).foregroundStyle(ReffiColor.ink)
+                Text(candidate.expiryTouched ? "Use by" : "Estimated use-by").reffiType(.body).foregroundStyle(ReffiColor.ink)
                 Spacer()
                 // 날짜 휠·달력 표기는 기기 로케일을 따른다(38차 — 앱 언어 선택과 분리).
                 DatePicker("", selection: $candidate.expiresAt,
@@ -665,6 +707,13 @@ private struct CandidateEditSheet: View {
             .frame(minHeight: ReffiChrome.tapMin)
 
             ReffiRule(.ticket)
+
+            if !candidate.expiryTouched {
+                Text("This date is an estimate. Check the packaging and the food before using it.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                Button("I checked this date") { candidate.expiryTouched = true; isDirty = true }
+                    .reffiType(.caption).frame(minHeight: 44)
+            }
 
             // 필드 이름은 `IngredientEditView`의 구매처 행과 **같은 한 단어**("Where")다 — 같은 값을
             // 고치는 두 폼이 서로 다른 이름을 쓰면 어느 쪽이 무엇을 담는 칸인지 매번 다시 읽어야 한다.
@@ -680,12 +729,12 @@ private struct CandidateEditSheet: View {
     /// 도킹 Save(§14.4) — 인셋·페이드·바닥 여백은 `SheetShell`이 세운다.
     private var saveButton: some View {
         PaperButton(title: "Save") {
-            onSave(candidate)
-            dismiss()
+            if onSave(candidate) { dismiss() }
         }
         // 이름 없는 재료는 냉장고에서 이름 없는 칸이 된다 — 빈 초안으로 시작하는 직접 입력에서
         // 특히 도달 가능한 상태라, 저장 자체를 막는다(디밍은 PaperButton이 §7.2로 처리).
-        .disabled(candidate.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        .disabled(candidate.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || Quantity.inputValue(quantityInput) == nil)
+        .safeAreaInset(edge: .top, spacing: ReffiSpace.s2) { if store.hasSaveError { SaveErrorNotice() } }
     }
 
     /// 이름·보관이 바뀔 때마다, 사용자가 날짜를 만지기 전까지만 사전 기본값으로 재계산.

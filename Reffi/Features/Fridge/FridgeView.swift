@@ -1143,21 +1143,19 @@ struct FridgeView: View {
         Button {
             withAnimation(motion) { compact.toggle() }
         } label: {
-            (compact ? ReffiIcon.stackView : ReffiIcon.compactView).reffi(14, .bold)
+            HStack(spacing: ReffiSpace.s1) {
+                (compact ? ReffiIcon.stackView : ReffiIcon.compactView).reffi(14, .bold)
+                Text(compact ? "Cards" : "List").reffiType(.caption)
+            }
                 .foregroundStyle(ReffiColor.ink)
                 .padding(ReffiSpace.s2)
                 .background {
-                    // 위 정렬 칩과 **같은 계층인데 프리미티브가 다르다** — 이 면은 30×30 정사각이고
-                    // `PaperCutRect`의 잘림은 `min(높이 32%, 폭 12%)`라 폭 쪽이 3.6pt로 눌려 8각이
-                    // 아니라 그냥 사각으로 읽힌다. 잘림을 **짧은 변**에 매단 형제가 `PaperChipCut`이다
-                    // (30pt에서 7.8pt). 정사각에 가까운 칩에 `PaperCutRect`를 쓰지 마라.
+                    // 아이콘과 짧은 라벨을 같은 종이 조작 면에 둔다.
                     let s = PaperChipCut(seed: 6)
                     s.fill(ReffiColor.paper).paperEdge(s)
                 }
                 .frame(minWidth: ReffiChrome.tapMin, minHeight: ReffiChrome.tapMin)   // §7.3
                 .contentShape(Rectangle())
-                // 히트 44가 시각 30을 우측선 안쪽으로 밀었다 — 마진 라인으로 되민다(§7.3·42차).
-                .edgeAligned(.trailing, visual: 30)
         }
         .buttonStyle(.paperPress)
         .accessibilityLabel(compact ? "Switch to stack view" : "Switch to simple view")
@@ -1660,7 +1658,7 @@ struct ExpandedFridgeCard: View {
                 row("Quantity", ingredient.quantityText)
                 // D-day는 카드 상단 스탬프가 이미 말한다 — 같은 값을 '· 3d'로 되풀이하지 않는다
                 // (오너 승인·43차 이관: 한 카드에서 같은 사실은 한 번만).
-                row("Use by", ingredient.expiresText, valueColor: f.dark)
+                row(ingredient.expiryIsEstimated ? "Estimated use-by" : "Use by", ingredient.expiresText, valueColor: f.dark)
                 row("Storage", ingredient.storage.label, numeric: false)
             }
             .padding(.horizontal, ReffiSpace.s5)

@@ -1,8 +1,14 @@
-# Reffi 행동 계측·리텐션 측정 가이드
+# Reffi usage analytics
 
-> 2026-09-05(64차). 앱이 사용자의 행동을 어떻게 데이터로 남기고, 그 데이터로 리텐션과 UX 지표를
-> 어떻게 읽는지의 **정본**이다. 코드(`Reffi/Data/Analytics.swift`)·서버(`supabase/migrations/0002_analytics.sql`)와
-> 어긋나면 이 문서를 먼저 고친다.
+## Current release, 2026-09-07
+
+Production usage collection is disabled. `Analytics.shared` has a permanent kill switch and `canUpload` returns false. Startup disables the pipeline and clears older unsent queues. Settings no longer offers Share usage data. New installations have no server Auth session. Existing sessions also cannot upload new events.
+
+The injectable pipeline and its tests remain as historical implementation. Server tables are retained for existing-account deletion and earlier records, not new collection. The privacy manifest no longer declares ProductInteraction or Analytics purposes. Email/UserID functionality declarations remain for existing-account authentication and deletion.
+
+The following sections document the previous, inactive pipeline. They are not instructions to enable collection or a description of this release. Restoring collection requires an explicit product decision, accurate notice and any necessary consent.
+
+## Historical pipeline reference
 
 ## 0. 한눈에
 

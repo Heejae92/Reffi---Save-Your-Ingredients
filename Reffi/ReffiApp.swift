@@ -43,8 +43,6 @@ struct ReffiApp: App {
                 .environment(profile)
                 .environment(auth)
                 .tint(ReffiColor.blue)
-                .onOpenURL { auth.handleOpenURL($0) }
-                .sheet(isPresented: $auth.needsPasswordReset) { PasswordResetView() }
                 // 컬러 스킴은 시스템 설정을 따른다 — 시맨틱 토큰이 전부 적응형(ReffiColor.dynamic)이라
                 // 라이트/다크 어느 쪽으로도 팔레트가 스스로 뒤집힌다.
                 // 알림은 앞으로 30일 치만 등록되므로, 포그라운드 복귀 때마다 창을 앞으로 민다
@@ -83,8 +81,7 @@ struct ReffiApp: App {
             GlyphMetricsView()
         } else if ProcessInfo.processInfo.arguments.contains("-buttonGallery") {
             ButtonGalleryView()
-        } else if ProcessInfo.processInfo.arguments.contains("-authView") {
-            AuthView()
+
         } else {
             RootGateView()
         }
@@ -109,7 +106,7 @@ struct ReffiApp: App {
     #endif
 }
 
-/// 진입 게이트 — 온보딩(기기당 1회) → 로그인(세션/게스트 없으면) → 메인.
+/// 진입 게이트 — 저장된 기기 자료 복원 → 온보딩(기기당 1회) → 메인.
 /// App이 아닌 View에 두어 @AppStorage 변경이 확실히 리렌더를 트리거하게 한다.
 /// 로컬 데이터 소유자 키 — RootGateView(대조·기록)와 ProfileView(계정삭제 시 해제)가 공유한다.
 enum DataOwner {
@@ -129,6 +126,11 @@ enum DataOwner {
     }
 
     static func scope(_ owner: String?) -> String { owner ?? "guest" }
+
+    /// With sign-in removed, expiration of a legacy session must not hide this device's stock.
+    static func localOwner(authenticated: String?, stored: String?, preserveSavedOwner: Bool = true) -> String? {
+        authenticated ?? (preserveSavedOwner ? stored : nil)
+    }
 
     @MainActor static func storageURL() -> URL {
         storageURL(owner: UserDefaults.standard.string(forKey: key))
@@ -162,6 +164,7 @@ private struct RootGateView: View {
             .environment(\.locale, AppLanguage.resolve(stored: languageRaw).resolvedLocale)
             .onChange(of: auth.accountUserID, initial: true) { _, _ in reconcileDataOwner() }
             .onChange(of: auth.restoring) { _, _ in reconcileDataOwner() }
+            .onChange(of: auth.retainsLocalDataOwner) { _, _ in reconcileDataOwner() }
             .paperDialog(isPresented: $dataError, title: "Couldn't switch accounts",
                          message: "Your saved data is still on this device. Try again to open this account.",
                          seed: 2, backdropDismisses: false,
@@ -176,8 +179,7 @@ private struct RootGateView: View {
             OnboardingView(onFinish: { onboardingDone = true })
                 .analyticsScreen(.onboarding)
         } else {
-            // 게스트 우선 — 온보딩 후엔 로그인 벽 없이 곧장 메인 앱. 세션이 없으면 익명 게스트로 진입한다.
-            // 로그인/가입은 프로필 탭 Account 섹션에서 선택적으로(익명→가입 데이터 승계 보장).
+            // 신규 계정을 만들지 않고 저장된 기기 자료로 바로 진입한다.
             RootTabView()
                 .transition(.opacity)
                 .task { if !auth.isSignedIn { await auth.continueAsGuest() } }
@@ -188,8 +190,9 @@ private struct RootGateView: View {
     private func reconcileDataOwner() {
         guard !auth.restoring else { return }
         dataReady = false
-        let newID = auth.accountUserID
         let previous = UserDefaults.standard.string(forKey: DataOwner.key)
+        let newID = DataOwner.localOwner(authenticated: auth.accountUserID, stored: previous,
+                                        preserveSavedOwner: auth.retainsLocalDataOwner)
         guard previous != newID else { dataReady = true; return }
         do {
             let transferredGuest = try store.switchAccount(to: newID, inheritGuest: previous == nil && newID != nil)

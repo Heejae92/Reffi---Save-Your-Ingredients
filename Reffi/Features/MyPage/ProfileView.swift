@@ -38,9 +38,6 @@ struct ProfileView: View {
     @AppStorage(ReffiFeedback.hapticsKey) private var hapticsEnabled = true
     @AppStorage(ReffiFeedback.tiltKey) private var tiltEnabled = true
 
-    // 계측 옵트아웃 SSOT(64차) — `Analytics.enabledKey`. 토글이 바뀌면 파이프라인에 즉시 반영한다.
-    @AppStorage(Analytics.enabledKey) private var usageSharing = false
-
     // 앱 내 언어 SSOT(38차) — `RootGateView`가 같은 키로 루트 `.environment(\.locale)`을 건다.
     @AppStorage(AppLanguage.key) private var languageRaw = AppLanguage.system.rawValue
     @State private var languagePickerOpen = false
@@ -49,12 +46,10 @@ struct ProfileView: View {
     @State private var householdPickerOpen = false
 
     @State private var sheet: Sheet?
-    @State private var showLogout = false
     @State private var showDelete = false
     @State private var showAccountDelete = false
     @State private var showPrivacy = false
     @State private var accountError = false
-    @State private var showAuth = false
     @State private var showMyRecipes = false
     @State private var showResetConfirm = false
     @State private var showSampleConfirm = false
@@ -160,7 +155,6 @@ struct ProfileView: View {
             }
         }
         .sheet(isPresented: $showPrivacy) { PrivacyView() }
-        .sheet(isPresented: $showAuth) { AuthView().analyticsScreen(.auth) }
         .sheet(isPresented: $showMyRecipes) { MyRecipesView().analyticsScreen(.myRecipes) }
         // 언어 픽커(38차) — `PaperDropdown` 루트 오버레이(ScrollView 클리핑 밖, `FridgeView` 정렬
         // 드롭다운과 같은 문법이나 트리거가 하나뿐이라 시트용 `paperDropdownOverlay`를 그대로 쓴다.
@@ -180,11 +174,6 @@ struct ProfileView: View {
         // (design_system.md §14.7 개정 — 룰⑧의 "파괴 확인은 시스템에 남긴다" 경계는 이 라운드의
         // 사용자 결정으로 폐기됐다). 행동 배선·role·햅틱·카피는 원본과 완전히 동일하다 — 의미는
         // 얼리고 재질만 바꾼다. 딤 탭은 취소 행동이 있는 질문형만 취소로 받는다(§14.7).
-        .paperDialog(isPresented: $showLogout, title: "Log out of Reffi?",
-                    message: "Your fridge and history stay on this device.\nLog back in anytime.",
-                    seed: 1, backdropDismisses: true,
-                    primary: PaperDialogAction("Log out", role: .destructive) { Task { await auth.signOut() } },
-                    secondary: PaperDialogAction("Cancel", role: .cancel) {})
         .paperDialog(isPresented: $showDelete, title: "Erase this device's data?",
                     message: "This erases this device's data and logs you out.\nYour account stays on the server.",
                     seed: 2, backdropDismisses: true,
@@ -462,14 +451,6 @@ struct ProfileView: View {
                 .padding(.vertical, ReffiSpace.s4)
 
             ReceiptRule()
-            // 선택적 사용 기록 공유. 기본값은 꺼짐.
-            // 끄면 로컬 큐까지 비운다(`Analytics.setEnabled`) — 토글이 곧 사실이다(MVP 원칙).
-            SettingsToggle(title: "Share usage data",
-                           caption: "Usage linked to your account",
-                           isOn: $usageSharing, seed: 3)
-            .onChange(of: usageSharing) { _, on in Analytics.shared.setEnabled(on) }
-
-            ReceiptRule()
             if Self.showsSampleLoad(isGuest: auth.isGuest) {
                 QuietButton(title: "Load the sample fridge", icon: ReffiIcon.fridge, tint: ReffiColor.blueDark) {
                     if store.isPristine {
@@ -516,15 +497,8 @@ struct ProfileView: View {
     private var accountReceipt: some View {
         ReceiptCard(title: "Account") {
             if auth.isGuest {
-                // 게스트는 상태 표시와 진입점을 한 행으로 합친다(2026-08, 37차) — 예전엔 탭 안 되는
-                // "Guest mode · Sign up to keep your data" 안내 줄 바로 아래 별도 "Log in / Sign up"
-                // 버튼이 있어, 안내문은 액션처럼 읽히는데 정작 탭이 안 되고 진짜 액션은 한 칸 아래
-                // 떨어져 있었다. `SettingsRow`(라벨+값+셰브런, 전체가 탭 표면)로 하나의 명확한
-                // 진입점만 남긴다 — 같은 목적지(인증 시트)로 가는 입구를 화면에 흩뿌리지 않는다.
-                // 카피는 정직하게: 서버 백업은 없으므로 약속하지 않고, 로컬 기기에 남는다는 사실만 말한다.
-                SettingsRow(label: "Guest mode", value: AppLanguage.localizedNow("On this device")) {
-                    showAuth = true   // 익명 세션을 유지한 채 시트에서 전환/로그인(승계 보장).
-                }
+                // 계정 없는 릴리스의 기본 상태. 로그인 시트나 가입 진입점이 없다.
+                SettingsRow(label: "On this device", value: AppLanguage.localizedNow("No sign-in needed"))
             } else {
                 // 로그인 상태도 **게스트와 같은 행 문법**이다(라벨=checklistItem/ink · 값=metaText/ink2).
                 // 예전엔 이 자리만 손으로 조립한 HStack이었고 라벨·값을 둘 다 caption으로 적어, 같은
@@ -536,12 +510,7 @@ struct ProfileView: View {
                 SettingsRow(label: "Logged in",
                             value: auth.userEmail ?? "",
                             valueTruncation: .middle)
-                ReceiptRule()
-                QuietButton(title: "Log out", icon: ReffiIcon.go, tint: ReffiColor.blueDark) {
-                    showLogout = true
-                }
-                .padding(.horizontal, ReffiSpace.s4)   // 위 Data 영수증과 같은 정렬선
-                .padding(.vertical, ReffiSpace.s1)
+
             }
             if auth.accountUserID != nil {
                 ReceiptRule()

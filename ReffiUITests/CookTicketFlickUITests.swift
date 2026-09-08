@@ -545,7 +545,11 @@ final class CookTicketFlickUITests: XCTestCase {
         // 건 버그가 아니라 **정확한 동작**이다 — 모달 시트 밑 콘텐츠는 히트 테스트에서 빠지는 게 맞다.
         // 시트 자신의 리스트에만 식별자(`kitchenCopy.steps`, `KitchenCopySheet.swift`)를 달아 좁힌다.
         let firstStep = app.scrollViews["kitchenCopy.steps"].buttons.firstMatch
-        XCTAssertTrue(firstStep.waitForExistence(timeout: 4), "체크할 단계 행이 있어야 한다")
+        for _ in 0..<10 {
+            if firstStep.exists && firstStep.isHittable { break }
+            app.scrollViews["kitchenCopy.steps"].swipeUp()
+        }
+        XCTAssertTrue(firstStep.isHittable, "체크할 단계 행이 있어야 한다")
         let stepLabel = firstStep.label
         // 42차 — 단계 완료는 "선택"이 아니라 도메인 값(Done/Not done)으로 말한다(§14.7 상태 채널 단일화).
         XCTAssertEqual(firstStep.value as? String, "Not done", "처음엔 아무 단계도 체크돼 있지 않아야 한다")
@@ -567,7 +571,11 @@ final class CookTicketFlickUITests: XCTestCase {
 
         link.tap()   // 다시 열기
         let reopenedStep = app.scrollViews["kitchenCopy.steps"].buttons.matching(NSPredicate(format: "label == %@", stepLabel)).firstMatch
-        XCTAssertTrue(reopenedStep.waitForExistence(timeout: 4))
+        for _ in 0..<10 {
+            if reopenedStep.exists { break }
+            app.scrollViews["kitchenCopy.steps"].swipeUp()
+        }
+        XCTAssertTrue(reopenedStep.exists)
         XCTAssertEqual(reopenedStep.value as? String, "Done", "닫았다 다시 열어도 체크 상태가 세션에 남아 있어야 한다")
     }
 

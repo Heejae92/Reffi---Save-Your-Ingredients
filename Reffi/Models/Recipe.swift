@@ -20,6 +20,13 @@ struct Recipe: Identifiable, Codable, Equatable {
         var safetyRefs: [String]? = nil
         var en: String
         var ko: String?
+        /// 인분 기준 안내용 분량. 재고 차감에는 사용하지 않으며 기존 저장 데이터에서는 nil.
+        var amount: LocalizedName? = nil
+
+        var displayAmount: String? {
+            guard let amount else { return nil }
+            return Recipe.isKorean ? (amount.ko ?? amount.en) : amount.en
+        }
 
         /// 로케일 표시명.
         var displayName: String { Recipe.isKorean ? (ko ?? en) : en }
@@ -38,9 +45,8 @@ struct Recipe: Identifiable, Codable, Equatable {
     var minutes: Int
     /// 몇 인분 기준인가(64차). 시드가 채우고, 사용자 커스텀 레시피엔 없다(편집기가 안 받는다).
     /// **옵셔널 + 기본값 nil** — 구버전 저장 데이터가 이 키 없이 그대로 디코드돼야 한다
-    /// (`intro`·`origin`과 같은 규칙). 재료별 분량은 여전히 없다: 이 값은 "이 조리 단계가
-    /// 몇 인분을 만드는가"이지 재료를 스케일하는 계수가 아니다. 분량 없이 계수만 두면
-    /// 곱해 줄 대상이 없어 위약이 된다(MVP 원칙).
+    /// (`intro`·`origin`과 같은 규칙). 재료별 안내 분량이 있으면 이 인분을 기준으로 한다.
+    /// 재고의 실제 사용량이나 자동 차감 비율을 뜻하지 않는다.
     var servings: Int? = nil
     var ingredients: [Item]
     /// 조리 단계 — 티켓의 "How to cook"(48차) 링크가 여는 주방 전표(`KitchenCopySheet`)가

@@ -14,9 +14,22 @@ await db.exec(`
     $$ select current_setting('request.jwt.claim.role', true) $$;
   grant usage on schema auth to authenticated, anon;
 `);
-for (const file of ['0001_ai_recipe.sql','0002_analytics.sql','0003_account_deletion.sql']) {
+// Previous-project fixtures model the two live foreign keys without real user data.
+await db.exec(`
+  create table public.rejection_patterns(id uuid primary key);
+  create table public.rejection_submissions(matched_pattern_id uuid references public.rejection_patterns(id));
+  create table public.feedback(id uuid primary key);
+  create table public.onboarding_responses(id uuid primary key);
+  create table public.user_guide_progress(user_id uuid references auth.users(id) on delete cascade);
+`);
+for (const file of ['0001_ai_recipe.sql','0002_analytics.sql','0003_account_deletion.sql','0004_remove_previous_project.sql']) {
   await db.exec(await readFile(new URL(`../supabase/migrations/${file}`, import.meta.url), 'utf8'));
 }
+for (const table of ['rejection_patterns','rejection_submissions','feedback','onboarding_responses','user_guide_progress']) {
+  assert.equal((await db.query('select to_regclass($1) as relation', ['public.' + table])).rows[0].relation, null);
+}
+// Re-running the cleanup must be safe after its targets are gone.
+await db.exec(await readFile(new URL('../supabase/migrations/0004_remove_previous_project.sql', import.meta.url), 'utf8'));
 const a='00000000-0000-0000-0000-000000000001';
 const b='00000000-0000-0000-0000-000000000002';
 const c='00000000-0000-0000-0000-000000000003';
@@ -62,4 +75,4 @@ await assert.rejects(db.query('select public.delete_own_account()'));
 await db.exec('reset role');
 assert.equal((await db.query('select count(*)::int as n from auth.users')).rows[0].n,2);
 await db.close();
-console.log('PASS: anonymous denial, caller isolation, own data deletion, retry, deleted-JWT rejection, transaction rollback, Apple revocation guard');
+console.log('PASS: anonymous denial, caller isolation, own data deletion, retry, deleted-JWT rejection, transaction rollback, Apple revocation guard, previous-project cleanup and retry');

@@ -33,6 +33,7 @@ struct CookingStepsView: View {
     /// 필요 없다 — 시트 콘텐츠는 그 시점의 `store.activeCook`에서 다시 읽는다(진행 중 세션의 체크
     /// 상태가 store에 바로 반영되므로, 여기 로컬 스냅샷을 따로 들지 않는다).
     @State private var showKitchenCopy = false
+    @State private var remainingInput: [UUID: String] = [:]
     @State private var leftovers: Set<UUID> = []   // '조금 남았어요'로 표시한 재료
     @State private var shareImage: Image?   // 공유 카드 오프스크린 렌더 결과 — 아래 ShareCardKey가 바뀔 때만 갱신
 
@@ -199,7 +200,8 @@ struct CookingStepsView: View {
                 KitchenCopySheet(recipeName: cook.recipeName,
                                   servings: servings(for: cook),
                                   steps: resolvedSteps(for: cook) ?? [],
-                                  completedSteps: Set(cook.completedSteps ?? [])) { index in
+                                  completedSteps: Set(cook.completedSteps ?? []),
+                                  ingredients: store.recipes.first { $0.id == cook.recipeID }?.ingredients ?? []) { index in
                     store.toggleCookStep(index)
                 }
                 // detent·핸들은 시트 안에 산다(§14.5 · 61차) — `KitchenCopySheet` 본문 참고
@@ -233,12 +235,10 @@ struct CookingStepsView: View {
                 PaperButton(title: "Finish cooking") {
                     // 예약 재료가 있으면 확인 시트에서 확정(남은 재료 원탭), 없으면(구버전 세션) 바로 종료.
                     if reservedIngredients.isEmpty {
-                        finishHaptic += 1
-                        withAnimation(ReffiMotion.gated(ReffiMotion.pop, reduce: reduceMotion)) {
-                            store.finishCooking()
-                        }
+                        if store.finishCooking() { finishHaptic += 1 }
                     } else {
                         leftovers = []
+                        remainingInput = [:]
                         showFinishSheet = true
                     }
                 }
@@ -270,7 +270,7 @@ struct CookingStepsView: View {
         SheetShell(title: "Anything left over?", showsClose: false) {
             VStack(spacing: 0) {
                 // 첫 콘텐츠라 상단 패딩을 갖지 않는다 — 헤더가 이미 `headerGap`을 줬다(§14.8 헤더 간격 계약).
-                Text("Leftovers stay in the fridge at half the amount.")
+                Text("Enter how much is left. Unselected ingredients will be used up.")
                     .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .sheetInset()
@@ -288,12 +288,12 @@ struct CookingStepsView: View {
             }
         } bar: {
             PaperButton(title: "Confirm & finish") {
-                finishHaptic += 1
+                guard let amounts = remainingQuantities else { return }
+                let saved = store.finishCooking(remaining: amounts)
                 showFinishSheet = false
-                withAnimation(ReffiMotion.gated(ReffiMotion.pop, reduce: reduceMotion)) {
-                    store.finishCooking(leftovers: leftovers)
-                }
+                if saved { finishHaptic += 1 }
             }
+            .disabled(remainingQuantities == nil)
         }
         // 목록이 재료 수에 따라 늘어나므로(데이터 기반) `.medium`만으로는 넘칠 수 있어 `.large`를 더한다(§14.5).
         .presentationDetents([.medium, .large])
@@ -302,14 +302,24 @@ struct CookingStepsView: View {
     /// 재료 한 줄 — 탭으로 '다 썼어요 ↔ 조금 남았어요' 토글. 기본은 다 씀(마찰 0).
     private func leftoverRow(_ ing: Ingredient) -> some View {
         let left = leftovers.contains(ing.id)
-        return Button {
-            if left { leftovers.remove(ing.id) } else { leftovers.insert(ing.id) }
+        return VStack(alignment: .leading, spacing: ReffiSpace.s2) {
+        Button {
+            if left { leftovers.remove(ing.id) } else {
+                leftovers.insert(ing.id)
+                remainingInput[ing.id] = ing.quantity.halved.inputText
+            }
         } label: {
             HStack(spacing: ReffiSpace.s3) {
                 PaperSilhouette(glyph: ing.glyph, fresh: ing.freshness)
                     .frame(width: ReffiFoodIcon.rowMini, height: ReffiFoodIcon.rowMini)
-                Text(verbatim: reservedName(ing))
-                    .reffiType(.body).foregroundStyle(ReffiColor.ink).lineLimit(1)
+                VStack(alignment: .leading, spacing: ReffiSpace.s0) {
+                    Text(verbatim: reservedName(ing))
+                        .reffiType(.body).foregroundStyle(ReffiColor.ink).lineLimit(1)
+                    if left {
+                        Text("Enter the remaining amount below")
+                            .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                    }
+                }
                 Spacer(minLength: ReffiSpace.s2)
                 Text(left ? "Some left" : "Used it all")
                     .reffiType(.pillLabel)
@@ -328,6 +338,42 @@ struct CookingStepsView: View {
         .accessibilityLabel(Text(verbatim: ing.displayName))   // 재료명은 데이터 — 번역 키가 아니다(§i18n)
         .accessibilityValue(left ? Text("Some left") : Text("Used it all"))
         .accessibilityHint(Text("Toggles whether some is left over"))
+        if left {
+            HStack {
+                Text("Remaining").reffiType(.body)
+                Spacer()
+                TextField("Remaining", text: Binding(get: { remainingInput[ing.id] ?? "" },
+                                                       set: { remainingInput[ing.id] = $0 }))
+                    .keyboardType(.decimalPad).multilineTextAlignment(.trailing)
+                    .font(.reffiNum(.body)).frame(minWidth: 64)
+                    .accessibilityIdentifier("leftover.quantity.\(ing.canonicalID ?? ing.id.uuidString)")
+                Text(verbatim: ing.quantity.unit.label).reffiType(.body)
+            }
+            .padding(.horizontal, ReffiSpace.s3)
+            Text("Available: \(ing.quantity.text)").reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                .padding(.horizontal, ReffiSpace.s3)
+            if !validRemaining(for: ing) {
+                Text("Enter an amount greater than 0 and no more than the available quantity.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.urgentDark)
+                    .padding(.horizontal, ReffiSpace.s3)
+            }
+        }
+        }
+    }
+
+    private func validRemaining(for ingredient: Ingredient) -> Bool {
+        guard let value = Quantity.inputValue(remainingInput[ingredient.id] ?? "") else { return false }
+        return value <= ingredient.quantity.value
+    }
+
+    private var remainingQuantities: [UUID: Quantity]? {
+        var result: [UUID: Quantity] = [:]
+        for ingredient in reservedIngredients where leftovers.contains(ingredient.id) {
+            guard validRemaining(for: ingredient),
+                  let value = Quantity.inputValue(remainingInput[ingredient.id] ?? "") else { return nil }
+            result[ingredient.id] = Quantity(value: value, unit: ingredient.quantity.unit)
+        }
+        return result
     }
 
     /// 커버 헤더 — 단일 공급원 `CoverHeader`(§14.2) + **상단 도킹 면**.
@@ -475,7 +521,7 @@ struct CookingStepsView: View {
                 PaperButton(title: "Videos", kind: .soft, seed: 3,
                             icon: ReffiIcon.youtube, iconWeight: .fill, onCard: true) {
                     Analytics.shared.track(.videoOpen(source: .cook))
-                    openURL(youtubeSearchURL(for: cook.recipeName))
+                    openURL(youtubeSearchURL(for: cook))
                 }
                 .accessibilityLabel(Text("Open recipe videos"))
                 .accessibilityHint(Text("Opens YouTube in your browser"))
@@ -515,8 +561,9 @@ struct CookingStepsView: View {
 
     /// 유튜브 검색 URL — 조립은 `RecipeVideoSearch`(단일 공급원)가 한다. 티켓 덱의 영상 브리지와
     /// 같은 규칙을 쓰려고 여기서 다시 만들지 않는다.
-    private func youtubeSearchURL(for recipeName: String) -> URL {
-        RecipeVideoSearch.urlForRecipe(recipeName)
+    private func youtubeSearchURL(for cook: FridgeStore.CookSession) -> URL {
+        let name = store.recipes.first { $0.id == cook.recipeID }?.displayName ?? cook.recipeName
+        return RecipeVideoSearch.urlForRecipe(name)
     }
 
     /// 공유 카드 이미지 렌더 — `RecipeShareCard`를 레티나 스케일로 오프스크린 래스터라이즈한다. 실패하면 nil.

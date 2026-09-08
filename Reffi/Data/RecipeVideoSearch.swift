@@ -28,30 +28,30 @@ enum RecipeVideoSearch {
     /// 검색어 접미사 조립의 **단일 지점**(42차) — "recipe"는 영어 키워드라 한국어 사용자의 질의어로는
     /// 틀린다(ko 정답은 "레시피" — 검색 결과 품질을 직접 정한다). 카탈로그 키 `"%@ recipe"`를 타서
     /// 접미사 낱말을 언어가 정하게 한다. 세 호출부(재료 1종·재료 여럿·레시피명)가 전부 여기를 지난다.
-    private static func query(for subject: String) -> String {
-        String(localized: "\(subject) recipe")
+    private static func query(for subject: String, language: AppLanguage) -> String {
+        AppLanguage.localizedNow("\(subject) recipe", language: language)
     }
 
     /// 레시피명으로 여는 검색 — 조리 화면 "Open recipe videos"의 목적지(42차, 접합 단일화).
-    static func urlForRecipe(_ name: String) -> URL {
-        url(query: query(for: name))
+    static func urlForRecipe(_ name: String, language: AppLanguage = .current) -> URL {
+        url(query: query(for: name, language: language))
     }
 
     /// 재료 이름 하나로 여는 검색 — "<재료> recipe". 티켓이 못 다루는 임박 재료의 출구다.
-    static func urlForIngredient(_ name: String) -> URL {
-        url(query: query(for: name))
+    static func urlForIngredient(_ name: String, language: AppLanguage = .current) -> URL {
+        url(query: query(for: name, language: language))
     }
 
     /// **호명된 이름 전부**로 여는 검색 — "<재료> <재료> recipe". 브리지 문구가 최대 2종을 부르는데
     /// 버튼이 첫 번째만 열면 두 번째 재료에는 같은 침묵이 그대로 남는다(문구와 버튼의 책임 범위 일치).
     /// 공백으로 잇는다 — `", "`는 검색어에 구두점을 섞고, 유튜브는 공백 나열을 함께 쓰는 레시피로 읽는다.
     /// 빈 배열이면 "recipe"뿐인 무의미한 검색 대신 홈으로 떨어진다.
-    static func urlForIngredients(_ names: [String]) -> URL {
+    static func urlForIngredients(_ names: [String], language: AppLanguage = .current) -> URL {
         let joined = names
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
             .joined(separator: " ")
         guard !joined.isEmpty else { return home }
-        return url(query: query(for: joined))
+        return url(query: query(for: joined, language: language))
     }
 }

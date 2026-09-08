@@ -546,6 +546,16 @@
         }
       }
     },
+    "Add first ingredient": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "첫 재료 추가"
+          }
+        }
+      }
+    },
     "Add ingredients": {
       "localizations": {
         "ko": {
@@ -622,6 +632,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "산 재료를 추가하고\n소비기한을 확인해요."
+          }
+        }
+      }
+    },
+    "Add what's already in your fridge.\nKeep track of how much is left and what to use first.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고에 있는 재료부터 넣어 보세요.\n남은 양과 먼저 쓸 재료를 확인할 수 있어요."
           }
         }
       }
@@ -741,6 +761,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "이미 목록에 있어요"
+          }
+        }
+      }
+    },
+    "Amounts are a cooking guide. Confirm what is left when you finish.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "조리에 참고할 분량이에요. 요리를 마치면 실제로 남은 재료를 확인해 주세요."
           }
         }
       }
@@ -931,6 +961,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "개봉한 재료를 체크해 주세요.\n개봉 후 소비기한으로 바뀌어요."
+          }
+        }
+      }
+    },
+    "Check the quantities of the selected items before adding.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택한 재료의 수량을 확인한 뒤 추가해 주세요."
           }
         }
       }
@@ -1562,6 +1602,16 @@
         }
       }
     },
+    "Enter a quantity greater than 0.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "수량은 0보다 크게 입력해 주세요."
+          }
+        }
+      }
+    },
     "Erase": {
       "localizations": {
         "ko": {
@@ -1998,6 +2048,16 @@
         }
       }
     },
+    "Ingredients": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재료"
+          }
+        }
+      }
+    },
     "Ingredients and history will be deleted.\nThis can't be undone.": {
       "localizations": {
         "ko": {
@@ -2075,6 +2135,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "계속"
+          }
+        }
+      }
+    },
+    "Keep %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 남기기"
           }
         }
       }
@@ -3390,7 +3460,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "보관기간과 삭제 방법"
+            "value": "보관과 삭제"
           }
         }
       }
@@ -3728,6 +3798,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "요리 시작"
+          }
+        }
+      }
+    },
+    "Start with something in your fridge.\nA name and quantity are enough.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고에 있는 재료 하나부터 시작해요.\n이름과 수량만 입력해도 돼요."
           }
         }
       }
@@ -4632,7 +4712,7 @@
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "운영자와 개인정보 문의"
+            "value": "운영자와 문의처"
           }
         }
       }
@@ -4965,6 +5045,614 @@
           "stringUnit": {
             "state": "translated",
             "value": "장"
+          }
+        }
+      }
+    },
+    "Available: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "등록된 수량: %@"
+          }
+        }
+      }
+    },
+    "Changes aren't saved yet. Keep Reffi open, free some device storage, then try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes aren't saved yet. Keep Reffi open, free some device storage, then try again."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 저장되지 않았어요. Reffi를 열어 둔 채 기기 저장 공간을 확보하고 다시 시도해 주세요."
+          }
+        }
+      }
+    },
+    "Enter an amount greater than 0 and no more than the available quantity.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter an amount greater than 0 and no more than the available quantity."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0보다 크고 등록된 수량 이하로 입력해 주세요."
+          }
+        }
+      }
+    },
+    "Enter how much is left. Unselected ingredients will be used up.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter how much is left. Unselected ingredients will be used up."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "남은 수량을 입력해 주세요. 선택하지 않은 재료는 모두 사용한 것으로 기록해요."
+          }
+        }
+      }
+    },
+    "Enter the remaining amount below": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the remaining amount below"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아래에 남은 수량을 입력해 주세요"
+          }
+        }
+      }
+    },
+    "Estimated: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "추정: %@"
+          }
+        }
+      }
+    },
+    "Estimated use-by": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated use-by"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예상 소비기한"
+          }
+        }
+      }
+    },
+    "I checked this date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I checked this date"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 날짜를 확인했어요"
+          }
+        }
+      }
+    },
+    "No sign-in needed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No sign-in needed"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "로그인 없이 사용"
+          }
+        }
+      }
+    },
+    "Remaining": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "남은 수량"
+          }
+        }
+      }
+    },
+    "This date is an estimate. Check the packaging and the food before using it.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This date is an estimate. Check the packaging and the food before using it."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 날짜는 추정값이에요. 사용하기 전에 포장에 적힌 날짜와 재료 상태를 확인해 주세요."
+          }
+        }
+      }
+    },
+    "Try saving again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try saving again"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 저장하기"
+          }
+        }
+      }
+    },
+    "View fridge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View fridge"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고 보기"
+          }
+        }
+      }
+    },
+    "%lld items in your fridge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld items in your fridge"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고에 재료 %lld개"
+          }
+        }
+      }
+    },
+    "Cards": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cards"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "카드"
+          }
+        }
+      }
+    },
+    "List": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "List"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "목록"
+          }
+        }
+      }
+    },
+    "Start with something in your fridge.\nAdd its name and quantity, then check the date.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start with something in your fridge.\nAdd its name and quantity, then check the date."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고에 있는 재료 하나부터 시작해요.\n이름과 수량을 적고 날짜를 확인해 주세요."
+          }
+        }
+      }
+    },
+    "Reffi website": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reffi website"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reffi 홈페이지"
+          }
+        }
+      }
+    },
+    "Added to your fridge.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added to your fridge."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고에 등록했어요."
+          }
+        }
+      }
+    },
+    "Effective date: September 7, 2026": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effective date: September 7, 2026"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시행일: 2026년 9월 7일"
+          }
+        }
+      }
+    },
+    "Your fridge stays on this device. No sign-in or usage sharing is required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your fridge stays on this device. No sign-in or usage sharing is required."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고 데이터는 이 기기에 보관합니다. 로그인이나 사용기록 공유가 필요하지 않습니다."
+          }
+        }
+      }
+    },
+    "Vercel Privacy Notice": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vercel Privacy Notice"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vercel 개인정보 고지"
+          }
+        }
+      }
+    },
+    "Reffi is operated by Jongmin Lee and Heejae Eo for general audiences in the United States and South Korea. Both operators handle privacy requests at lee1993ljm@gmail.com. Our website is https://reffi-site.vercel.app. This policy describes the version of Reffi that works without new accounts or sign-in.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reffi is operated by Jongmin Lee and Heejae Eo for general audiences in the United States and South Korea. Both operators handle privacy requests at lee1993ljm@gmail.com. Our website is https://reffi-site.vercel.app. This policy describes the version of Reffi that works without new accounts or sign-in."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reffi는 미국과 한국의 일반 이용자를 대상으로 Jongmin Lee와 Heejae Eo가 운영합니다. 두 운영자가 lee1993ljm@gmail.com에서 개인정보 관련 문의와 권리 행사 요청을 처리합니다. 홈페이지는 https://reffi-site.vercel.app입니다. 이 방침은 신규 계정 생성과 로그인 없이 사용하는 Reffi 버전에 적용됩니다."
+          }
+        }
+      }
+    },
+    "Information on your device": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Information on your device"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기에서 처리하는 정보"
+          }
+        }
+      }
+    },
+    "Ingredient names, quantities, dates, shopping notes, cooking history, saved recipes, nickname, food preferences, allergy entries and settings stay in this device’s app storage. They support inventory management, reminders and recipe matching. Allergy entries are optional and are used only for local filtering. Receipt text recognition runs on the device. Reffi does not upload receipt photos or your fridge to its servers or to an external AI service. This version does not collect or transmit usage analytics, display advertising, sell personal information or share it for cross-context behavioral advertising.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ingredient names, quantities, dates, shopping notes, cooking history, saved recipes, nickname, food preferences, allergy entries and settings stay in this device’s app storage. They support inventory management, reminders and recipe matching. Allergy entries are optional and are used only for local filtering. Receipt text recognition runs on the device. Reffi does not upload receipt photos or your fridge to its servers or to an external AI service. This version does not collect or transmit usage analytics, display advertising, sell personal information or share it for cross-context behavioral advertising."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재료 이름·수량·날짜, 장보기 메모, 조리 이력, 저장한 레시피, 닉네임, 음식 취향, 알레르기 입력값과 설정은 이 기기의 앱 저장 공간에 보관합니다. 재고 관리, 알림과 레시피 추천에 사용합니다. 알레르기 정보는 선택 입력이며 기기 내 필터링에만 사용합니다. 영수증의 글자 인식도 기기에서 처리합니다. Reffi는 영수증 사진이나 냉장고 내용을 서버 또는 외부 AI 서비스에 업로드하지 않습니다. 이 버전은 사용 분석 정보를 수집·전송하지 않으며 광고를 표시하거나 개인정보를 판매하거나 서로 다른 서비스의 활동을 연결한 맞춤형 광고에 제공하지 않습니다."
+          }
+        }
+      }
+    },
+    "Permissions and your choices": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permissions and your choices"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "권한과 선택"
+          }
+        }
+      }
+    },
+    "Camera access is requested for receipt scanning. Photo selection gives the app the images you choose. Notifications are optional and are scheduled locally. You may deny or change these permissions in iOS Settings and still enter ingredients by hand. Sharing a cooking card sends the content you select only to the destination you choose. The app does not request your precise location, contacts or advertising tracking permission.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera access is requested for receipt scanning. Photo selection gives the app the images you choose. Notifications are optional and are scheduled locally. You may deny or change these permissions in iOS Settings and still enter ingredients by hand. Sharing a cooking card sends the content you select only to the destination you choose. The app does not request your precise location, contacts or advertising tracking permission."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영수증을 촬영할 때 카메라 접근을 요청합니다. 사진 선택 시에는 직접 선택한 이미지를 앱에 전달합니다. 알림은 선택 사항이며 기기에서 예약합니다. iOS 설정에서 권한을 거부하거나 변경해도 재료를 직접 입력할 수 있습니다. 조리 카드를 공유하면 선택한 내용이 직접 고른 대상으로 전달됩니다. 앱은 정확한 위치, 연락처 또는 광고 추적 권한을 요청하지 않습니다."
+          }
+        }
+      }
+    },
+    "Links, video searches and inquiries": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Links, video searches and inquiries"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "외부 링크·영상 검색·문의"
+          }
+        }
+      }
+    },
+    "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영상 버튼을 누르면 현재 앱 언어로 YouTube 검색을 엽니다. 검색어에는 레시피나 재료 이름이 들어갈 수 있으며 직접 입력한 이름도 포함될 수 있습니다. YouTube와 Google은 검색어, 접속 정보와 쿠키 등을 자사의 개인정보처리방침에 따라 처리할 수 있습니다. 홈페이지를 열면 브라우저가 호스팅 제공업체 Vercel에 접속하며 웹 요청과 접속 정보가 처리됩니다. 개인정보 문의를 보내면 이메일 주소, 메시지와 직접 첨부한 자료를 Google LLC의 Gmail을 통해 운영자가 받습니다. 문의 답변, 필요한 경우의 요청자 확인과 권리 보호에 사용합니다. 이들 제공업체는 미국을 포함한 여러 국가에서 운영되며 정보가 거주 국가 밖에서 처리될 수 있습니다. 외부 링크를 열지 않거나 이메일을 보내지 않을 수 있으며, 기기 내 재고 관리 기능은 계속 사용할 수 있습니다. 비밀번호나 불필요한 민감정보는 보내지 마세요."
+          }
+        }
+      }
+    },
+    "Accounts from earlier versions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accounts from earlier versions"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이전 버전에서 만든 계정"
+          }
+        }
+      }
+    },
+    "New email registration, sign-in and password reset are unavailable in this version. If an earlier installation has a saved account session, the app preserves its local data and supports deletion of that existing account. Authentication and deletion requests use Supabase Inc., a US-based provider; this project’s primary database is in Seoul, South Korea. Existing account records can include your email, account identifier, authentication records and previously shared usage events. They are used to maintain and delete the existing account, not to collect new usage events. Your fridge and allergy entries are not included in these requests. Use Delete account when an existing session is available, or contact the privacy email if you can no longer access it. We may request limited verification before deleting server records.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New email registration, sign-in and password reset are unavailable in this version. If an earlier installation has a saved account session, the app preserves its local data and supports deletion of that existing account. Authentication and deletion requests use Supabase Inc., a US-based provider; this project’s primary database is in Seoul, South Korea. Existing account records can include your email, account identifier, authentication records and previously shared usage events. They are used to maintain and delete the existing account, not to collect new usage events. Your fridge and allergy entries are not included in these requests. Use Delete account when an existing session is available, or contact the privacy email if you can no longer access it. We may request limited verification before deleting server records."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 버전에서는 이메일 신규 가입, 로그인과 비밀번호 재설정을 제공하지 않습니다. 이전 설치에 저장된 계정 세션이 있으면 해당 로컬 데이터를 유지하고 기존 계정의 삭제 기능을 제공합니다. 인증과 삭제 요청은 미국 소재 Supabase Inc.를 통해 처리하며 이 프로젝트의 기본 데이터베이스는 대한민국 서울에 있습니다. 기존 계정 기록에는 이메일, 계정 식별자, 인증 기록과 과거에 공유한 사용 기록이 포함될 수 있습니다. 기존 계정의 유지와 삭제에 사용하며 새로운 사용 기록을 수집하는 데 사용하지 않습니다. 냉장고 내용과 알레르기 입력값은 이 요청에 포함하지 않습니다. 기존 세션이 있으면 계정 삭제를 이용하고, 접근할 수 없으면 개인정보 문의 이메일로 요청해 주세요. 서버 기록을 삭제하기 전에 필요한 최소한의 본인 확인을 요청할 수 있습니다."
+          }
+        }
+      }
+    },
+    "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. Signing out preserves that account’s separate local copy. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. Signing out preserves that account’s separate local copy. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 내 기록은 직접 삭제하거나 현재 데이터를 초기화하거나 기기의 앱 데이터를 지우거나 앱을 삭제할 때까지 보관합니다. 이 기기에서 지우기는 모든 로컬 냉장고·프로필 사본을 지우며, 이전 서버 계정을 삭제하지는 않습니다. 로그아웃하면 해당 계정의 별도 로컬 사본은 유지합니다. 이전 버전의 미전송 분석 기록은 비우고 새로운 사용 기록은 남기지 않습니다. 기존 서버 계정과 앱 사용 기록은 계정 삭제 또는 본인 확인을 마친 삭제 요청 시까지 보관합니다. 앱의 계정 삭제는 서버의 해당 계정과 사용 기록을 삭제한 후 성공이 확인되면 해당 계정의 로컬 데이터를 지웁니다. 실패하면 안내합니다. 문의 메일은 요청 처리와 후속 대응에 필요한 동안만 보관하고, 더 이상 필요하지 않으면 삭제합니다. 법령상 보관 의무가 있으면 그 근거와 기간을 안내합니다. 제공업체의 보안 로그와 복구용 사본은 해당 업체의 보관 절차에 따르므로 활성 기록과 동시에 즉시 삭제되지 않을 수 있습니다. 이 프로젝트에는 예약된 데이터베이스 백업이 없습니다. 기기 시스템 백업은 Apple 설정에 따라 관리됩니다. 앱을 삭제해도 서버 계정이나 시스템 백업 사본까지 삭제되지는 않습니다."
+          }
+        }
+      }
+    },
+    "Your rights and safeguards": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your rights and safeguards"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "권리 행사와 보호 조치"
+          }
+        }
+      }
+    },
+    "You may request access, correction, deletion, restriction or withdrawal of optional consent, as applicable to your location, directly or through an authorized representative. Edit or remove local entries in the app. Contact lee1993ljm@gmail.com for records held by the operators or service providers. We handle requests within the periods required by applicable law and explain any lawful restriction or refusal. You may also complain to the relevant privacy authority, including South Korea’s Personal Information Protection Commission. Server requests use HTTPS and account access controls. Keep your device locked and review its backup settings. No system can guarantee absolute security. This app’s recommendations do not make decisions about legal rights or access to essential services.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You may request access, correction, deletion, restriction or withdrawal of optional consent, as applicable to your location, directly or through an authorized representative. Edit or remove local entries in the app. Contact lee1993ljm@gmail.com for records held by the operators or service providers. We handle requests within the periods required by applicable law and explain any lawful restriction or refusal. You may also complain to the relevant privacy authority, including South Korea’s Personal Information Protection Commission. Server requests use HTTPS and account access controls. Keep your device locked and review its backup settings. No system can guarantee absolute security. This app’s recommendations do not make decisions about legal rights or access to essential services."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "거주 지역에 적용되는 법령에 따라 열람, 정정, 삭제, 처리 정지와 선택적 동의 철회를 본인 또는 적법한 대리인을 통해 요청할 수 있습니다. 기기 내 기록은 앱에서 수정하거나 지울 수 있습니다. 운영자나 서비스 제공업체가 보유한 기록은 lee1993ljm@gmail.com으로 문의해 주세요. 법령에서 정한 기간 내에 요청을 처리하고, 정당한 제한 또는 거절 사유가 있으면 설명합니다. 대한민국 개인정보보호위원회 등 관할 개인정보 감독기관에 문의하거나 민원을 제기할 수 있습니다. 서버 요청에는 HTTPS와 계정별 접근 통제를 사용합니다. 기기 잠금과 백업 설정을 확인해 주세요. 어떤 시스템도 절대적인 보안을 보장할 수는 없습니다. 앱의 추천은 법적 권리나 필수 서비스 이용 여부를 결정하지 않습니다."
+          }
+        }
+      }
+    },
+    "Children and policy changes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Children and policy changes"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아동과 방침 변경"
+          }
+        }
+      }
+    },
+    "Reffi is not directed to children under 13 in the United States or under 14 in South Korea. This version does not collect birth dates or offer guardian consent. A parent or guardian who believes a child has provided personal information should contact the privacy email so we can investigate and delete information where required. We will update this policy when our processing changes and provide additional notice or obtain consent where required by applicable law.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reffi is not directed to children under 13 in the United States or under 14 in South Korea. This version does not collect birth dates or offer guardian consent. A parent or guardian who believes a child has provided personal information should contact the privacy email so we can investigate and delete information where required. We will update this policy when our processing changes and provide additional notice or obtain consent where required by applicable law."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reffi는 미국의 만 13세 미만 또는 대한민국의 만 14세 미만 아동을 대상으로 하지 않습니다. 이 버전은 생년월일을 수집하거나 법정대리인 동의 절차를 제공하지 않습니다. 아동이 개인정보를 제공했다고 생각되는 경우 부모 또는 법정대리인은 개인정보 문의 이메일로 알려 주세요. 확인 후 법령에 따라 필요한 삭제 등의 조치를 하겠습니다. 처리 방식이 바뀌면 방침을 개정하고, 법령에 따라 추가 고지 또는 동의가 필요한 경우 이를 진행합니다."
+          }
+        }
+      }
+    },
+    "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. The current local fridge remains accessible if a saved account session expires. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. The current local fridge remains accessible if a saved account session expires. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 내 기록은 직접 삭제하거나 현재 데이터를 초기화하거나 기기의 앱 데이터를 지우거나 앱을 삭제할 때까지 보관합니다. 이 기기에서 지우기는 모든 로컬 냉장고·프로필 사본을 지우며, 이전 서버 계정을 삭제하지는 않습니다. 저장된 계정 세션이 만료되어도 현재 기기의 냉장고는 계속 열 수 있습니다. 이전 버전의 미전송 분석 기록은 비우고 새로운 사용 기록은 남기지 않습니다. 기존 서버 계정과 앱 사용 기록은 계정 삭제 또는 본인 확인을 마친 삭제 요청 시까지 보관합니다. 앱의 계정 삭제는 서버의 해당 계정과 사용 기록을 삭제한 후 성공이 확인되면 해당 계정의 로컬 데이터를 지웁니다. 실패하면 안내합니다. 문의 메일은 요청 처리와 후속 대응에 필요한 동안만 보관하고, 더 이상 필요하지 않으면 삭제합니다. 법령상 보관 의무가 있으면 그 근거와 기간을 안내합니다. 제공업체의 보안 로그와 복구용 사본은 해당 업체의 보관 절차에 따르므로 활성 기록과 동시에 즉시 삭제되지 않을 수 있습니다. 이 프로젝트에는 예약된 데이터베이스 백업이 없습니다. 기기 시스템 백업은 Apple 설정에 따라 관리됩니다. 앱을 삭제해도 서버 계정이나 시스템 백업 사본까지 삭제되지는 않습니다."
+          }
+        }
+      }
+    },
+    "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Our homepage also loads Google Fonts, which sends font requests and connection information to Google. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Our homepage also loads Google Fonts, which sends font requests and connection information to Google. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영상 버튼을 누르면 현재 앱 언어로 YouTube 검색을 엽니다. 검색어에는 레시피나 재료 이름이 들어갈 수 있으며 직접 입력한 이름도 포함될 수 있습니다. YouTube와 Google은 검색어, 접속 정보와 쿠키 등을 자사의 개인정보처리방침에 따라 처리할 수 있습니다. 홈페이지를 열면 브라우저가 호스팅 제공업체 Vercel에 접속하며 웹 요청과 접속 정보가 처리됩니다. 홈페이지 글꼴은 Google Fonts에서 불러오므로 Google에도 글꼴 요청과 접속 정보가 전달됩니다. 개인정보 문의를 보내면 이메일 주소, 메시지와 직접 첨부한 자료를 Google LLC의 Gmail을 통해 운영자가 받습니다. 문의 답변, 필요한 경우의 요청자 확인과 권리 보호에 사용합니다. 이들 제공업체는 미국을 포함한 여러 국가에서 운영되며 정보가 거주 국가 밖에서 처리될 수 있습니다. 외부 링크를 열지 않거나 이메일을 보내지 않을 수 있으며, 기기 내 재고 관리 기능은 계속 사용할 수 있습니다. 비밀번호나 불필요한 민감정보는 보내지 마세요."
           }
         }
       }

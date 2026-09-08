@@ -54,6 +54,19 @@ struct Quantity: Codable, Equatable {
     var value: Double
     var unit: IngredientUnit
 
+    /// Parse the complete editable string. Empty/partial input must not retain an old number.
+    static func inputValue(_ text: String, locale: Locale = .current) -> Double? {
+        let raw = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalized = raw.replacingOccurrences(of: locale.decimalSeparator ?? ".", with: ".")
+        guard normalized.range(of: #"^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$"#, options: .regularExpression) != nil,
+              let value = Double(normalized), value.isFinite, value > 0 else { return nil }
+        return value
+    }
+
+    var inputText: String { value.formatted(.number.grouping(.never).precision(.significantDigits(1...15))) }
+
+    var isValid: Bool { value.isFinite && value > 0 }
+
     /// 같은 차원의 다른 단위로 환산. 차원이 다르면 nil(개수↔무게 등은 환산 불가).
     func converted(to target: IngredientUnit) -> Quantity? {
         guard unit.dimension == target.dimension else { return nil }
@@ -62,24 +75,32 @@ struct Quantity: Codable, Equatable {
         return Quantity(value: base / target.baseFactor, unit: target)
     }
 
-    /// 절반 — "조금 남았어요" 처리용. 0.25 미만으로는 내려가지 않는다(잔량 표시 유지).
-    var halved: Quantity { Quantity(value: max(0.25, value / 2), unit: unit) }
+    /// 잔량은 단위에 관계없이 절반이다. 고정 하한은 작은 kg/L 수량을 오히려 늘린다.
+    var halved: Quantity { Quantity(value: value / 2, unit: unit) }
 
     /// 표시 문자열 — 정수는 소수점 없이, 0.5는 ½로.
     ///
     /// 수치는 `String(format:)`이 아니라 `FormatStyle`로 만든다 — 포맷 문자열은 로케일을 타지 않아
     /// 어디서나 마침표를 찍고 그룹 구분자도 빼먹는다(독일어·프랑스어는 "1,5", 천 단위 구분도 다르다).
-    /// 소수는 최대 한 자리까지만 남긴다(기존 "%.1f"와 같은 자릿수, 정수는 소수점 없이).
+    /// 작은 kg/L 값은 g/ml로 표시하고, 반복해서 나눈 잔량도 유효숫자를 유지한다.
     /// 숫자와 단위 사이는 줄바꿈 없는 공백 — "300"과 "g"가 행 끝에서 갈라지지 않게 한다.
     var text: String {
+        let displayed: Quantity
+        if unit == .kilogram, value > 0, value < 1 {
+            displayed = converted(to: .gram) ?? self
+        } else if unit == .liter, value > 0, value < 1 {
+            displayed = converted(to: .milliliter) ?? self
+        } else {
+            displayed = self
+        }
         let v: String
-        if value == 0.5 { v = "½" }
-        else if value == 0.25 { v = "¼" }
-        else { v = value.formatted(.number.precision(.fractionLength(0...1))) }
+        if displayed.value == 0.5 { v = "½" }
+        else if displayed.value == 0.25 { v = "¼" }
+        else { v = displayed.value.formatted(.number.precision(.significantDigits(1...6))) }
         // 수량-단위 접합도 언어의 것이다(42차) — en "300 g"(NBSP)와 ko "3개"(공백 없음)는 같은
         // 코드 상수로 만들 수 없다. 카탈로그 키("%1$@ %2$@", ko "%1$@%2$@")가 공백 유무를 정한다.
         // en 값의 공백은 줄바꿈 없는 공백(U+00A0) — "300"과 "g"가 행 끝에서 갈라지지 않게(§3.4).
-        return AppLanguage.localizedNow("\(v) \(unit.label)")   // key: 수량-단위 접합(en NBSP · ko 무공백)
+        return AppLanguage.localizedNow("\(v) \(displayed.unit.label)")
     }
 
     /// 레거시 자유 문자열("300 g", "2 ea", "½모 남음", "1 L") 최선 파싱 — v1 → v2 마이그레이션.

@@ -97,20 +97,25 @@ struct WiltStyle: Equatable {
     static func rigidity(for glyph: FoodGlyph) -> Rigidity {
         switch glyph {
         // 잎·줄기·봉오리·해조·버섯 — 가장 먼저 숨이 죽는다.
-        case .leaf, .cabbage, .seaweed, .broccoli, .pea, .mushroom:
+        case .leaf, .cabbage, .seaweed, .broccoli, .pea, .mushroom,
+             .scallion, .enoki, .napa, .sprout, .bokChoy, .asparagus, .celery, .cauliflower:
             .leafy
         // 수분 많은 살 — 과일 전종 + 물러지는 채소 + 조리·가공된 무른 것.
         case .apple, .citrus, .berry, .avocado, .banana, .grape, .watermelon, .pineapple, .mango,
              .tomato, .cucumber, .chili, .eggplant,
-             .tofu, .cheese, .bread, .dumpling, .rice, .noodles, .gimbap:
+             .tofu, .cheese, .bread, .dumpling, .rice, .noodles, .gimbap,
+             .pear, .peach, .blueberry, .cherry, .kiwi, .melon, .orange, .lime,
+             .kimchi, .riceCake, .iceCream:
             .soft
         // 갑·캔·병·단지·껍질 — 형태 불변.
-        case .milk, .yogurt, .butter, .can, .sauceBottle, .honey, .egg:
+        case .milk, .yogurt, .butter, .can, .sauceBottle, .honey, .egg,
+             .flour, .spice, .jar, .oil, .water, .coffee, .tea, .juice, .salt, .peppercorn, .curryPowder, .wasabi:
             .rigidContainer
         // 단단한 몸통 — 뿌리채소·덩어리 단백질·해산물·곡물, 그리고 정체불명 블롭.
         case .root, .squash, .onion, .pepper, .potato, .garlic, .pumpkin, .sweetPotato, .ginger, .corn,
              .meat, .poultry, .fish, .shrimp, .sausage, .bacon, .crab, .squid, .clam,
-             .generic:
+             .radish, .beet, .lotusRoot, .burdock, .salmon, .octopus, .fishCake,
+             .cinnamon, .starAnise, .grains, .beans, .nuts, .walnut, .chocolate, .olive, .driedFruit, .cornDog, .ricePaper, .generic:
             .firm
         }
     }

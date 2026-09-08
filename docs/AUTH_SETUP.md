@@ -1,31 +1,25 @@
-# Reffi authentication, build 25
+# Reffi authentication
 
-Supabase project: `bzzpmaeitfbbunsmjvmd`, Seoul. Dashboard: https://supabase.com/dashboard/project/bzzpmaeitfbbunsmjvmd
+## Current release, 2026-09-07
 
-## Launch methods
+New installations run locally without an account. Email registration, login, password reset and auth callbacks have been removed. Apple, Google and anonymous sign-in are unavailable. `AuthStore` only restores earlier sessions and supports existing-account deletion. It never requests a new session for local use.
 
-Email signup/login and local guest mode are the supported launch methods. Apple and Google are hidden until provider setup, device login and account deletion are verified. Keeping native implementations in source does not make those providers release-ready.
+The Supabase dashboard for project `bzzpmaeitfbbunsmjvmd` was updated and re-read on 2026-09-07: **Allow new users to sign up = off; Email provider = disabled; anonymous sign-in = off**. SMTP remains off and is no longer a dependency of the supported app flow. Old distributed builds still showing email forms will no longer be able to sign in or register.
 
-`AuthStore.refreshAvailability()` reads `/auth/v1/settings`. Anonymous sign-in is attempted only when enabled there; otherwise guest mode remains local. Usage events cannot upload without a server session. Analytics is optional and off by default.
+## Existing installations
 
-## Email verification and password recovery
+Saved fridge/profile storage remains scoped to its earlier local owner. Expiration of an Auth session must not switch the device to an empty guest file. There is no new login or logout button. Users with an existing usable session retain Delete account; users without it can request server-record deletion at lee1993ljm@gmail.com. No server accounts were deleted by this release change.
 
-Add `reffi://auth-callback` to Authentication > URL Configuration > Redirect URLs. Signup, anonymous email upgrade and password recovery explicitly request this URL. Reffi handles the callback at the app root so the authentication sheet need not be open.
+`delete_own_account()` deletes only the authenticated caller's account and application usage rows transactionally. It accepts no user ID. The client resets that account's local data only after server success. The Apple-identity guard remains, and Apple login is unavailable.
 
-Verify email confirmation and recovery on a physical iPhone, including a cold launch from the email link. Production email sending/SMTP and rate limits also need verification before release.
+`Erase this device` clears all local fridge/profile copies and signs out. It does not delete a server account. Fridge contents have no server synchronization or sign-in recovery.
 
-## Account deletion
+## Server evidence
 
-Apply `supabase/migrations/0003_account_deletion.sql` after `0002_analytics.sql`. The client calls `public.delete_own_account()` using the current session. It accepts no account ID. The database deletes the caller's analytics, legacy AI usage and auth account in one transaction. The client clears local data only after server success.
+Migrations `0003_account_deletion.sql` and `0004_remove_previous_project.sql` are applied. Five owner-approved previous-project tables were removed; Reffi account and usage counts were unchanged. Anonymous calls to the deletion RPC return 401 / `42501`. Local SQL tests cover caller isolation, deletion, rollback and deleted-JWT rejection. Actual-device account deletion still needs a disposable account with a usable existing session.
 
-The RPC rejects Apple identities until server-side Apple token revocation is implemented. Apple/Google login remain hidden. Do not enable them by only changing a UI flag.
-
-## Local data ownership
-
-Fridge files and profile snapshots are kept per account on this device. First account registration transfers guest data; later logins restore that account's local data. Signing out opens separate guest storage. A damaged destination file blocks the switch and leaves the current data intact. There is no cloud fridge synchronization.
-
-`Erase this device` removes all local account archives and signs out. `Delete account` removes the server account and the active account's local data. These are separate actions with separate confirmations.
+The unused legacy redirect configuration remains `reffi://auth-callback`; the app no longer consumes it. The project remains in Seoul.
 
 ## QA
 
-`-authView` opens authentication directly. `-skipAuth -skipOnboarding -analyticsOff` opens an isolated simulator without authentication or telemetry. See `docs/RELEASE_READINESS.md` for validation commands and outstanding release requirements.
+`-skipAuth -skipOnboarding -analyticsOff` opens an isolated simulator. `-authView` is removed. Test the default onboarding path as well as the QA shortcuts. Test that expired legacy sessions preserve the current local fridge and that settings has no login or telemetry entry point.

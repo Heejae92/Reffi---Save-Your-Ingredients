@@ -34,6 +34,7 @@ struct MainView: View {
     /// 라우터를 새로 만들지 않는다: 이 앱의 화면 전환은 전부 클로저·바인딩으로 위로 올린다
     /// (선례: `onClose`·`onFire`·`onAddMissing`). 실제 탭 전환은 `RootTabView`가 한다.
     var onOpenToBuy: () -> Void = {}
+    var onOpenFridge: () -> Void = {}
 
     /// SKScene 보관 박스 — @State 초기값 식은 뷰 구조체가 재생성될 때마다 평가되므로(예: undo 토스트
     /// 등장·소멸마다 RootTabView body 재평가 → MainView 재구성) 씬을 게으르게 만들어 1회만 생성한다.
@@ -43,6 +44,7 @@ struct MainView: View {
     @State private var deciding: Ingredient?       // Ate/Tossed 결정 중인 재료(투명 풀스크린 커버)
     @State private var showCarousel = false
     @State private var showSteps = false           // 단계별 레시피(발주 직후 + Cooking now 카드에서)
+    @State private var registrationFeedback = false
     @State private var showAdd = false
     @State private var carouselSnapshot: [RecipeRecommender.Result] = []   // 커버 입력 동결(발주 중 재랭크 방지)
     /// 빈 덱에서 호명할 위험 재고 이름 — **비-fresh 전체**(soon + urgent), 중복 제거, **앞 2개 =
@@ -219,15 +221,33 @@ struct MainView: View {
 
             // 보조 줄(49차 신설, 50차에 3분기로 확장) — 동사만 있는 CTA는 결과를 눌러 봐야 알 수
             // 있었다. 이 줄이 **화면에서 오늘의 상태를 말하는 유일한 문장**이다(아래 `ctaSubtitle`).
-            PaperButton(title: "Start cooking",
-                        subtitle: ctaSubtitle(counter)) { cook() }
+            VStack(spacing: ReffiSpace.s1) {
+                if registrationFeedback {
+                    Text("Added to your fridge.").reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                        .accessibilityIdentifier("ingredient.saved")
+                }
+                PaperButton(title: store.ingredients.isEmpty
+                            ? (store.isPristine ? "Add first ingredient" : "Add ingredients")
+                            : "View fridge",
+                            subtitle: store.ingredients.isEmpty ? nil : "\(store.ingredients.count) items in your fridge") {
+                    if store.ingredients.isEmpty { showAdd = true } else { onOpenFridge() }
+                }
+                if !counter.items.isEmpty {
+                    QuietButton(title: "Start cooking", icon: ReffiIcon.go, tint: ReffiColor.blueDark) { cook() }
+                }
+            }
                 .padding(.horizontal, margin)
                 .padding(.top, ReffiSpace.s3)
                 // 스크롤이 아니라 화면에 못 박힌 CTA라 **자리 예약** 쪽이다(§9.3) — 냉장고 펼침의
                 // 바닥 여백과 같은 값을 본다. 홈만 자기 상수(86)를 들고 있어 네비 높이를 건드리면
                 // 여기만 조용히 어긋났다.
                 .padding(.bottom, ReffiChrome.navReserve)
-                .disabled(counter.items.isEmpty)   // 디밍은 PaperButton이 §7.2로 처리 — 여기서 겹치면 곱해진다.
+        }
+        .onChange(of: store.ingredients.count) { before, after in
+            registrationFeedback = after > before && !store.hasSaveError
+        }
+        .onChange(of: isActive) { _, active in
+            if !active { registrationFeedback = false }
         }
         .animation(ReffiMotion.gated(ReffiMotion.settle, reduce: reduceMotion), value: store.activeCook)
         // 가려진 패인은 배경을 세우지 않는다 — FridgeView·ProfileView와 같은 계약이다.
@@ -358,7 +378,10 @@ struct MainView: View {
             if args.contains("-cookTicket") {
                 if store.activeCook == nil {
                     store.loadSampleData()
-                    if let top = carouselResults.first { store.cook(top) }
+                    if let key = args.firstIndex(of: "-cookTicket.recipeID"), key + 1 < args.count,
+                       let recipe = store.recipes.first(where: { $0.id == args[key + 1] }) {
+                        store.cook(RecipeRecommender.result(for: recipe, ingredients: store.sorted))
+                    } else if let top = carouselResults.first { store.cook(top) }
                 }
                 // fire 직후 같은 프레임의 커버 프레젠테이션은 씹힌다(-fridgeExpand 선례) — 한 박자 늦게 연다.
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { showSteps = true }
@@ -574,7 +597,7 @@ struct MainView: View {
     ///
     /// **사라진 문장은 위가 아니라 아래로 갔다.** 미션 줄의 세 분기(임박 · 곧 상함 · 전부 신선) 중
     /// CTA와 겹치는 것은 첫 분기뿐이라, 줄만 지우면 나머지 두 상태가 무언(無言)이 된다. 그래서
-    /// 판정을 **행동 옆으로 이관**했다 — `ctaSubtitle`이 같은 3분기를 CTA 보조 줄에서 인쇄한다.
+    /// 현재 릴리스에서는 CTA가 냉장고 전체 개수를 표시하고 개별 날짜는 재료 배지가 말한다.
     ///
     /// **이 자리에 상태 문장을 다시 세우지 마라.** 화면 위와 아래가 각자 오늘을 말하는 순간 겹침이
     /// 구조적으로 재발한다(49→50차에 실제로 일어난 일이다). 오늘의 상태를 말하는 자리는 CTA 보조 줄
@@ -594,28 +617,6 @@ struct MainView: View {
     private var wordmark: some View {
         Text(verbatim: "Reffi").reffiType(.display).foregroundStyle(ReffiColor.ink)
             .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    // MARK: - CTA 보조 줄
-
-    /// `Start cooking`이 지금 무엇을 처리하는가 — 50차 이후 **화면에서 오늘의 상태를 말하는 유일한
-    /// 문장**이다(위 `wordmark` 독스트링).
-    ///
-    /// 세 문구는 전부 오더 메모 카드 판정문 키커(`OrderMemoCard.verdictKicker`)가 쓰는 **키 그대로**다
-    /// — 신규 문자열 0개. 같은 사실을 두 표면이 다른 말로 하면 그게 곧 용어 분열이고, 여기선 누르기
-    /// 직전(CTA)과 직후(덱 티켓 크라운)에 같은 문장이 이어져 결정이 확인된다. 분기 기준도 키커와
-    /// 같게 맞췄다: 임박이 있으면 임박, 없으면 곧 상할 것, 둘 다 없으면 신선. 문구를 손볼 일이
-    /// 생기면 **두 곳을 같은 커밋에서** 고쳐라 — 한쪽만 바꾸면 이 이음매가 조용히 끊긴다.
-    ///
-    /// **빈 작업대에선 줄이 서지 않는다(43차 오너 결정 — 같은 말 두 번 금지).** 빈 상태
-    /// 블록(`emptyField`)이 같은 화면에서 "무엇을 하라"를 이미 전담하는데 여기서도 말하면 한 화면에
-    /// 지시가 겹치고, 냉동·예약만 남은 분기에선 빈 상태("냉장고 탭 확인")와 지시가 갈리기까지 했다.
-    /// 게다가 그 상태의 CTA는 `disabled`다 — 못 누르는 버튼 아래 처리 예고를 인쇄할 수 없다.
-    private func ctaSubtitle(_ counter: CounterDigest) -> LocalizedStringKey? {
-        if counter.items.isEmpty { return nil }
-        if counter.urgent > 0 { return "Saves \(counter.urgent) expiring today" }
-        if counter.soon > 0 { return "Saves \(counter.soon) before they turn" }
-        return "Use these while fresh"
     }
 
     // MARK: - 알림 유도 배너 (프리퍼미션)
@@ -902,7 +903,7 @@ struct MainView: View {
             if store.isPristine {
                 VStack(spacing: ReffiSpace.s1) {
                     Text("What's in your fridge?").reffiType(.subhead).foregroundStyle(ReffiColor.ink)
-                    Text("Add a few ingredients. Reffi tells you\nwhat to cook before they turn.")
+                    Text("Add what's already in your fridge.\nKeep track of how much is left and what to use first.")
                         .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
                         .multilineTextAlignment(.center)
                 }
@@ -919,7 +920,6 @@ struct MainView: View {
             } else {
                 Text("Nothing to use yet").reffiType(.subhead).foregroundStyle(ReffiColor.ink2)
             }
-            AddBadge { showAdd = true }
             if store.isPristine {
                 Button {
                     withAnimation(ReffiMotion.gated(ReffiMotion.settle, reduce: reduceMotion)) {

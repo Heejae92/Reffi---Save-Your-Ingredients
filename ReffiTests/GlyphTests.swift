@@ -7,10 +7,12 @@ import Foundation
 /// 이후에 그쪽에서 검증한다(이 스위트는 enum 자체의 결정론적 계약만 지킨다).
 struct GlyphTests {
 
-    @Test func caseCountIs53() {
+    @Test func expandedLibraryKeepsOriginalGlyphs() {
         // 35종 + v2 신규 17종(eggplant·sweetPotato·ginger·seaweed·grape·watermelon·pineapple·mango·
         // sausage·bacon·crab·squid·clam·yogurt·butter·honey·dumpling) + v3 요리형 1종(gimbap).
-        #expect(FoodGlyph.allCases.count == 53)
+        #expect(FoodGlyph.allCases.count >= 96)
+        #expect(FoodGlyph(rawValue: "root") == .root)
+        #expect(FoodGlyph(rawValue: "onion") == .onion)
     }
 
     @Test func everyGlyphHasCategoryLabel() {

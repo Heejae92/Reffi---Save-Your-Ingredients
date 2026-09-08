@@ -816,7 +816,7 @@ enum RecipeRecommender {
     /// 채식 하드 필터가 배제하는 글리프 — Meat(meat·poultry·sausage·bacon) + Seafood(fish·shrimp·
     /// crab·squid·clam) 카테고리(`FoodGlyph.categoryLabel` 기준). 계란·유제품은 통과(락토오보 채식).
     private static let animalGlyphs: Set<FoodGlyph> = [.meat, .poultry, .sausage, .bacon,
-                                                       .fish, .shrimp, .crab, .squid, .clam]
+                                                       .fish, .shrimp, .crab, .squid, .clam, .salmon, .octopus, .fishCake]
 
     static func isAllowed(_ recipe: Recipe, preferences: RecipePreferences) -> Bool {
         !containsAllergen(recipe, preferences.allergenIDs)
@@ -837,7 +837,7 @@ enum RecipeRecommender {
 
     /// 실제 투입 재고에도 같은 제한을 적용한다. 대체 및 총칭 매칭으로 제한을 우회할 수 없다.
     static func isUsable(_ ingredient: Ingredient, preferences: RecipePreferences, now: Date = Date()) -> Bool {
-        guard ingredient.effectiveDaysLeft(asOf: now) >= 0,
+        guard ingredient.quantity.isValid, ingredient.effectiveDaysLeft(asOf: now) >= 0,
               preferences.allergenIDs.allSatisfy({ IngredientLexicon.shared.entry(id: $0) != nil }) else { return false }
         let id = ingredient.canonicalID ?? IngredientLexicon.shared.canonicalID(for: ingredient.name)
         guard let id, IngredientLexicon.shared.entry(id: id) != nil else { return preferences.allergenIDs.isEmpty && !preferences.vegetarian }

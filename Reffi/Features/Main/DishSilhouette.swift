@@ -20,10 +20,13 @@ struct DishSilhouette: View {
                                                               dy: size.height * 0.07)
             var shaded = ctx
             if shadowed {
-                shaded.addFilter(.shadow(color: .black.opacity(0.20),
-                                         radius: size.width * 0.04, x: 0, y: size.height * 0.015))
+                shaded.addFilter(.shadow(color: .black.opacity(0.16),
+                                         radius: size.width * 0.018, x: 0, y: size.height * 0.015))
             }
-            shaded.drawLayer { layer in draw(in: r, ctx: &layer) }
+            shaded.drawLayer { layer in
+                draw(in: r, ctx: &layer)
+                FoodPaperGrain.overlay(in: r, context: &layer)
+            }
         }
         .accessibilityHidden(true)
     }
@@ -47,6 +50,8 @@ struct DishSilhouette: View {
         case .curryPlate:    curryPlate(r, &ctx)
         case .sideBowl:      sideBowl(r, &ctx)
         case .bakeDish:      bakeDish(r, &ctx)
+        case .openToast, .riceTriangle, .skewers, .drinkGlass, .waffle, .wholeFish, .salmonFillet:
+            platedSpecialty(r, &ctx)
         }
     }
 
@@ -209,13 +214,20 @@ struct DishSilhouette: View {
             fill(&ctx, facet(p.x + s * 0.24, p.y + s * 0.10, s * 0.34, s * 0.26, 5), m.color)
             fill(&ctx, facet(p.x + s * 0.02, p.y - s * 0.34, s * 0.26, s * 0.22, 5), m.color)
         case .leafy:
-            let l1 = angularLeaf(CGPoint(x: p.x - s * 0.52, y: p.y + s * 0.24),
-                                 CGPoint(x: p.x + s * 0.44, y: p.y - s * 0.30), s * 0.24)
-            fill(&ctx, l1, m.color); chipShade(&ctx, l1, split: 0.5)
-            let l2 = angularLeaf(CGPoint(x: p.x - s * 0.18, y: p.y + s * 0.36),
-                                 CGPoint(x: p.x + s * 0.30, y: p.y + s * 0.40), s * 0.16)
-            fill(&ctx, l2, m.color)
+            let leaf = poly([CGPoint(x:p.x-s*0.5,y:p.y+s*0.2),
+                             CGPoint(x:p.x-s*0.46,y:p.y-s*0.22),
+                             CGPoint(x:p.x-s*0.08,y:p.y-s*0.46),
+                             CGPoint(x:p.x+s*0.51,y:p.y-s*0.39),
+                             CGPoint(x:p.x+s*0.40,y:p.y+s*0.13),
+                             CGPoint(x:p.x+s*0.03,y:p.y+s*0.34)])
+            fill(&ctx, leaf, m.color); chipShade(&ctx, leaf, split:0.6)
+            fill(&ctx, poly([CGPoint(x:p.x-s*0.45,y:p.y+s*0.22),
+                             CGPoint(x:p.x+s*0.40,y:p.y-s*0.32),
+                             CGPoint(x:p.x+s*0.15,y:p.y-s*0.10),
+                             CGPoint(x:p.x-s*0.37,y:p.y+s*0.25)]),
+                 DishPalette.cabbagePale.opacity(0.65))
         case .yolk:
+            fill(&ctx, facet(p.x, p.y, s * 1.40, s * 1.15, 11), DishPalette.eggWhite)
             let y = facet(p.x, p.y, s * 0.92, s * 0.80, 10)
             fill(&ctx, y, m.color)
             fill(&ctx, facet(p.x - s * 0.14, p.y - s * 0.16, s * 0.34, s * 0.28, 6),
@@ -228,6 +240,8 @@ struct DishSilhouette: View {
                           CGPoint(x: p.x + s * 0.30, y: p.y + s * 0.34),
                           CGPoint(x: p.x - s * 0.34, y: p.y + s * 0.30)])
             fill(&ctx, q, m.color); chipShade(&ctx, q, split: 0.48)
+        case .shrimp, .eggHalf, .bananaSlice, .mushroom, .citrusSlice, .tomatoSlice, .floret, .clam, .lotus, .dumpling, .berry:
+            foodMark(&ctx, m, at: p, size: s)
         case .wedge:
             let q = poly([CGPoint(x: p.x - s * 0.52, y: p.y + s * 0.42),
                           CGPoint(x: p.x + s * 0.52, y: p.y + s * 0.30),
@@ -261,8 +275,8 @@ struct DishSilhouette: View {
         shadow(&ctx, body, r)
         fill(&ctx, body, t.base)
         shadeBody(&ctx, body, dark: t.dark, light: t.light, split: 0.38)
-        fill(&ctx, facet(cx, rim, w * 0.88, h * 0.235, 12), t.light)      // 전(입구 테두리)
-        let broth = facet(cx, rim + h * 0.008, w * 0.74, h * 0.195, 12)
+        fill(&ctx, facet(cx, rim, w * 0.88, h * 0.34, 12), t.light)      // 전(입구 테두리)
+        let broth = facet(cx, rim + h * 0.008, w * 0.74, h * 0.28, 12)
         fill(&ctx, broth, look.fill)
         chipShade(&ctx, broth, split: 0.58)
         var c = ctx; c.clip(to: broth)
@@ -311,8 +325,8 @@ struct DishSilhouette: View {
         shadeBody(&ctx, body, dark: t.dark, light: t.light, split: 0.40)
         // 국물면을 넉넉히 잡는다 — 수면이 실 한 줄이면 고명이 클립에 잘려 조각만 남고,
         // 아홉 개 국·수프가 전부 "색만 다른 빈 그릇"이 된다(변주 축이 렌더에서 사라진다).
-        fill(&ctx, facet(cx, rim, w * 0.96, h * 0.255, 12), t.light)
-        let broth = facet(cx, rim + h * 0.008, w * 0.82, h * 0.205, 12)
+        fill(&ctx, facet(cx, rim, w * 0.96, h * 0.36, 12), t.light)
+        let broth = facet(cx, rim + h * 0.008, w * 0.82, h * 0.29, 12)
         fill(&ctx, broth, look.fill)
         chipShade(&ctx, broth, split: 0.58)
         var c = ctx; c.clip(to: broth)
@@ -365,7 +379,7 @@ struct DishSilhouette: View {
 
     private func noodleBowl(_ r: CGRect, _ ctx: inout GraphicsContext) {
         let t = tone, cx = r.midX, w = r.width, h = r.height
-        let rim = r.minY + h * 0.46
+        let rim = r.minY + h * 0.59
         // 뒤 테두리 + 국물(있을 때만) — 국물 유무가 국물면/볶음면을 가르는 축이다.
         fill(&ctx, facet(cx, rim, w * 0.80, h * 0.15, 11), t.light)
         if let broth = look.accent {
@@ -381,22 +395,18 @@ struct DishSilhouette: View {
                           CGPoint(x: cx + w * 0.31, y: rim + h * 0.015)])
         fill(&ctx, mound, look.fill)
         chipShade(&ctx, mound, split: 0.66)
-        // 면 가닥 — 각진 지그재그 두 줄(봉우리 안쪽에만).
         var c = ctx; c.clip(to: mound)
-        for oy in [CGFloat(0), CGFloat(0.075)] {
-            c.fill(poly([CGPoint(x: cx - w * 0.28, y: rim - h * (0.055 + oy)),
-                         CGPoint(x: cx - w * 0.12, y: rim - h * (0.125 + oy)),
-                         CGPoint(x: cx + w * 0.04, y: rim - h * (0.060 + oy)),
-                         CGPoint(x: cx + w * 0.20, y: rim - h * (0.120 + oy)),
-                         CGPoint(x: cx + w * 0.27, y: rim - h * (0.070 + oy)),
-                         CGPoint(x: cx + w * 0.27, y: rim - h * (0.040 + oy)),
-                         CGPoint(x: cx - w * 0.28, y: rim - h * (0.025 + oy))]),
-                    with: .color(.black.opacity(0.10)))
+        for i in 0..<7 {
+            let y = rim - h * (0.04 + CGFloat(i) * 0.025)
+            let path = ringPath(cx + w * (i % 2 == 0 ? -0.02 : 0.025), y,
+                                w * (0.54 - CGFloat(i) * 0.027), h * 0.12, 12,
+                                thickness: w * 0.014)
+            fillRing(&c, path, i % 2 == 0 ? .white.opacity(0.40) : .black.opacity(0.12))
         }
         marks(&c, [(CGPoint(x: cx - w * 0.16, y: rim - h * 0.095), w * 0.19),
                    (CGPoint(x: cx + w * 0.14, y: rim - h * 0.100), w * 0.18),
                    (CGPoint(x: cx + w * 0.00, y: rim - h * 0.035), w * 0.16)])
-        let front = bowlFront(cx, rim, w * 0.40, h * 0.44, sag: h * 0.060)
+        let front = bowlFront(cx, rim, w * 0.40, h * 0.30, sag: h * 0.060)
         fill(&ctx, front, t.base)
         shadeBody(&ctx, front, dark: t.dark, light: t.light, split: 0.34)
         fill(&ctx, poly([CGPoint(x: cx - w * 0.40, y: rim),
@@ -723,55 +733,50 @@ struct DishSilhouette: View {
 
     private func sideBowl(_ r: CGRect, _ ctx: inout GraphicsContext) {
         let t = tone, cx = r.midX, w = r.width, h = r.height
-        let rim = r.minY + h * 0.44
-        if let wedge = look.accent {
-            // 딥 모드 — 볼에 기대 **세운** 삼각 조각(나초·플랫브레드). 눕히면 조각들이 서로 붙어
-            // 한 장짜리 판때기로 읽힌다 — 밑변을 좁게, 꼭짓점을 높게 잡아야 조각으로 갈린다.
-            for (i, dx) in [CGFloat(-0.30), CGFloat(-0.05), CGFloat(0.21)].enumerated() {
-                let bx = cx + w * dx, lean = CGFloat(i) * 0.045 - 0.045
-                let piece = poly([CGPoint(x: bx, y: rim + h * 0.045),
-                                  CGPoint(x: bx + w * 0.17, y: rim + h * 0.020),
-                                  CGPoint(x: bx + w * (0.115 + lean), y: rim - h * 0.235)])
-                shadow(&ctx, piece, r)
-                fill(&ctx, piece, wedge)
-                chipShade(&ctx, piece, split: 0.5)
-            }
-        } else {
-            // 잎 더미 — 각진 잎 다섯 장이 볼 위로 봉긋하게. 밑동을 전부 테두리 근처에 모아
-            // 볼에서 자라 나온 한 무더기로 읽히게 한다(밑동이 흩어지면 조각들이 허공에 뜬다).
-            for (dx, dy, ang) in [(CGFloat(-0.28), CGFloat(0.00), CGFloat(-0.9)),
-                                  (-0.11, -0.05, -0.35), (0.07, -0.08, 0.15),
-                                  (0.24, -0.01, 0.75), (-0.02, 0.02, -0.05)] {
-                let base = CGPoint(x: cx + w * dx * 0.45, y: rim + h * 0.035)
-                let tip = CGPoint(x: cx + w * dx + sin(ang) * w * 0.11,
-                                  y: rim + h * dy - h * 0.20)
-                let leaf = angularLeaf(base, tip, w * 0.115)
-                shadow(&ctx, leaf, r)
-                fill(&ctx, leaf, look.fill)
-                chipShade(&ctx, leaf, split: 0.5)
-            }
-        }
-        // 마지막 두 점이 몸통 안쪽으로 되짚어 들어가면 다각형이 자기를 가로질러(self-intersecting)
-        // 볼이 얇은 조각으로 찢어진다 — 외곽만 한 바퀴 돌고, 테두리는 별도 면으로 얹는다.
-        let body = poly([CGPoint(x: cx - w * 0.45, y: rim),
-                         CGPoint(x: cx + w * 0.45, y: rim),
-                         CGPoint(x: cx + w * 0.38, y: rim + h * 0.18),
-                         CGPoint(x: cx + w * 0.20, y: rim + h * 0.34),
-                         CGPoint(x: cx - w * 0.20, y: rim + h * 0.34),
-                         CGPoint(x: cx - w * 0.38, y: rim + h * 0.18)])
+        let cy = r.midY + h * 0.04
+        let body = facet(cx, cy + h * 0.11, w * 0.94, h * 0.60, 12)
         shadow(&ctx, body, r)
-        fill(&ctx, body, t.base)
-        shadeBody(&ctx, body, dark: t.dark, light: t.light, split: 0.32)
-        fill(&ctx, facet(cx, rim, w * 0.92, h * 0.155, 12), t.light)   // 테두리
-        if look.accent != nil {
-            // 딥 표면 — 얇게 잡으면 흰 볼에 파묻혀 조각들만 남는다(후무스가 빈 접시가 된다).
-            let dip = facet(cx, rim + h * 0.006, w * 0.78, h * 0.125, 12)
-            fill(&ctx, dip, look.fill)
-            chipShade(&ctx, dip, split: 0.55)
+        fill(&ctx, body, t.dark)
+        fill(&ctx, facet(cx, cy, w * 0.96, h * 0.56, 12), t.light)
+        let surface = facet(cx, cy, w * 0.81, h * 0.44, 12)
+        fill(&ctx, surface, look.fill)
+        var c = ctx; c.clip(to: surface)
+        switch look.surface {
+        case .smooth:
+            fillRing(&c, ringPath(cx, cy, w * 0.59, h * 0.26, 11, thickness: w * 0.015),
+                     .white.opacity(0.16))
+        case .leaves, .pieces:
+            for (i, spot) in [(CGFloat(-0.23), CGFloat(-0.08)), (0.04,-0.13), (0.24,-0.04),
+                              (-0.16,0.08), (0.11,0.09), (0.00,0.00)].enumerated() {
+                let center = CGPoint(x:cx+w*spot.0,y:cy+h*spot.1)
+                if look.surface == .leaves {
+                    mark(&c, DishMark(shape:.leafy,color:look.fill), at:center, size:w*0.36)
+                } else {
+                    let chunk = facet(center.x, center.y, w*0.28, h*0.17, 9,
+                                      phase:CGFloat(i)*0.35)
+                    shadow(&c, chunk, r)
+                    fill(&c, chunk, look.fill)
+                    chipShade(&c, chunk, split:0.67)
+                }
+            }
+        case .shreds:
+            for i in 0..<10 {
+                let x=cx+w*(CGFloat((i*7)%9)/14-0.28)
+                let y=cy+h*(CGFloat(i%4)/12-0.13)
+                mark(&c,DishMark(shape:.baton,color:look.fill),at:CGPoint(x:x,y:y),size:w*0.32)
+                fill(&c,facet(x,y-h*0.012,w*0.18,h*0.011,4),.white.opacity(0.35))
+            }
         }
-        marks(&ctx, [(CGPoint(x: cx - w * 0.17, y: rim - h * 0.055), w * 0.19),
-                     (CGPoint(x: cx + w * 0.16, y: rim - h * 0.035), w * 0.18),
-                     (CGPoint(x: cx - w * 0.01, y: rim - h * 0.115), w * 0.16)])
+        if let accent = look.accent {
+            for dx in [CGFloat(-0.26), CGFloat(0.23)] {
+                mark(&ctx, DishMark(shape: .wedge, color: accent),
+                     at: CGPoint(x: cx + w * dx, y: cy - h * 0.12), size: w * 0.30)
+            }
+        }
+        marks(&c, [(CGPoint(x: cx - w * 0.20, y: cy - h * 0.025), w * 0.28),
+                   (CGPoint(x: cx + w * 0.17, y: cy - h * 0.055), w * 0.26),
+                   (CGPoint(x: cx + w * 0.01, y: cy + h * 0.105), w * 0.25),
+                   (CGPoint(x: cx - w * 0.025, y: cy - h * 0.12), w * 0.20)])
     }
 
     // MARK: - 오븐 그릇 (그라탕·라자냐·베이크)
@@ -818,5 +823,176 @@ struct DishSilhouette: View {
         marks(&c, [(CGPoint(x: cx - w * 0.19, y: backY + h * 0.075), w * 0.20),
                    (CGPoint(x: cx + w * 0.17, y: backY + h * 0.115), w * 0.19),
                    (CGPoint(x: cx - w * 0.01, y: backY + h * 0.045), w * 0.16)])
+    }
+}
+
+// MARK: - Recognisable food details and serving shapes
+private extension DishSilhouette {
+    func piece(_ c: inout GraphicsContext, _ pts: [(CGFloat,CGFloat)], _ color: Color) {
+        let path = poly(pts.map { CGPoint(x:$0.0,y:$0.1) })
+        fill(&c,path,color)
+    }
+
+    func foodMark(_ ctx: inout GraphicsContext, _ m: DishMark, at p: CGPoint, size s: CGFloat) {
+        var c=ctx
+        c.translateBy(x:p.x,y:p.y)
+        c.scaleBy(x:s,y:s)
+        let P=DishPalette.self
+        switch m.shape {
+        case .shrimp:
+            // A segmented curled body and a separate tail, instead of a meat strip.
+            for i in 0..<6 {
+                let a = CGFloat(i) * 0.47 + 0.55
+                let x=cos(a)*0.34,y=sin(a)*0.30
+                fill(&c,facet(x,y,0.31-CGFloat(i)*0.025,0.27,7),m.color)
+                fill(&c,facet(x-0.035,y-0.04,0.08,0.18,5),P.eggWhite.opacity(0.65))
+            }
+            piece(&c,[(-0.34,0.03),(-0.52,-0.28),(-0.31,-0.17),(-0.20,-0.36),(-0.20,-0.04)],m.color)
+        case .bananaSlice:
+            fill(&c,facet(0,0,1.06,0.87,11),P.pancakeGold)
+            fill(&c,facet(0,-0.025,0.93,0.74,11),P.eggWhite)
+            fill(&c,facet(0,-0.025,0.82,0.64,11),m.color.opacity(0.45))
+            for i in 0..<3 {
+                let a=CGFloat(i) * .pi * 2 / 3
+                fill(&c,facet(cos(a)*0.13,sin(a)*0.10,0.06,0.085,5),P.woodLight)
+            }
+        case .eggHalf:
+            fill(&c,facet(0,0,0.92,1.23,11),P.eggWhite)
+            fill(&c,facet(0,0.15,0.59,0.59,10),m.color)
+        case .mushroom:
+            piece(&c,[(-0.13,0.02),(0.14,0.02),(0.23,0.49),(-0.24,0.49)],P.eggWhite)
+            piece(&c,[(-0.54,0.05),(-0.43,-0.27),(-0.20,-0.44),(0.22,-0.42),(0.45,-0.22),(0.54,0.05)],m.color)
+            piece(&c,[(-0.27,-0.21),(-0.06,-0.13),(0.20,-0.28),(0.06,-0.05)],P.eggWhite.opacity(0.8))
+        case .citrusSlice, .tomatoSlice, .lotus:
+            fill(&c,facet(0,0,1.12,0.89,11),m.color)
+            fill(&c,facet(0,0,0.91,0.72,11),m.shape == .tomatoSlice ? P.chiliRed : P.eggWhite)
+            for i in 0..<7 {
+                let a=CGFloat(i) * .pi * 2 / 7
+                if m.shape == .lotus {
+                    fill(&c,facet(cos(a)*0.32,sin(a)*0.25,0.15,0.17,7),P.mushroomTan)
+                } else {
+                    let b=a+0.65
+                    piece(&c,[(cos(a)*0.08,sin(a)*0.06),(cos(a)*0.41,sin(a)*0.31),
+                              (cos(b)*0.41,sin(b)*0.31)],m.shape == .tomatoSlice ? P.tomatoRed : m.color)
+                    if m.shape == .tomatoSlice { fill(&c,facet(cos(a)*0.26,sin(a)*0.19,0.05,0.07,5),P.sesame) }
+                }
+            }
+        case .floret:
+            piece(&c,[(-0.1,0),(0.13,0),(0.23,0.48),(-0.20,0.48)],P.cabbagePale)
+            for (x,y) in [(CGFloat(-0.27),CGFloat(-0.08)),(0,-0.26),(0.28,-0.06),(0.03,0.08)] {
+                fill(&c,facet(x,y,0.48,0.44,9),m.color)
+                fill(&c,facet(x-0.06,y-0.06,0.23,0.18,7),P.eggWhite.opacity(0.25))
+            }
+        case .clam:
+            piece(&c,[(-0.51,-0.10),(-0.35,-0.44),(0,-0.49),(0.36,-0.32),(0.47,0.05),
+                      (0.22,0.43),(-0.20,0.45)],m.color)
+            fill(&c,facet(0,0.03,0.66,0.59,9),P.eggWhite)
+            fill(&c,facet(0.02,0.09,0.40,0.30,9),P.mushroomTan)
+            for x in [CGFloat(-0.25),0,0.25] { piece(&c,[(x,-0.30),(x+0.04,-0.28),(0.03,0.34),(-0.02,0.34)],P.woodDark.opacity(0.4)) }
+        case .dumpling:
+            piece(&c,[(-0.55,0.22),(-0.41,-0.13),(-0.19,-0.36),(0.15,-0.39),(0.46,-0.17),
+                      (0.55,0.16),(0.29,0.37),(-0.28,0.39)],m.color)
+            for x in [CGFloat(-0.28),-0.08,0.13,0.31] {
+                piece(&c,[(x,-0.20),(x+0.035,-0.22),(x*0.45,0.22),(x*0.45-0.04,0.23)],P.woodLight.opacity(0.6))
+            }
+        case .berry:
+            for (x,y) in [(CGFloat(-0.23),CGFloat(-0.08)),(0.23,-0.15),(0,0.23)] {
+                fill(&c,facet(x,y,0.48,0.51,9),m.color)
+                fill(&c,facet(x,y-0.08,0.12,0.10,5),P.oliveInk)
+            }
+        default: break
+        }
+    }
+
+    func platedSpecialty(_ r: CGRect, _ ctx: inout GraphicsContext) {
+        var c=ctx
+        c.translateBy(x:r.minX,y:r.minY)
+        c.scaleBy(x:r.width/100,y:r.height/100)
+        let P=DishPalette.self
+        let unit=CGRect(x:0,y:0,width:100,height:100)
+        if look.archetype != .drinkGlass {
+            plate(&c,50,57,98,72)
+        }
+        switch look.archetype {
+        case .openToast:
+            for (i,x) in [CGFloat(17),CGFloat(53)].enumerated() {
+                let y:CGFloat = i == 0 ? 28 : 23
+                let crust=poly([CGPoint(x:x,y:y+9),CGPoint(x:x+7,y:y),CGPoint(x:x+24,y:y-3),
+                                CGPoint(x:x+31,y:y+6),CGPoint(x:x+30,y:y+48),CGPoint(x:x+21,y:y+55),
+                                CGPoint(x:x+3,y:y+53)])
+                shadow(&c,crust,unit);fill(&c,crust,look.fill)
+                piece(&c,[(x+4,y+12),(x+10,y+4),(x+23,y+3),(x+27,y+10),(x+25,y+47),(x+6,y+48)],P.toastCream)
+                piece(&c,[(x+7,y+15),(x+12,y+8),(x+24,y+12),(x+23,y+43),(x+8,y+44)],look.accent ?? P.toastGold)
+                if let m=look.mark { mark(&c,m,at:CGPoint(x:x+15,y:y+23),size:19) }
+                if let m=look.mark2 { mark(&c,m,at:CGPoint(x:x+18,y:y+39),size:15) }
+            }
+        case .riceTriangle:
+            for (x,y) in [(CGFloat(12),CGFloat(27)),(48,34)] {
+                let rice=poly([CGPoint(x:x,y:y+37),CGPoint(x:x+16,y:y+2),CGPoint(x:x+24,y:y),
+                               CGPoint(x:x+43,y:y+35),CGPoint(x:x+38,y:y+44),CGPoint(x:x+7,y:y+46)])
+                shadow(&c,rice,unit);fill(&c,rice,look.fill)
+                piece(&c,[(x+15,y+25),(x+28,y+24),(x+31,y+43),(x+14,y+45)],look.accent ?? P.seaweedDark)
+                for (dx,dy) in [(CGFloat(14),CGFloat(19)),(25,12),(32,29),(8,32)] {
+                    fill(&c,facet(x+dx,y+dy,3.5,1.8,5),P.woodLight.opacity(0.3))
+                }
+            }
+        case .skewers:
+            for i in 0..<3 {
+                let x=CGFloat(20+i*22)
+                piece(&c,[(x,18),(x+2,18),(x+10,89),(x+8,89)],P.woodLight)
+                for j in 0..<3 {
+                    let y=CGFloat(27+j*17),xx=x+CGFloat(j)*2
+                    let chunk=poly([CGPoint(x:xx-7,y:y),CGPoint(x:xx+7,y:y-4),CGPoint(x:xx+12,y:y+7),
+                                    CGPoint(x:xx+5,y:y+13),CGPoint(x:xx-8,y:y+9)])
+                    shadow(&c,chunk,unit);fill(&c,chunk,look.fill)
+                    piece(&c,[(xx-5,y+1),(xx+8,y-1),(xx+9,y+2),(xx-4,y+4)],P.searDark.opacity(0.6))
+                }
+            }
+            if let m=look.mark2 { mark(&c,m,at:CGPoint(x:75,y:76),size:17) }
+        case .drinkGlass:
+            piece(&c,[(22,20),(77,20),(71,84),(62,94),(35,94),(27,84)],P.indigoLight)
+            piece(&c,[(27,29),(72,29),(66,83),(60,88),(37,88),(32,80)],look.fill)
+            fill(&c,facet(49,25,53,22,12),P.eggWhite)
+            fill(&c,facet(49,25,44,15,12),look.fill)
+            piece(&c,[(59,50),(67,5),(71,6),(63,51)],P.woodLight)
+            piece(&c,[(28,37),(32,38),(37,80),(34,81)],P.eggWhite.opacity(0.7))
+            if let m=look.mark { mark(&c,m,at:CGPoint(x:47,y:23),size:12) }
+        case .waffle:
+            for (i,x) in [CGFloat(16),CGFloat(43)].enumerated() {
+                let y:CGFloat = i == 0 ? 29 : 43
+                piece(&c,[(x,y),(x+39,y-7),(x+45,y+34),(x+6,y+41)],look.fill)
+                for row in 0..<3 { for col in 0..<3 {
+                    let xx=x+5+CGFloat(col)*11+CGFloat(row),yy=y+5+CGFloat(row)*10-CGFloat(col)*2
+                    piece(&c,[(xx,yy),(xx+8,yy-1),(xx+9,yy+6),(xx+1,yy+8)],P.toastGold)
+                    piece(&c,[(xx,yy),(xx+8,yy-1),(xx+8,yy+1),(xx+2,yy+3),(xx+1,yy+8)],P.woodLight)
+                } }
+            }
+            piece(&c,[(46,39),(60,36),(65,46),(51,50)],P.butterCube)
+            if let m=look.mark { mark(&c,m,at:CGPoint(x:72,y:72),size:18) }
+        case .wholeFish:
+            for (x,y) in [(CGFloat(14),CGFloat(38)),(23,57)] {
+                let body=poly([CGPoint(x:x,y:y),CGPoint(x:x+10,y:y-9),CGPoint(x:x+48,y:y-8),
+                               CGPoint(x:x+58,y:y),CGPoint(x:x+49,y:y+12),CGPoint(x:x+9,y:y+11)])
+                shadow(&c,body,unit);fill(&c,body,P.indigoLight)
+                piece(&c,[(x+56,y),(x+71,y-9),(x+67,y+2),(x+72,y+11),(x+56,y+7)],P.indigoDark)
+                piece(&c,[(x+10,y-9),(x+48,y-8),(x+54,y-3),(x+12,y-3)],P.indigoDark)
+                fill(&c,facet(x+9,y+1,5,5,9),P.eggWhite)
+                fill(&c,facet(x+9,y+1,2.6,2.6,8),P.oliveInk)
+                for k in 0..<3 { let xx=x+23+CGFloat(k)*8;piece(&c,[(xx,y-3),(xx+2,y-3),(xx-1,y+6),(xx-3,y+7)],P.searDark.opacity(0.6)) }
+            }
+            foodMark(&c,DishMark(shape:.citrusSlice,color:P.lemonYellow),at:CGPoint(x:73,y:27),size:22)
+        case .salmonFillet:
+            let slab=poly([CGPoint(x:29,y:26),CGPoint(x:69,y:30),CGPoint(x:87,y:68),
+                           CGPoint(x:68,y:83),CGPoint(x:29,y:71),CGPoint(x:19,y:41)])
+            shadow(&c,slab,unit);fill(&c,slab,look.fill)
+            var clipped=c;clipped.clip(to:slab)
+            for i in 0..<6 {
+                let x=CGFloat(28+i*8)
+                piece(&clipped,[(x,24),(x+2,24),(x+13,50),(x+6,78),(x+3,78),(x+10,50)],P.porkFat)
+            }
+            mark(&c,DishMark(shape:.leafy,color:look.accent ?? P.parsley),at:CGPoint(x:19,y:65),size:26)
+            foodMark(&c,DishMark(shape:.citrusSlice,color:P.lemonYellow),at:CGPoint(x:77,y:29),size:22)
+        default: break
+        }
     }
 }

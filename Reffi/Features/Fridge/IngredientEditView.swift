@@ -17,6 +17,7 @@ struct IngredientEditView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    @State private var quantityInput: String
     @State private var draft: Ingredient
     @State private var showDeleteConfirm = false
     @State private var showDiscardConfirm = false
@@ -31,6 +32,7 @@ struct IngredientEditView: View {
     init(ingredient: Ingredient) {
         original = ingredient
         _draft = State(initialValue: ingredient)
+        _quantityInput = State(initialValue: ingredient.quantity.inputText)
     }
 
     private var trimmedName: String { draft.name.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -71,6 +73,8 @@ struct IngredientEditView: View {
                               onSelect: { draft.storage = $0 })
         .presentationDetents([.large])
         .interactiveDismissDisabled(isDirty)
+        .onChange(of: quantityInput) { _, value in draft.quantity.value = Quantity.inputValue(value) ?? 0 }
+        .onChange(of: draft.expiresAt) { _, _ in draft.expiryIsEstimated = false }
         .reffiFeedback(.warning, trigger: deleteHaptic)
         .reffiFeedback(.success, trigger: savedHaptic)
         // 40차 — 팝업 전수 종이화(§14.7 개정). 원본은 취소 버튼을 명시하지 않아(시스템 자동 Cancel)
@@ -145,7 +149,8 @@ struct IngredientEditView: View {
             HStack {
                 Text("Quantity").reffiType(.body).foregroundStyle(ReffiColor.ink)
                 Spacer()
-                TextField("1", value: $draft.quantity.value, format: .number)
+                TextField("1", text: $quantityInput)
+                    .accessibilityIdentifier("ingredient.quantity")
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     .font(.reffiNum(.body))
@@ -160,6 +165,11 @@ struct IngredientEditView: View {
                     .accessibilityLabel(Text("Unit: \(draft.quantity.unit.label)"))
             }
             .frame(minHeight: 40)
+
+            if !draft.quantity.isValid {
+                Text("Enter a quantity greater than 0.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.urgentDark)
+            }
 
             ReffiRule(.ticket)
 
@@ -191,7 +201,7 @@ struct IngredientEditView: View {
             ReffiRule(.ticket)
 
             HStack {
-                Text("Use by").reffiType(.body).foregroundStyle(ReffiColor.ink)
+                Text(draft.expiryIsEstimated ? "Estimated use-by" : "Use by").reffiType(.body).foregroundStyle(ReffiColor.ink)
                 Spacer()
                 // 날짜 휠·달력 표기는 기기 로케일을 따른다(38차 — 앱 언어 선택과 분리).
                 DatePicker("", selection: $draft.expiresAt,
@@ -225,6 +235,12 @@ struct IngredientEditView: View {
 
     private var deleteSection: some View {
         VStack(alignment: .leading, spacing: ReffiSpace.s2) {
+            if draft.expiryIsEstimated {
+                Text("This date is an estimate. Check the packaging and the food before using it.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                Button("I checked this date") { draft.expiryIsEstimated = false }
+                    .reffiType(.caption).frame(minHeight: 44)
+            }
             Button { showDeleteConfirm = true } label: {
                 HStack(spacing: ReffiSpace.s2) {
                     ReffiIcon.delete.reffi(15, .bold).foregroundStyle(ReffiColor.urgentDark)
@@ -259,11 +275,12 @@ struct IngredientEditView: View {
             if draft.storage == .freezer, draft.frozenAt == nil {
                 draft.frozenAt = Date()
             }
-            store.update(draft)
+            guard store.update(draft) else { return }
             savedHaptic += 1   // §7.6 저장 성공(42차)
             dismiss()
         }
-        .disabled(trimmedName.isEmpty)   // 이름이 비면 저장 불가 — PaperButton이 투명도로 표시(§7.2, 색 변경 X).
+        .disabled(trimmedName.isEmpty || Quantity.inputValue(quantityInput) == nil)
+        .safeAreaInset(edge: .top, spacing: ReffiSpace.s2) { if store.hasSaveError { SaveErrorNotice() } }
     }
 
     // MARK: - 헬퍼

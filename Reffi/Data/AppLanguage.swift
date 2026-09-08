@@ -60,12 +60,12 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     /// (38차 각주의 "`String(localized:locale:)`가 안 먹더라"는 API 오해였다 — `locale:`은 복수·숫자
     /// 규칙용이고 조회 언어는 `bundle:`이 정한다. 42차 검증에서 빌드 산출물의 ko.lproj 324키 확인.)
     /// `.system`이거나 번들을 못 찾으면 `Bundle.main`으로 폴백해 종전과 동일하게 동작한다.
-    static func localizedNow(_ key: String.LocalizationValue) -> String {
+    static func localizedNow(_ key: String.LocalizationValue, language: AppLanguage = .current) -> String {
         let bundle: Bundle
-        switch current {
+        switch language {
         case .system: bundle = .main
         case .en, .ko:
-            if let path = Bundle.main.path(forResource: current.rawValue, ofType: "lproj"),
+            if let path = Bundle.main.path(forResource: language.rawValue, ofType: "lproj"),
                let b = Bundle(path: path) { bundle = b } else { bundle = .main }
         }
         return String(localized: key, bundle: bundle)

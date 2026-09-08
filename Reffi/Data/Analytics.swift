@@ -221,17 +221,12 @@ enum AnalyticsValue: Codable, Equatable {
 @MainActor
 final class Analytics {
 
+    /// This release does not collect or transmit usage events, including an old opt-in queue.
     static let shared: Analytics = {
-        let args = ProcessInfo.processInfo.arguments
-        let underXCTest = NSClassFromString("XCTestCase") != nil
-        return Analytics(defaults: .standard,
-                         queueURL: Analytics.defaultQueueURL,
-                         uploader: Analytics.supabaseUploader,
-                         canUpload: {
-                             guard let session = AuthStore.client.auth.currentSession, !session.isExpired else { return false }
-                             return UserDefaults.standard.string(forKey: "analytics.accountID") == session.user.id.uuidString
-                         },
-                         killSwitch: underXCTest || args.contains("-analyticsOff"))
+        let analytics = Analytics(defaults: .standard, queueURL: Analytics.defaultQueueURL,
+                                  uploader: Analytics.supabaseUploader, canUpload: { false }, killSwitch: true)
+        analytics.setEnabled(false)
+        return analytics
     }()
 
     /// 공유 토글의 키. 미설정은 꺼짐이다.

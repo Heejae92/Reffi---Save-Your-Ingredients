@@ -97,8 +97,31 @@ struct QuantityTests {
         #expect(Quantity(value: 2, unit: .piece).converted(to: .pack) == nil)
     }
 
-    @Test func halvedKeepsFloor() {
+    @Test func halvingNeverIncreasesOrStopsReducingStock() {
         #expect(Quantity(value: 2, unit: .piece).halved == Quantity(value: 1, unit: .piece))
-        #expect(Quantity(value: 0.25, unit: .piece).halved.value == 0.25)   // 바닥 유지
+        #expect(Quantity(value: 0.25, unit: .piece).halved.value == 0.125)
+        for unit in IngredientUnit.allCases {
+            for value in [0.001, 0.1, 0.25, 1, 100] {
+                let quantity = Quantity(value: value, unit: unit)
+                #expect(quantity.halved.value == value / 2)
+                #expect(quantity.halved.isValid)
+            }
+        }
+    }
+
+    @Test func equivalentMassAndVolumeHaveEquivalentLeftovers() throws {
+        #expect(Quantity(value: 0.1, unit: .kilogram).halved.converted(to: .gram)
+                == Quantity(value: 100, unit: .gram).halved)
+        #expect(Quantity(value: 0.1, unit: .liter).halved.converted(to: .milliliter)
+                == Quantity(value: 100, unit: .milliliter).halved)
+        #expect(Quantity(value: 0.1, unit: .kilogram).halved.text == Quantity(value: 50, unit: .gram).text)
+        #expect(Quantity(value: 0.1, unit: .liter).halved.text == Quantity(value: 50, unit: .milliliter).text)
+        #expect(Quantity(value: 0.125, unit: .piece).text.hasPrefix("0.125"))
+    }
+
+    @Test func invalidQuantitiesCannotRepresentStock() {
+        for value in [0, -1, Double.infinity, -Double.infinity, Double.nan] {
+            #expect(!Quantity(value: value, unit: .gram).isValid)
+        }
     }
 }

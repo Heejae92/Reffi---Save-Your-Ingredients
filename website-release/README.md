@@ -1,0 +1,1 @@
+Publishing package for https://reffi-site.vercel.app. privacy.html matches the account-free app policy. index.html preserves the public landing page with Privacy linked and the recipe count corrected. Verify the source project before deployment; this folder has not been deployed.

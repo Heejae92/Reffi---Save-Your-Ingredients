@@ -22,6 +22,14 @@ enum FoodGlyph: String, Codable, CaseIterable {
     case sauceBottle, can                              // 신규 저장식품
     case honey, dumpling                               // v2 신규 저장식품·기타
     case gimbap                                        // v3 요리형(만두 선례) — 재료가 아니라 메뉴 자체가 모티프
+    // Dedicated silhouettes for previously shared or missing ingredients.
+    case scallion, radish, beet, lotusRoot, burdock, enoki, napa, sprout
+    case bokChoy, asparagus, celery, cauliflower, pear, peach, blueberry, cherry
+    case kiwi, melon, orange, lime, salmon, octopus, fishCake, kimchi
+    case riceCake, flour, grains, spice, beans, nuts, walnut, jar
+    case oil, water, coffee, tea, juice, chocolate, olive, driedFruit
+    case cornDog, ricePaper, iceCream
+    case salt, peppercorn, curryPowder, cinnamon, starAnise, wasabi
     case generic
 
     /// 톨러런트 디코드 — 미지의 rawValue(향후 케이스 추가·데이터 오염)가 필드 하나로 끝나게
@@ -136,6 +144,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
     var name: String              // "연두부"
     var category: String          // 글리프에서 파생된 카테고리 라벨
     var canonicalID: String?      // 정본 사전 캐논 ID — 표기 무관 매칭 키. nil = 미해석·사전 밖(스토어가 해석·승격)
+    var expiryIsEstimated: Bool
     var expiresAt: Date           // 소비기한(자정 기준 일 단위) — 냉동해도 불변(원본)
     var quantity: Quantity        // 수량 — 수치 + 단위(부분 소비·환산 가능)
     var glyph: FoodGlyph
@@ -156,11 +165,12 @@ struct Ingredient: Identifiable, Codable, Equatable {
          quantity: Quantity = Quantity(value: 1, unit: .piece),
          glyph: FoodGlyph? = nil, place: String = "",
          storage: StorageLocation = .fridge, purchasedAt: Date? = nil, frozenAt: Date? = nil,
-         canonicalID: String? = nil) {
+         canonicalID: String? = nil, expiryIsEstimated: Bool = false) {
         self.id = id
         self.name = name
         self.category = category
         self.canonicalID = canonicalID
+        self.expiryIsEstimated = expiryIsEstimated
         self.expiresAt = expiresAt
         self.quantity = quantity
         self.glyph = glyph ?? FoodGlyph.match(name)
@@ -183,6 +193,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case id, name, category, canonicalID, expiresAt, quantity, glyph, place, storage, purchasedAt, frozenAt
+        case expiryIsEstimated
         case openedAt, sealedCheckAt   // 44차 개봉 라이프사이클 — 구파일엔 없음(옵셔널 디코드)
         case amount   // v1 레거시(자유 문자열) — 읽기 전용
     }
@@ -194,6 +205,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
         category = try c.decode(String.self, forKey: .category)
         canonicalID = try c.decodeIfPresent(String.self, forKey: .canonicalID)   // 레거시 파일엔 없음 → nil(로드 시 승격)
         expiresAt = try c.decode(Date.self, forKey: .expiresAt)
+        expiryIsEstimated = try c.decodeIfPresent(Bool.self, forKey: .expiryIsEstimated) ?? true
         glyph = try c.decode(FoodGlyph.self, forKey: .glyph)
         place = try c.decode(String.self, forKey: .place)
         storage = try c.decodeIfPresent(StorageLocation.self, forKey: .storage) ?? .fridge
@@ -217,6 +229,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
         try c.encode(category, forKey: .category)
         try c.encode(canonicalID, forKey: .canonicalID)   // 항상 기록(nil이면 null) — 해석 결과를 영속화
         try c.encode(expiresAt, forKey: .expiresAt)
+        try c.encode(expiryIsEstimated, forKey: .expiryIsEstimated)
         try c.encode(quantity, forKey: .quantity)
         try c.encode(glyph, forKey: .glyph)
         try c.encode(place, forKey: .place)
@@ -334,7 +347,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
     var canFreeze: Bool { canFreeze(asOf: Date()) }
 
     /// 남은 일수 라벨(로컬라이즈). 데이터성 숫자(§3.4).
-    var dDayText: String { Self.dDayText(daysLeft: effectiveDaysLeft) }
+    var dDayText: String { (expiryIsEstimated ? "≈ " : "") + Self.dDayText(daysLeft: effectiveDaysLeft) }
 
     /// 앱 전역의 **유일한** D-day 표기 포맷터(§3.4) — 재고 카드·배지·도장·온보딩 데모가 전부 여기를 탄다.
     /// 화면마다 다른 표기를 손으로 적으면 온보딩이 가르친 표기를 본 앱이 한 번도 쓰지 않는 일이 생긴다
@@ -360,7 +373,10 @@ struct Ingredient: Identifiable, Codable, Equatable {
     /// 남은 일수를 **소리로** 읽는 문구 — 화면 표기(`dDayText`)는 도장·배지 폭에 맞춘 축약이라
     /// 보조기술에는 그대로 쓸 수 없다("3d"는 문자 그대로 "삼디"로 읽히고, 영문 음성은 3D(입체)와 겹친다).
     /// 표기와 문구를 **한 쌍으로** 여기 둔다 — 화면마다 손으로 적으면 한쪽만 고쳐져 둘이 어긋난다.
-    var dDayAccessibilityText: String { Self.dDayAccessibilityText(daysLeft: effectiveDaysLeft) }
+    var dDayAccessibilityText: String {
+        let value = Self.dDayAccessibilityText(daysLeft: effectiveDaysLeft)
+        return expiryIsEstimated ? AppLanguage.localizedNow("Estimated: \(value)") : value
+    }
 
     static func dDayAccessibilityText(daysLeft: Int) -> String {
         switch daysLeft {
@@ -395,18 +411,21 @@ extension FoodGlyph {
         switch self {
         case .leaf, .broccoli, .onion, .garlic, .potato, .root, .squash, .mushroom, .pepper, .tomato,
              .cucumber, .pea, .cabbage, .chili, .pumpkin,
-             .eggplant, .sweetPotato, .ginger, .seaweed: "Veg"
+             .eggplant, .sweetPotato, .ginger, .seaweed,
+             .scallion, .radish, .beet, .lotusRoot, .burdock, .enoki, .napa, .sprout, .bokChoy, .asparagus, .celery, .cauliflower, .kimchi: "Veg"
         case .apple, .citrus, .berry, .avocado, .banana,
-             .grape, .watermelon, .pineapple, .mango: "Fruit"
-        case .egg, .milk, .cheese, .yogurt, .butter: "Dairy"
+             .grape, .watermelon, .pineapple, .mango,
+             .pear, .peach, .blueberry, .cherry, .kiwi, .melon, .orange, .lime, .driedFruit, .olive: "Fruit"
+        case .egg, .milk, .cheese, .yogurt, .butter, .iceCream: "Dairy"
         case .meat, .poultry, .sausage, .bacon: "Meat"
-        case .fish, .shrimp, .crab, .squid, .clam: "Seafood"
-        case .tofu: "Protein"
+        case .fish, .shrimp, .crab, .squid, .clam, .salmon, .octopus, .fishCake: "Seafood"
+        case .tofu, .beans: "Protein"
         case .bread: "Bakery"
         // 김밥은 요리지만 정체는 밥 — Other(잡동사니)보다 Grain이 카테고리 축에서 읽힌다.
-        case .rice, .noodles, .corn, .gimbap: "Grain"
-        case .sauceBottle, .can, .honey: "Pantry"
-        case .generic, .dumpling: "Other"
+        case .rice, .noodles, .corn, .gimbap, .riceCake, .grains, .ricePaper: "Grain"
+        case .sauceBottle, .can, .honey, .flour, .spice, .nuts, .walnut, .jar, .oil,
+             .water, .coffee, .tea, .juice, .chocolate, .salt, .peppercorn, .curryPowder, .cinnamon, .starAnise, .wasabi: "Pantry"
+        case .generic, .dumpling, .cornDog: "Other"
         }
     }
 }

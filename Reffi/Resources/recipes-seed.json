@@ -18,68 +18,108 @@
         {
           "ref": "kimchi",
           "en": "ripe kimchi",
-          "ko": "잘 익은 김치"
+          "ko": "잘 익은 김치",
+          "amount": {
+            "en": "300 g",
+            "ko": "300g"
+          }
         },
         {
           "ref": "pork",
           "en": "pork (shoulder or belly)",
-          "ko": "돼지고기 (앞다리살 또는 삼겹살)"
+          "ko": "돼지고기 (앞다리살 또는 삼겹살)",
+          "amount": {
+            "en": "200 g",
+            "ko": "200g"
+          }
         },
         {
           "ref": "tofu",
           "en": "tofu",
-          "ko": "두부"
+          "ko": "두부",
+          "amount": {
+            "en": "200 g",
+            "ko": "200g"
+          }
         },
         {
           "ref": "onion",
           "en": "onion",
-          "ko": "양파"
+          "ko": "양파",
+          "amount": {
+            "en": "1/2 medium (100 g)",
+            "ko": "중간 크기 1/2개(100g)"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "대파"
+          "ko": "대파",
+          "amount": {
+            "en": "1 stalk",
+            "ko": "1대"
+          }
         },
         {
           "ref": "garlic",
           "en": "minced garlic",
-          "ko": "다진 마늘"
+          "ko": "다진 마늘",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "gochugaru",
           "en": "gochugaru",
-          "ko": "고춧가루"
+          "ko": "고춧가루",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "sugar",
           "en": "sugar",
-          "ko": "설탕"
+          "ko": "설탕",
+          "amount": {
+            "en": "1/2 tsp",
+            "ko": "1/2작은술"
+          }
         },
         {
           "ref": "cooking-oil",
           "en": "cooking oil",
-          "ko": "식용유"
+          "ko": "식용유",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": null,
           "en": "water",
-          "ko": "물"
+          "ko": "물",
+          "amount": {
+            "en": "700 ml",
+            "ko": "700ml"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Cut the kimchi, pork, tofu, and onion into bite-size pieces.",
-          "Heat oil in a pot and stir-fry the pork and kimchi over medium heat until the pork is no longer pink.",
-          "Pour in water, add the garlic, gochugaru, and a pinch of sugar, and bring everything to a boil.",
-          "Lower the heat and simmer for about 10 minutes, then add the tofu and onion and cook 5 minutes more.",
-          "Scatter the green onion on top and serve hot with rice."
+          "Cut the pork into 1 cm pieces. Chop the kimchi and onion; slice the tofu and green onion.",
+          "Heat 1 tbsp oil in a pot over medium heat. Stir-fry the pork and kimchi for 4 minutes; the pork will finish cooking in the stew.",
+          "Add 700 ml water, garlic, gochugaru and sugar. Bring to a boil, then simmer gently for 10 minutes.",
+          "Add the onion and tofu. Simmer for 5–8 minutes, until the onion is tender and the stew, including the pork, reaches 74°C (165°F). Check with a food thermometer.",
+          "Add the green onion and simmer for 1 minute. Taste before adding any extra seasoning; kimchi saltiness varies."
         ],
         "ko": [
-          "김치, 돼지고기, 두부, 양파를 먹기 좋은 크기로 썬다.",
-          "냄비에 기름을 두르고 돼지고기와 김치를 중불에서 고기 색이 변할 때까지 볶는다.",
-          "물을 붓고 마늘, 고춧가루, 설탕 한 꼬집을 넣어 끓어오르게 한다.",
-          "불을 줄여 10분 정도 끓인 뒤 두부와 양파를 넣고 5분 더 익힌다.",
-          "대파를 올려 밥과 함께 뜨겁게 낸다."
+          "돼지고기는 1cm 크기로 썰어요. 김치와 양파는 먹기 좋게 썰고 두부와 대파도 썰어 둬요.",
+          "냄비에 식용유 1큰술을 두르고 중불에서 돼지고기와 김치를 4분간 볶아요. 돼지고기는 뒤이어 끓이면서 속까지 익혀요.",
+          "물 700ml, 마늘, 고춧가루, 설탕을 넣어요. 끓어오르면 불을 줄여 10분간 뭉근히 끓여요.",
+          "양파와 두부를 넣고 5~8분 더 끓여요. 양파가 부드러워지고 돼지고기 속을 포함한 찌개 온도가 74°C가 되었는지 조리용 온도계로 확인해요.",
+          "대파를 넣고 1분 더 끓여요. 김치마다 짠맛이 다르니 맛을 본 뒤 간을 더해요."
         ]
       }
     },
@@ -100,68 +140,109 @@
         {
           "ref": "doenjang",
           "en": "doenjang",
-          "ko": "된장"
+          "ko": "된장",
+          "amount": {
+            "en": "2 tbsp (35 g), then adjust",
+            "ko": "2큰술(35g), 맛을 보고 추가"
+          }
         },
         {
           "ref": "tofu",
           "en": "tofu",
-          "ko": "두부"
+          "ko": "두부",
+          "amount": {
+            "en": "200 g",
+            "ko": "200g"
+          }
         },
         {
           "ref": "zucchini",
           "en": "zucchini",
-          "ko": "애호박"
+          "ko": "애호박",
+          "amount": {
+            "en": "150 g",
+            "ko": "150g"
+          }
         },
         {
           "ref": "potato",
           "en": "potato",
-          "ko": "감자"
+          "ko": "감자",
+          "amount": {
+            "en": "1 small (150 g)",
+            "ko": "작은 것 1개(150g)"
+          }
         },
         {
           "ref": "onion",
           "en": "onion",
-          "ko": "양파"
+          "ko": "양파",
+          "amount": {
+            "en": "1/2 medium (100 g)",
+            "ko": "중간 크기 1/2개(100g)"
+          }
         },
         {
           "ref": "mushroom",
           "en": "mushrooms",
-          "ko": "버섯"
+          "ko": "버섯",
+          "amount": {
+            "en": "100 g",
+            "ko": "100g"
+          }
         },
         {
           "ref": "chili-pepper",
           "en": "green chili pepper",
-          "ko": "청양고추"
+          "ko": "청양고추",
+          "amount": {
+            "en": "1",
+            "ko": "1개"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "대파"
+          "ko": "대파",
+          "amount": {
+            "en": "1/2 stalk",
+            "ko": "1/2대"
+          }
         },
         {
           "ref": "garlic",
           "en": "minced garlic",
-          "ko": "다진 마늘"
+          "ko": "다진 마늘",
+          "amount": {
+            "en": "1 tsp",
+            "ko": "1작은술"
+          }
         },
         {
           "ref": null,
-          "safetyRefs": ["anchovy"], "en": "water (or anchovy stock)",
-          "ko": "물 (또는 멸치 육수)"
+          "safetyRefs": [
+            "anchovy"
+          ],
+          "en": "water (or anchovy stock)",
+          "ko": "물 (또는 멸치 육수)",
+          "amount": {
+            "en": "800 ml",
+            "ko": "800ml"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Dice the potato, zucchini, onion, tofu, and mushrooms into similar-size pieces.",
-          "Bring the water to a boil and whisk in the doenjang until it dissolves.",
-          "Add the potato first and cook for 5 minutes, since it takes the longest.",
-          "Add the zucchini, onion, mushrooms, and garlic and simmer until the vegetables soften.",
-          "Finish with the tofu, chili pepper, and green onion, and boil for 2 more minutes before serving."
+          "Cut the potato into 1 cm cubes. Dice the zucchini, onion, tofu and mushrooms; slice the chili and green onion.",
+          "Bring 800 ml water or stock to a boil. Stir in 2 tbsp doenjang and add the potato. Simmer over medium heat for 5 minutes.",
+          "Add the zucchini, onion, mushrooms and garlic. Simmer for 5–7 minutes, until a fork slides easily into the potato.",
+          "Add the tofu, chili and green onion. Simmer for 2 minutes, then taste. Add a little more doenjang if needed, or water if too salty."
         ],
         "ko": [
-          "감자, 애호박, 양파, 두부, 버섯을 비슷한 크기로 깍둑썰기한다.",
-          "물을 끓인 뒤 된장을 풀어 잘 녹인다.",
-          "가장 오래 걸리는 감자를 먼저 넣고 5분간 끓인다.",
-          "애호박, 양파, 버섯, 마늘을 넣고 채소가 부드러워질 때까지 끓인다.",
-          "마지막에 두부, 고추, 대파를 넣고 2분 더 끓여 낸다."
+          "감자는 1cm 크기로 썰어요. 애호박, 양파, 두부, 버섯은 먹기 좋게 썰고 고추와 대파는 송송 썰어요.",
+          "물이나 육수 800ml를 끓이고 된장 2큰술을 풀어요. 감자를 넣고 중불에서 5분간 끓여요.",
+          "애호박, 양파, 버섯, 마늘을 넣어요. 감자가 포크로 쉽게 찔릴 때까지 5~7분 더 끓여요.",
+          "두부, 고추, 대파를 넣고 2분간 끓인 뒤 맛을 봐요. 싱거우면 된장을 조금 더 넣고 짜면 물을 보충해요."
         ]
       }
     },
@@ -341,27 +422,47 @@
         {
           "ref": "egg",
           "en": "eggs",
-          "ko": "계란"
+          "ko": "계란",
+          "amount": {
+            "en": "4",
+            "ko": "4개"
+          }
         },
         {
           "ref": "carrot",
           "en": "carrot (finely diced)",
-          "ko": "당근 (잘게 다진 것)"
+          "ko": "당근 (잘게 다진 것)",
+          "amount": {
+            "en": "30 g",
+            "ko": "30g"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion (finely chopped)",
-          "ko": "쪽파 또는 대파 (잘게 썬 것)"
+          "ko": "쪽파 또는 대파 (잘게 썬 것)",
+          "amount": {
+            "en": "2 tbsp, chopped",
+            "ko": "썬 것 2큰술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "1/4 tsp",
+            "ko": "1/4작은술"
+          }
         },
         {
           "ref": "cooking-oil",
           "en": "cooking oil",
-          "ko": "식용유"
+          "ko": "식용유",
+          "amount": {
+            "en": "2 tsp",
+            "ko": "2작은술"
+          }
         }
       ],
       "steps": {
@@ -581,58 +682,90 @@
         {
           "ref": "rice",
           "en": "cooked rice (cooled promptly and refrigerated)",
-          "ko": "밥 (조리 후 바로 식혀 냉장 보관한 것)"
+          "ko": "밥 (조리 후 바로 식혀 냉장 보관한 것)",
+          "amount": {
+            "en": "400 g",
+            "ko": "400g"
+          }
         },
         {
           "ref": "kimchi",
           "en": "ripe kimchi",
-          "ko": "잘 익은 김치"
+          "ko": "잘 익은 김치",
+          "amount": {
+            "en": "200 g",
+            "ko": "200g"
+          }
         },
         {
           "ref": "spam",
           "en": "spam (diced)",
-          "ko": "스팸 (깍둑썬 것)"
+          "ko": "스팸 (깍둑썬 것)",
+          "amount": {
+            "en": "100 g",
+            "ko": "100g"
+          }
         },
         {
           "ref": "egg",
           "en": "egg",
-          "ko": "계란"
+          "ko": "계란",
+          "amount": {
+            "en": "2",
+            "ko": "2개"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "대파"
+          "ko": "대파",
+          "amount": {
+            "en": "1/2 stalk",
+            "ko": "1/2대"
+          }
         },
         {
           "ref": "cooking-oil",
           "en": "cooking oil",
-          "ko": "식용유"
+          "ko": "식용유",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "sesame-oil",
           "en": "sesame oil",
-          "ko": "참기름"
+          "ko": "참기름",
+          "amount": {
+            "en": "1 tsp",
+            "ko": "1작은술"
+          }
         },
         {
           "ref": "dried-seaweed",
           "en": "crumbled roasted seaweed",
-          "ko": "부순 구운 김"
+          "ko": "부순 구운 김",
+          "amount": {
+            "en": "1 sheet",
+            "ko": "1장"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Chop the kimchi and dice the spam into small cubes.",
-          "Heat oil in a pan and fry the green onion until fragrant, then add the spam and kimchi.",
-          "Stir-fry until the kimchi softens, then add the rice and break up any clumps while mixing.",
-          "Drizzle sesame oil around the edge of the pan and toss once more.",
-          "Top with a fried egg and crumbled seaweed before serving."
+          "Use rice that was cooled promptly and kept refrigerated. Chop the kimchi and green onion; dice the Spam.",
+          "Heat the oil in a wide pan over medium-high heat. Cook the green onion for 30 seconds, then add the Spam and kimchi. Stir-fry for 3–4 minutes.",
+          "Add the rice and break up the clumps. Stir-fry for 3–5 minutes, until hot throughout; reheated rice should reach 74°C (165°F).",
+          "Turn off the heat and stir in the sesame oil. Fry the eggs separately until both whites and yolks are firm.",
+          "Divide between two bowls and top with the eggs and crumbled seaweed. Serve immediately."
         ],
         "ko": [
-          "김치는 잘게 썰고 스팸은 작게 깍둑썬다.",
-          "팬에 기름을 두르고 대파를 볶아 향을 낸 뒤 스팸과 김치를 넣는다.",
-          "김치가 부드러워지면 밥을 넣고 덩어리를 풀어가며 볶는다.",
-          "팬 가장자리에 참기름을 두르고 한 번 더 섞는다.",
-          "계란 프라이와 부순 김을 올려 낸다."
+          "조리 후 바로 식혀 냉장 보관한 밥을 사용해요. 김치와 대파를 썰고 스팸은 작게 깍둑썰기해요.",
+          "넓은 팬에 식용유를 두르고 중강불에서 대파를 30초간 볶아요. 스팸과 김치를 넣고 3~4분간 볶아요.",
+          "밥을 넣고 덩어리를 풀어가며 3~5분간 볶아요. 냉장 밥은 전체가 뜨거워지고 중심 온도가 74°C에 도달하도록 데워요.",
+          "불을 끄고 참기름을 섞어요. 다른 팬에서 계란의 흰자와 노른자가 모두 단단해질 때까지 프라이해요.",
+          "두 그릇에 나누어 담고 계란과 부순 김을 올려 바로 먹어요."
         ]
       }
     },
@@ -653,38 +786,66 @@
         {
           "ref": "bean-sprout",
           "en": "bean sprouts",
-          "ko": "콩나물"
+          "ko": "콩나물",
+          "amount": {
+            "en": "300 g",
+            "ko": "300g"
+          }
         },
         {
           "ref": "anchovy",
           "en": "dried anchovies (for stock)",
-          "ko": "국물용 멸치"
+          "ko": "국물용 멸치",
+          "amount": {
+            "en": "10 g",
+            "ko": "10g"
+          }
         },
         {
           "ref": "garlic",
           "en": "minced garlic",
-          "ko": "다진 마늘"
+          "ko": "다진 마늘",
+          "amount": {
+            "en": "1 tsp",
+            "ko": "1작은술"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "대파"
+          "ko": "대파",
+          "amount": {
+            "en": "1/2 stalk",
+            "ko": "1/2대"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "1/2 tsp, then adjust",
+            "ko": "1/2작은술, 맛을 보고 추가"
+          }
         },
         {
           "ref": "gochugaru",
           "en": "gochugaru (optional)",
           "ko": "고춧가루 (선택)",
-          "optional": true
+          "optional": true,
+          "amount": {
+            "en": "1/2 tsp, optional",
+            "ko": "1/2작은술, 선택"
+          }
         },
         {
           "ref": null,
           "en": "water",
-          "ko": "물"
+          "ko": "물",
+          "amount": {
+            "en": "1 litre",
+            "ko": "1L"
+          }
         }
       ],
       "steps": {
@@ -1004,7 +1165,10 @@
         },
         {
           "ref": null,
-          "safetyRefs": ["anchovy"], "en": "water (or anchovy stock)",
+          "safetyRefs": [
+            "anchovy"
+          ],
+          "en": "water (or anchovy stock)",
           "ko": "물 (또는 멸치 육수)"
         }
       ],
@@ -1747,7 +1911,10 @@
         },
         {
           "ref": null,
-          "safetyRefs": ["stock"], "en": "water (or dashi)",
+          "safetyRefs": [
+            "stock"
+          ],
+          "en": "water (or dashi)",
           "ko": "물 (또는 가쓰오 육수)"
         }
       ],
@@ -1824,7 +1991,10 @@
         },
         {
           "ref": null,
-          "safetyRefs": ["stock"], "en": "water (or dashi)",
+          "safetyRefs": [
+            "stock"
+          ],
+          "en": "water (or dashi)",
           "ko": "물 (또는 가쓰오 육수)"
         }
       ],
@@ -2227,58 +2397,88 @@
         {
           "ref": "rice",
           "en": "cooked rice (cooled promptly and refrigerated)",
-          "ko": "밥 (조리 후 바로 식혀 냉장 보관한 것)"
+          "ko": "밥 (조리 후 바로 식혀 냉장 보관한 것)",
+          "amount": {
+            "en": "400 g",
+            "ko": "400g"
+          }
         },
         {
           "ref": "egg",
           "en": "eggs",
-          "ko": "계란"
+          "ko": "계란",
+          "amount": {
+            "en": "3",
+            "ko": "3개"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "대파"
+          "ko": "대파",
+          "amount": {
+            "en": "1 stalk",
+            "ko": "1대"
+          }
         },
         {
           "ref": "ham",
           "en": "ham (diced, optional)",
-          "ko": "햄 (깍둑썬 것, 선택)"
+          "ko": "햄 (깍둑썬 것, 선택)",
+          "amount": {
+            "en": "80 g, optional",
+            "ko": "80g, 선택"
+          }
         },
         {
           "ref": "cooking-oil",
           "en": "cooking oil",
-          "ko": "식용유"
+          "ko": "식용유",
+          "amount": {
+            "en": "2 tbsp",
+            "ko": "2큰술"
+          }
         },
         {
           "ref": "soy-sauce",
           "en": "soy sauce",
-          "ko": "간장"
+          "ko": "간장",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "To taste after soy sauce",
+            "ko": "간장을 넣은 뒤 입맛에 맞게"
+          }
         },
         {
           "ref": "black-pepper",
           "en": "black pepper",
-          "ko": "후추"
+          "ko": "후추",
+          "amount": {
+            "en": "A pinch",
+            "ko": "한 꼬집"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Beat the eggs and chop the green onion, keeping the white and green parts separate.",
-          "Heat oil in a wok and fry the white part of the green onion until fragrant.",
-          "Pour in the eggs and scramble them softly, then add the rice before they fully set.",
-          "Toss over high heat, pressing out clumps, and add the ham if using.",
-          "Season with soy sauce along the rim of the wok, salt, and pepper, then finish with the green onion tops."
+          "Use rice that was cooled promptly and refrigerated. Beat the eggs, chop the green onion and dice the optional ham.",
+          "Heat the oil in a wide pan over medium-high heat. Fry the white part of the green onion for 30 seconds, then scramble the eggs for about 1 minute.",
+          "Add the rice and ham if using. Break up the rice and stir-fry for 3–5 minutes, until the eggs are fully set and the reheated rice reaches 74°C (165°F).",
+          "Stir in the soy sauce, pepper and green onion tops. Taste before adding salt, then divide between two bowls."
         ],
         "ko": [
-          "계란을 풀고 대파는 흰 부분과 초록 부분을 나눠 썬다.",
-          "웍에 기름을 두르고 대파 흰 부분을 향이 나게 볶는다.",
-          "계란물을 부어 부드럽게 스크램블하고 완전히 익기 전에 밥을 넣는다.",
-          "센 불에서 덩어리를 풀어가며 볶고 햄이 있으면 함께 넣는다.",
-          "웍 가장자리에 간장을 둘러 향을 내고 소금, 후추로 간한 뒤 파 초록 부분으로 마무리한다."
+          "조리 후 바로 식혀 냉장 보관한 밥을 사용해요. 계란을 풀고 대파와 선택 재료인 햄을 썰어요.",
+          "넓은 팬에 식용유를 두르고 중강불에서 대파 흰 부분을 30초간 볶아요. 계란물을 넣고 약 1분간 저어 익혀요.",
+          "밥과 햄을 넣고 덩어리를 풀며 3~5분간 볶아요. 계란은 완전히 익히고 냉장 밥은 중심 온도가 74°C에 도달하도록 데워요.",
+          "간장, 후추, 대파 초록 부분을 넣고 섞어요. 맛을 본 뒤 소금을 더하고 두 그릇에 나누어 담아요."
         ]
       }
     },
@@ -2388,32 +2588,56 @@
         {
           "ref": "bok-choy",
           "en": "bok choy",
-          "ko": "청경채"
+          "ko": "청경채",
+          "amount": {
+            "en": "300 g",
+            "ko": "300g"
+          }
         },
         {
           "ref": "garlic",
           "en": "garlic (sliced)",
-          "ko": "마늘 (편 썬 것)"
+          "ko": "마늘 (편 썬 것)",
+          "amount": {
+            "en": "2 cloves",
+            "ko": "2쪽"
+          }
         },
         {
           "ref": "cooking-oil",
           "en": "cooking oil",
-          "ko": "식용유"
+          "ko": "식용유",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "oyster-sauce",
           "en": "oyster sauce",
-          "ko": "굴소스"
+          "ko": "굴소스",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "sugar",
           "en": "sugar",
-          "ko": "설탕"
+          "ko": "설탕",
+          "amount": {
+            "en": "1/4 tsp",
+            "ko": "1/4작은술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "To taste after oyster sauce",
+            "ko": "굴소스를 넣은 뒤 입맛에 맞게"
+          }
         }
       ],
       "steps": {
@@ -2537,38 +2761,66 @@
         {
           "ref": "tomato",
           "en": "ripe tomatoes",
-          "ko": "잘 익은 토마토"
+          "ko": "잘 익은 토마토",
+          "amount": {
+            "en": "2 medium (300 g)",
+            "ko": "중간 크기 2개(300g)"
+          }
         },
         {
           "ref": "egg",
           "en": "eggs",
-          "ko": "계란"
+          "ko": "계란",
+          "amount": {
+            "en": "3",
+            "ko": "3개"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "대파"
+          "ko": "대파",
+          "amount": {
+            "en": "2 tbsp, chopped",
+            "ko": "썬 것 2큰술"
+          }
         },
         {
           "ref": "sugar",
           "en": "sugar",
-          "ko": "설탕"
+          "ko": "설탕",
+          "amount": {
+            "en": "1/2 tsp",
+            "ko": "1/2작은술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "1/4 tsp, then adjust",
+            "ko": "1/4작은술, 맛을 보고 추가"
+          }
         },
         {
           "ref": "ketchup",
           "en": "ketchup (optional, for depth)",
           "ko": "케첩 (선택, 감칠맛용)",
-          "optional": true
+          "optional": true,
+          "amount": {
+            "en": "1 tbsp, optional",
+            "ko": "1큰술, 선택"
+          }
         },
         {
           "ref": "cooking-oil",
           "en": "cooking oil",
-          "ko": "식용유"
+          "ko": "식용유",
+          "amount": {
+            "en": "2 tbsp, divided",
+            "ko": "2큰술, 나누어 사용"
+          }
         }
       ],
       "steps": {
@@ -2576,14 +2828,14 @@
           "Cut the tomatoes into wedges and beat the eggs with a pinch of salt.",
           "Soft-scramble the eggs in hot oil and set them aside while still glossy.",
           "In the same pan, cook the tomatoes with sugar and a little ketchup until they release their juices.",
-          "Return the eggs, fold everything together gently, and season with salt.",
+          "Return the eggs and fold gently over medium heat for 1–2 minutes, until no liquid egg remains and the egg mixture reaches 71°C (160°F). Season with salt.",
           "Top with green onion and serve with rice."
         ],
         "ko": [
           "토마토는 웨지로 썰고 계란은 소금 한 꼬집을 넣어 푼다.",
           "뜨거운 기름에 계란을 촉촉하게 스크램블해 따로 덜어 둔다.",
           "같은 팬에 토마토, 설탕, 케첩 약간을 넣고 즙이 나올 때까지 익힌다.",
-          "계란을 다시 넣고 살살 섞은 뒤 소금으로 간한다.",
+          "계란을 다시 넣고 중불에서 1~2분간 살살 섞어요. 계란물이 남지 않고 계란 요리의 중심 온도가 71°C가 되도록 익힌 뒤 소금으로 간해요.",
           "대파를 올려 밥과 함께 낸다."
         ]
       }
@@ -3110,7 +3362,10 @@
         },
         {
           "ref": null,
-          "safetyRefs": ["beef"], "en": "water (or beef stock)",
+          "safetyRefs": [
+            "beef"
+          ],
+          "en": "water (or beef stock)",
           "ko": "물 (또는 소고기 육수)"
         }
       ],
@@ -3150,47 +3405,83 @@
         {
           "ref": "pasta",
           "en": "pasta",
-          "ko": "파스타 면"
+          "ko": "파스타 면",
+          "amount": {
+            "en": "200 g, dry",
+            "ko": "마른 면 200g"
+          }
         },
         {
           "ref": "tomato",
           "en": "tomatoes (chopped)",
-          "ko": "토마토 (썬 것)"
+          "ko": "토마토 (썬 것)",
+          "amount": {
+            "en": "500 g",
+            "ko": "500g"
+          }
         },
         {
           "ref": "onion",
           "en": "onion (diced)",
-          "ko": "양파 (잘게 썬 것)"
+          "ko": "양파 (잘게 썬 것)",
+          "amount": {
+            "en": "1/2 medium (100 g)",
+            "ko": "중간 크기 1/2개(100g)"
+          }
         },
         {
           "ref": "garlic",
           "en": "garlic (minced)",
-          "ko": "마늘 (다진 것)"
+          "ko": "마늘 (다진 것)",
+          "amount": {
+            "en": "2 cloves",
+            "ko": "2쪽"
+          }
         },
         {
           "ref": "olive-oil",
           "en": "olive oil",
-          "ko": "올리브오일"
+          "ko": "올리브오일",
+          "amount": {
+            "en": "2 tbsp",
+            "ko": "2큰술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "2 tsp for pasta water; sauce to taste",
+            "ko": "면수용 2작은술, 소스는 입맛에 맞게"
+          }
         },
         {
           "ref": "sugar",
           "en": "sugar (a pinch)",
-          "ko": "설탕 (약간)"
+          "ko": "설탕 (약간)",
+          "amount": {
+            "en": "1/4 tsp",
+            "ko": "1/4작은술"
+          }
         },
         {
           "ref": "black-pepper",
           "en": "black pepper",
-          "ko": "후추"
+          "ko": "후추",
+          "amount": {
+            "en": "A pinch",
+            "ko": "한 꼬집"
+          }
         },
         {
           "ref": "parmesan",
           "en": "parmesan (grated, optional)",
-          "ko": "파마산 치즈 (간 것, 선택)"
+          "ko": "파마산 치즈 (간 것, 선택)",
+          "amount": {
+            "en": "2 tbsp, optional",
+            "ko": "2큰술, 선택"
+          }
         }
       ],
       "steps": {
@@ -3289,48 +3580,72 @@
         {
           "ref": "pasta",
           "en": "pasta",
-          "ko": "파스타 면"
+          "ko": "파스타 면",
+          "amount": {
+            "en": "200 g, dry",
+            "ko": "마른 면 200g"
+          }
         },
         {
           "ref": "garlic",
           "en": "garlic (thinly sliced)",
-          "ko": "마늘 (얇게 썬 것)"
+          "ko": "마늘 (얇게 썬 것)",
+          "amount": {
+            "en": "4 cloves",
+            "ko": "4쪽"
+          }
         },
         {
           "ref": "olive-oil",
           "en": "olive oil (generous)",
-          "ko": "올리브오일 (넉넉히)"
+          "ko": "올리브오일 (넉넉히)",
+          "amount": {
+            "en": "3 tbsp",
+            "ko": "3큰술"
+          }
         },
         {
           "ref": "chili-pepper",
           "en": "chili pepper (sliced) or chili flakes",
-          "ko": "고추 (썬 것) 또는 페페론치노"
+          "ko": "고추 (썬 것) 또는 페페론치노",
+          "amount": {
+            "en": "1 small or 1/2 tsp flakes",
+            "ko": "작은 것 1개 또는 고춧가루 1/2작은술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "2 tsp for pasta water; finish to taste",
+            "ko": "면수용 2작은술, 마무리 간은 입맛에 맞게"
+          }
         },
         {
           "ref": "black-pepper",
           "en": "black pepper",
-          "ko": "후추"
+          "ko": "후추",
+          "amount": {
+            "en": "A pinch",
+            "ko": "한 꼬집"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Boil the pasta in salted water until just tender, keeping some of the cooking water.",
-          "Gently warm a generous amount of olive oil in a pan and cook the sliced garlic over low heat until pale gold.",
-          "Add the sliced chili and stir briefly so the oil picks up a little heat.",
-          "Toss in the drained pasta with a ladle of pasta water and shake the pan until the oil and water come together.",
-          "Season with salt and black pepper and serve right away."
+          "Bring 2 litres water with 2 tsp salt to a boil. Cook the pasta for the time on its packet. Reserve 150 ml pasta water before draining.",
+          "While the pasta cooks, warm the olive oil and sliced garlic in a wide pan over low heat for 3–5 minutes, until the garlic is pale gold. Do not let it turn dark brown.",
+          "Add the chili and stir for 20 seconds. Add the pasta and 60 ml reserved water.",
+          "Toss over medium heat for 1–2 minutes, adding more reserved water a tablespoon at a time until the pasta is lightly coated.",
+          "Taste, add pepper and salt if needed, and serve immediately."
         ],
         "ko": [
-          "소금 넣은 끓는 물에 파스타를 알맞게 삶고 면수를 조금 남겨 둔다.",
-          "팬에 올리브오일을 넉넉히 두르고 얇게 썬 마늘을 약불에서 연한 갈색이 될 때까지 천천히 익힌다.",
-          "썬 고추를 넣고 잠깐 볶아 기름에 매콤한 향을 입힌다.",
-          "건진 파스타와 면수 한 국자를 넣고 기름과 면수가 어우러지도록 팬을 흔들며 섞는다.",
-          "소금과 후추로 간을 맞춰 바로 낸다."
+          "물 2L에 소금 2작은술을 넣고 끓여요. 파스타는 포장지에 적힌 시간대로 삶고 건지기 전에 면수 150ml를 남겨요.",
+          "면이 익는 동안 넓은 팬에 올리브오일과 마늘 편을 넣고 약불에서 3~5분간 익혀요. 연한 금색이 되면 다음 단계로 넘어가고 진한 갈색이 나지 않게 해요.",
+          "고추를 넣고 20초간 볶은 뒤 파스타와 면수 60ml를 넣어요.",
+          "중불에서 1~2분간 섞어요. 면이 촉촉하게 코팅되도록 남겨 둔 면수를 한 큰술씩 더해요.",
+          "맛을 보고 후추와 필요한 만큼의 소금을 넣어 바로 먹어요."
         ]
       }
     },
@@ -3753,27 +4068,47 @@
         {
           "ref": "egg",
           "en": "eggs",
-          "ko": "달걀"
+          "ko": "달걀",
+          "amount": {
+            "en": "2",
+            "ko": "2개"
+          }
         },
         {
           "ref": "milk",
           "en": "milk (a splash)",
-          "ko": "우유 (약간)"
+          "ko": "우유 (약간)",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "butter",
           "en": "butter",
-          "ko": "버터"
+          "ko": "버터",
+          "amount": {
+            "en": "10 g",
+            "ko": "10g"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "A pinch",
+            "ko": "한 꼬집"
+          }
         },
         {
           "ref": "black-pepper",
           "en": "black pepper",
-          "ko": "후추"
+          "ko": "후추",
+          "amount": {
+            "en": "A pinch",
+            "ko": "한 꼬집"
+          }
         }
       ],
       "steps": {
@@ -3946,38 +4281,66 @@
         {
           "ref": "bread",
           "en": "bread slices (thick-cut)",
-          "ko": "식빵 (두툼한 것)"
+          "ko": "식빵 (두툼한 것)",
+          "amount": {
+            "en": "4 slices, about 2 cm thick",
+            "ko": "약 2cm 두께 4장"
+          }
         },
         {
           "ref": "egg",
           "en": "eggs",
-          "ko": "달걀"
+          "ko": "달걀",
+          "amount": {
+            "en": "2",
+            "ko": "2개"
+          }
         },
         {
           "ref": "milk",
           "en": "milk",
-          "ko": "우유"
+          "ko": "우유",
+          "amount": {
+            "en": "100 ml",
+            "ko": "100ml"
+          }
         },
         {
           "ref": "sugar",
           "en": "sugar",
-          "ko": "설탕"
+          "ko": "설탕",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "butter",
           "en": "butter",
-          "ko": "버터"
+          "ko": "버터",
+          "amount": {
+            "en": "15 g",
+            "ko": "15g"
+          }
         },
         {
           "ref": "honey",
           "en": "honey or syrup (for serving)",
-          "ko": "꿀 또는 시럽 (곁들임)"
+          "ko": "꿀 또는 시럽 (곁들임)",
+          "amount": {
+            "en": "1 tbsp per serving, to taste",
+            "ko": "1인분에 1큰술, 입맛에 맞게"
+          }
         },
         {
           "ref": "cinnamon",
           "en": "cinnamon (optional)",
           "ko": "시나몬 가루 (선택)",
-          "optional": true
+          "optional": true,
+          "amount": {
+            "en": "1/4 tsp, optional",
+            "ko": "1/4작은술, 선택"
+          }
         }
       ],
       "steps": {
@@ -3985,14 +4348,14 @@
           "Whisk the eggs, milk, sugar, and cinnamon if using in a wide, shallow dish.",
           "Soak each bread slice in the mixture for a few seconds per side.",
           "Melt butter in a pan over medium heat.",
-          "Cook until golden on both sides and the egg mixture is set all the way through the bread.",
+          "Cook for 3–4 minutes per side, until golden and the egg mixture is set through the center of the bread, reaching 71°C (160°F). Lower the heat if the outside browns too quickly.",
           "Serve warm with honey or syrup drizzled on top."
         ],
         "ko": [
           "넓은 그릇에 달걀, 우유, 설탕, 시나몬(선택)을 넣고 잘 푼다.",
           "식빵을 앞뒤로 몇 초씩 담가 달걀물을 입힌다.",
           "팬에 버터를 중불로 녹인다.",
-          "양면을 노릇하게 굽고 빵 안쪽의 계란물까지 익힌다.",
+          "한 면당 3~4분씩 노릇하게 구워요. 빵 안쪽 계란물까지 굳고 중심 온도가 71°C가 되도록 익혀요. 겉면이 너무 빨리 진해지면 불을 줄여요.",
           "꿀이나 시럽을 뿌려 따뜻할 때 낸다."
         ]
       }
@@ -4014,33 +4377,43 @@
         {
           "ref": "bread",
           "en": "bread slices",
-          "ko": "식빵"
+          "ko": "식빵",
+          "amount": {
+            "en": "2 slices",
+            "ko": "2장"
+          }
         },
         {
           "ref": "cheese",
           "en": "cheese slices",
-          "ko": "치즈"
+          "ko": "치즈",
+          "amount": {
+            "en": "2 slices (40 g)",
+            "ko": "2장(40g)"
+          }
         },
         {
           "ref": "butter",
           "en": "butter (softened)",
-          "ko": "버터 (부드럽게 둔 것)"
+          "ko": "버터 (부드럽게 둔 것)",
+          "amount": {
+            "en": "10 g",
+            "ko": "10g"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Butter one side of each bread slice.",
-          "Place a slice butter-side down in a pan over medium-low heat and layer the cheese on top.",
-          "Close the sandwich with the second slice, butter side facing out.",
-          "Cook until the underside is deep golden, then flip carefully.",
-          "When both sides are crisp and the cheese has melted, cut in half and serve."
+          "Spread the butter evenly over one side of each bread slice.",
+          "Place one slice butter-side down in a pan over medium-low heat. Add the cheese and the other bread slice, butter-side up.",
+          "Cook for 3–4 minutes, until the underside is golden. Lower the heat if the bread browns before the cheese melts.",
+          "Flip carefully and cook for another 2–3 minutes, until both sides are crisp and the cheese is melted. Cut in half and serve."
         ],
         "ko": [
-          "식빵 한쪽 면에 각각 버터를 바른다.",
-          "버터 바른 면이 아래로 가게 팬에 올리고 중약불에서 치즈를 얹는다.",
-          "버터 면이 바깥으로 오도록 나머지 빵을 덮는다.",
-          "아랫면이 진한 갈색이 되면 조심스럽게 뒤집는다.",
-          "양면이 바삭해지고 치즈가 녹으면 반으로 잘라 낸다."
+          "식빵 한쪽 면에 버터를 고르게 나누어 발라요.",
+          "중약불로 달군 팬에 버터 면이 아래로 가도록 식빵 한 장을 올려요. 치즈와 나머지 빵을 얹고 위쪽 빵의 버터 면은 바깥을 향하게 해요.",
+          "아랫면이 노릇해질 때까지 3~4분간 구워요. 치즈가 녹기 전에 빵이 진해지면 불을 줄여요.",
+          "조심스럽게 뒤집어 2~3분 더 구워요. 양면이 바삭하고 치즈가 녹으면 반으로 잘라 먹어요."
         ]
       }
     },
@@ -17893,58 +18266,97 @@
         {
           "ref": "tofu",
           "en": "firm tofu",
-          "ko": "부침두부"
+          "ko": "부침두부",
+          "amount": {
+            "en": "450 g",
+            "ko": "450g"
+          }
         },
         {
           "ref": "soy-sauce",
           "en": "soy sauce",
-          "ko": "간장"
+          "ko": "간장",
+          "amount": {
+            "en": "2 tbsp",
+            "ko": "2큰술"
+          }
         },
         {
           "ref": "gochugaru",
           "en": "gochugaru",
-          "ko": "고춧가루"
+          "ko": "고춧가루",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "garlic",
           "en": "minced garlic",
-          "ko": "다진 마늘"
+          "ko": "다진 마늘",
+          "amount": {
+            "en": "1 tsp",
+            "ko": "1작은술"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "대파"
+          "ko": "대파",
+          "amount": {
+            "en": "1/2 stalk",
+            "ko": "1/2대"
+          }
         },
         {
           "ref": "sugar",
           "en": "sugar",
-          "ko": "설탕"
+          "ko": "설탕",
+          "amount": {
+            "en": "1 tsp",
+            "ko": "1작은술"
+          }
         },
         {
           "ref": "sesame-oil",
           "en": "sesame oil",
-          "ko": "참기름"
+          "ko": "참기름",
+          "amount": {
+            "en": "1 tsp",
+            "ko": "1작은술"
+          }
         },
         {
           "ref": "water",
           "en": "water",
-          "ko": "물"
+          "ko": "물",
+          "amount": {
+            "en": "120 ml",
+            "ko": "120ml"
+          }
+        },
+        {
+          "ref": "cooking-oil",
+          "en": "cooking oil",
+          "ko": "식용유",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Cut the tofu into thick slabs and pat every side completely dry.",
-          "Pan-fry in oil until both flat sides are golden and firm.",
-          "Mix soy sauce, gochugaru, garlic, sugar and water into a sauce.",
-          "Pour it over the tofu and simmer on low, spooning sauce over the top.",
-          "Cook until the sauce reduces and clings, then finish with green onion and sesame oil."
+          "Cut the tofu into 1 cm slabs and pat dry. Mix the soy sauce, gochugaru, garlic, sugar and 120 ml water.",
+          "Heat 1 tbsp cooking oil in a wide nonstick pan over medium heat. Fry the tofu for 3–4 minutes per side, until golden.",
+          "Pour in the sauce and bring to a simmer. Lower the heat and cook uncovered for 5–7 minutes, spooning sauce over the tofu.",
+          "When a little sauce remains, add the green onion and sesame oil. Turn off the heat. Serve as a side dish for three."
         ],
         "ko": [
-          "두부를 도톰하게 썰어 사방의 물기를 완전히 닦아요.",
-          "기름을 두르고 양면이 노릇하고 단단해질 때까지 지져요.",
-          "간장, 고춧가루, 다진 마늘, 설탕, 물을 섞어 양념장을 만들어요.",
-          "두부에 붓고 약한 불에서 양념을 끼얹어 가며 조려요.",
-          "국물이 졸아 붙으면 대파와 참기름으로 마무리해요."
+          "두부를 1cm 두께로 썰고 물기를 닦아요. 간장, 고춧가루, 마늘, 설탕, 물 120ml를 섞어요.",
+          "넓은 코팅 팬에 식용유 1큰술을 두르고 중불에서 두부를 한 면당 3~4분씩 노릇하게 지져요.",
+          "양념장을 붓고 끓어오르면 약불로 줄여요. 뚜껑을 열고 양념을 끼얹으며 5~7분간 졸여요.",
+          "양념이 조금 남았을 때 대파와 참기름을 넣고 불을 꺼요. 세 사람이 나누어 먹을 반찬으로 담아요."
         ]
       }
     },

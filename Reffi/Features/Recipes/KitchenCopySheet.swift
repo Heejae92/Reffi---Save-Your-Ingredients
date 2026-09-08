@@ -21,11 +21,12 @@ struct KitchenCopySheet: View {
     let recipeName: String
     /// 몇 인분 기준인가(64차). 시드 레시피만 값을 갖고, 커스텀 레시피는 nil이라 자리가 비어 있다.
     /// 세션 스냅샷에 박지 않고 `CookingStepsView`가 원본 레시피에서 되찾아 넘긴다 — 소개문(`intro`)과
-    /// 같은 체인이다. 재료별 분량이 없으므로 이 값은 "이 단계대로 하면 몇 인분이 나오는가"일 뿐,
-    /// 재료를 곱해 주는 계수가 아니다.
+    /// 같은 체인이다. 재료별 안내 분량이 있으면 이 인분을 기준으로 보여준다.
+    /// 수량을 자동으로 곱하거나 재고를 차감하지 않는다.
     let servings: Int?
     let steps: [String]
     let completedSteps: Set<Int>
+    var ingredients: [Recipe.Item] = []
     let onToggle: (Int) -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -101,6 +102,10 @@ struct KitchenCopySheet: View {
     private var list: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
+                if ingredients.contains(where: { $0.amount != nil }) {
+                    ingredientList
+                    ReffiRule(.ticket)
+                }
                 ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
                     stepRow(index: index, text: step)
                     if index < steps.count - 1 { ReffiRule(.ticket) }
@@ -114,6 +119,31 @@ struct KitchenCopySheet: View {
         // 동작인데, 식별자 없이 짠 첫 테스트는 그 버튼을 집어 "not hittable"로 깨졌다. `cook.intro`와
         // 같은 문법으로 이 리스트만 좁혀 잡는다.
         .accessibilityIdentifier("kitchenCopy.steps")
+    }
+
+    private var ingredientList: some View {
+        VStack(alignment: .leading, spacing: ReffiSpace.s3) {
+            Text("Ingredients").reffiType(.subhead).accessibilityAddTraits(.isHeader)
+            ForEach(Array(ingredients.enumerated()), id: \.offset) { _, item in
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline, spacing: ReffiSpace.s3) {
+                        Text(verbatim: item.displayName)
+                        Spacer(minLength: ReffiSpace.s2)
+                        Text(verbatim: item.displayAmount ?? "").fixedSize()
+                    }
+                    VStack(alignment: .leading, spacing: ReffiSpace.s0) {
+                        Text(verbatim: item.displayName)
+                        Text(verbatim: item.displayAmount ?? "")
+                    }
+                }
+                .reffiType(.body).foregroundStyle(ReffiColor.ink2)
+                .accessibilityElement(children: .combine)
+            }
+            Text("Amounts are a cooking guide. Confirm what is left when you finish.")
+                .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+        }
+        .padding(.vertical, ReffiSpace.s3)
+        .accessibilityIdentifier("kitchenCopy.ingredients")
     }
 
     private func stepRow(index: Int, text: String) -> some View {

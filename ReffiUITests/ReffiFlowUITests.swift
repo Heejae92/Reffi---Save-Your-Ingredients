@@ -48,12 +48,10 @@ final class ReffiFlowUITests: XCTestCase {
             .firstMatch.exists
     }
 
-    /// 온보딩을 처음부터 시작. `-skipAuth`로 게스트 상태를 로컬에 고정해, 셋업 완료 후
-    /// 메인 진입이 실제 익명 로그인 네트워크 호출에 좌우되지 않고 결정론적으로 검증되게 한다
-    /// (게이트 로직 자체는 세션 유무와 무관하게 온보딩 완료 시 곧장 메인으로 보낸다).
+    /// 실제 기본 로컬 모드로 온보딩을 처음부터 시작한다. 인증 우회 플래그를 쓰지 않는다.
     private func launchFreshOnboarding() -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-resetOnboarding", "-skipAuth"]
+        app.launchArguments = ["-resetOnboarding", "-app.language", "en", "-AppleLanguages", "(en)"]
         app.launch()
         return app
     }
@@ -665,24 +663,17 @@ final class ReffiFlowUITests: XCTestCase {
 
     // MARK: 로그인 화면 요소
 
-    func testAuthView_ShowsOnlySupportedEntryPoints() {
+    func testProfileHasNoLoginEntryPoints() {
         let app = XCUIApplication()
-        app.launchArguments = ["-authView", "-resetLanguage", "-analyticsOff", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launchArguments = ["-skipAuth", "-skipOnboarding", "-profileTab", "-profileBottom", "-app.language", "en", "-AppleLanguages", "(en)"]
         app.launch()
-
-        XCTAssertTrue(app.textFields["Email"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.secureTextFields.firstMatch.exists)
-        XCTAssertFalse(app.buttons["Continue with Apple"].exists)
-        XCTAssertFalse(app.buttons["Continue with Google"].exists)
-        XCTAssertTrue(app.buttons["Browse without an account"].exists)
-        XCTAssertTrue(app.buttons["Sign up"].exists, "가입 모드 전환 링크")
-        XCTAssertTrue(app.buttons["Forgot password?"].exists)
-        let authImage = XCTAttachment(screenshot: app.screenshot())
-        authImage.name = "auth-en"; authImage.lifetime = .keepAlways; add(authImage)
-        app.swipeUp()
-        XCTAssertTrue(app.buttons["Privacy Policy"].waitForExistence(timeout: 3))
-        app.buttons["Privacy Policy"].tap()
-        XCTAssertTrue(app.staticTexts["Release review draft"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["settings.privacyPolicy"].waitForExistence(timeout: 8))
+        XCTAssertFalse(app.textFields["Email"].exists)
+        XCTAssertFalse(app.secureTextFields.firstMatch.exists)
+        XCTAssertFalse(app.buttons["Sign up"].exists)
+        XCTAssertFalse(app.buttons["Forgot password?"].exists)
+        XCTAssertFalse(app.switches["Share usage data"].exists)
+        XCTAssertTrue(app.staticTexts["No sign-in needed"].exists)
     }
 
     func testPrivacy_LargeKoreanTextRemainsScrollable() {
@@ -692,13 +683,13 @@ final class ReffiFlowUITests: XCTestCase {
                                "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         app.launch()
         XCTAssertTrue(app.staticTexts["개인정보 처리방침"].waitForExistence(timeout: 8))
-        let reviewStatus = app.staticTexts["privacy.reviewStatus"]
-        XCTAssertTrue(reviewStatus.waitForExistence(timeout: 3))
-        let originalY = reviewStatus.frame.minY
+        let effectiveDate = app.staticTexts["privacy.effectiveDate"]
+        XCTAssertTrue(effectiveDate.waitForExistence(timeout: 3))
+        let originalY = effectiveDate.frame.minY
         let top = XCTAttachment(screenshot: app.screenshot())
         top.name = "privacy-ko-large-top"; top.lifetime = .keepAlways; add(top)
         app.swipeUp()
-        XCTAssertTrue(!reviewStatus.isHittable || reviewStatus.frame.minY < originalY)
+        XCTAssertTrue(!effectiveDate.isHittable || effectiveDate.frame.minY < originalY)
         XCTAssertTrue(app.buttons["완료"].isHittable)
         let bottom = XCTAttachment(screenshot: app.screenshot())
         bottom.name = "privacy-ko-large-bottom"; bottom.lifetime = .keepAlways; add(bottom)
@@ -759,20 +750,6 @@ final class ReffiFlowUITests: XCTestCase {
     /// 접근성 요소로 병합된다 — Toggle과 같은 병합 규칙). 로그인 계정 쪽(Logged in + Log out 행)은
     /// 실제 Supabase 세션이 있어야 재현돼 이 UI 테스트로는 다루지 못한다 — 그 갈림은
     /// `accountReceipt`의 `if auth.isGuest` 분기 자체(뷰 로직)만으로 보장된다.
-    func testProfile_GuestAccountRow_ShowsDeviceOnlyCopyAndOpensAuth() {
-        let app = XCUIApplication()
-        app.launchArguments = ["-skipAuth", "-onboarding.done", "YES", "-profileTab", "-profileBottom"]
-        app.launch()
-
-        let guestRow = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Guest mode")).firstMatch
-        XCTAssertTrue(guestRow.waitForExistence(timeout: 8), "게스트는 탭 가능한 단일 Guest mode 행을 봐야 한다")
-        XCTAssertTrue(guestRow.label.contains("On this device"),
-                      "곁 문구는 서버 백업을 약속하지 않고 기기 보관만 정직하게 말해야 한다")
-
-        guestRow.tap()
-        XCTAssertTrue(app.buttons["Sign up"].waitForExistence(timeout: 4), "탭하면 로그인/가입 시트가 떠야 한다")
-    }
-
     // MARK: 앱 내 언어 전환(38차)
 
     /// `.environment(\.locale)`이 실제로 라이브 반영되는지 확인한다 — `SettingsRow.label`·
