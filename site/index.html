@@ -166,23 +166,70 @@
         }
 
         /* Buttons */
+        /* Paper-cut primary button — mirrors the app's PaperCutRect (§13.1):
+           octagon whose corner cut is 32% of the height (capped at 12% of the width),
+           plus a ~1.3px seeded jitter so no two edges are machine-straight. */
         .btn-primary {
+            --cut: 16px;
+            --j: 1.3px;
+            position: relative;
             background-color: var(--c-blue);
             color: var(--c-white);
-            border-radius: var(--radius-paper);
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
             padding: 1rem 2rem;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(23, 106, 176, 0.3);
-            border: 1px solid rgba(37, 33, 27, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            clip-path: polygon(
+                calc(var(--cut) + 0.6 * var(--j)) 0,
+                calc(100% - var(--cut) - 0.5 * var(--j)) calc(0.5 * var(--j)),
+                100% calc(var(--cut) - 0.6 * var(--j)),
+                calc(100% - 0.4 * var(--j)) calc(100% - var(--cut) + 0.4 * var(--j)),
+                calc(100% - var(--cut) + 0.5 * var(--j)) calc(100% - 0.5 * var(--j)),
+                calc(var(--cut) - 0.6 * var(--j)) 100%,
+                calc(0.4 * var(--j)) calc(100% - var(--cut) - 0.5 * var(--j)),
+                0 calc(var(--cut) + 0.7 * var(--j))
+            );
+            transition: transform 0.18s cubic-bezier(.34,1.56,.64,1), background-color 0.18s ease;
+        }
+
+        /* seed B: the same cut with the jitter table shifted, so the two CTAs are not identical */
+        .btn-primary.seed-b {
+            clip-path: polygon(
+                calc(var(--cut) - 0.5 * var(--j)) calc(0.5 * var(--j)),
+                calc(100% - var(--cut) + 0.6 * var(--j)) 0,
+                calc(100% - 0.4 * var(--j)) calc(var(--cut) + 0.4 * var(--j)),
+                100% calc(100% - var(--cut) - 0.6 * var(--j)),
+                calc(100% - var(--cut) - 0.6 * var(--j)) 100%,
+                calc(var(--cut) + 0.4 * var(--j)) calc(100% - 0.5 * var(--j)),
+                0 calc(100% - var(--cut) + 0.6 * var(--j)),
+                calc(0.5 * var(--j)) calc(var(--cut) - 0.4 * var(--j))
+            );
+        }
+
+        /* paper edge on a filled surface: a 1px white hairline just inside the cut (§13.1 paperEdgeOnFill) */
+        .btn-primary::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            clip-path: inherit;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+            pointer-events: none;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(23, 106, 176, 0.4);
+            background-color: var(--c-blue-dark, #004985);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-primary { transition: none; }
         }
 
         .btn-secondary {
@@ -1122,7 +1169,7 @@
                         <p>See how Reffi helps you cook what is about to turn.</p>
                         
                         <div class="cta-actions">
-                            <a href="#how-it-works" class="btn-primary">See how Reffi works</a>
+                            <a href="#how-it-works" class="btn-primary seed-b">See how Reffi works</a>
                             <p class="beta-status">Public beta link coming soon.</p>
                         </div>
                     </div>
