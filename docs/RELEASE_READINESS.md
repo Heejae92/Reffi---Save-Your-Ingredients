@@ -77,7 +77,7 @@ Custom SMTP remains disabled. New-user signup and the Email provider were disabl
 
 The operators are Jongmin Lee and Heejae Eo; the privacy contact is lee1993ljm@gmail.com. General audiences in the US and South Korea, not children. The offline policy has an effective date and links to https://reffi-site.vercel.app. It describes local processing, existing accounts, optional external searches, Vercel/Google Fonts website requests and Gmail inquiries, retention/deletion and user rights.
 
-The existing homepage's Privacy link is a placeholder. `website-release/` contains a ready-to-integrate bilingual policy and the updated homepage. The original website repository/path is pending. Vercel requires a two-factor authenticator code after existing GitHub sign-in, and App Store Connect requires authenticated access. Publication and store metadata have not been verified. Do not use a source file or localhost preview as evidence of public publication. See `PRIVACY_POLICY_REVIEW.md` and the unsent provider questions for remaining operating details.
+The canonical website source is `site/`, integrated from Heejae's remote commits and updated with the bilingual policy. Heejae92 owns Vercel publication, tracked in GitHub issue #26. App Store Connect requires authenticated access for store metadata. Publication and store metadata have not been verified. Do not use a source file or localhost preview as evidence of public publication. See `PRIVACY_POLICY_REVIEW.md` and the unsent provider questions for remaining operating details.
 
 ## Validation commands
 
@@ -122,7 +122,7 @@ Final focused tests passed after the local-owner lifecycle changes: session expi
 
 The final device-targeted **Release build succeeded** with `CODE_SIGNING_ALLOWED=NO`. It verifies production compilation for iOS arm64; it is not a signed archive, exported IPA, installation or TestFlight upload. Log: `/tmp/reffi-p1p2-release-final.log`. The existing non-mutated variable warning in `PaperSilhouette.swift` and the App Intents metadata notice remain.
 
-Final localization gate: 501 keys / 342 literals / 0 missing. Privacy manifest validation and `git diff --check` passed. Eight Korean/English policy sections match between the app and website package. No commit, push, merge or new App Store upload was performed. Vercel is waiting for the operator's authenticator code; the published homepage and App Store Connect privacy metadata have not been changed.
+Final localization gate: 501 keys / 342 literals / 0 missing. Privacy manifest validation and `git diff --check` passed. Eight Korean/English policy sections match between the app and website package. Those checks preceded the build 27 integration recorded below. Vercel publication is assigned to Heejae92 in issue #26; public publication and App Store Connect privacy metadata remain unverified.
 
 Evidence is retained under `output/release-p1p2-2026-09-07/`, including test/build logs, selected screenshots and source hashes. The current TestFlight build predates these edits. Its old email screens cannot sign in now that the live provider has been disabled.
 
@@ -131,4 +131,6 @@ Evidence is retained under `output/release-p1p2-2026-09-07/`, including test/bui
 - Integrated remote main through d0a2b55, retaining site assets and client-role grant hardening. Email authentication UI and its obsolete tests are removed for the account-free release.
 - Local cleanup already occupies migration 0004; client grant hardening is numbered 0005 to avoid duplicate migration versions. The combined SQL harness passes.
 - Website source is `site/`; Heejae92 owns Vercel publication. The bilingual policy matches the app.
-- Build 27 archive and upload validation are pending. Earlier source manifest matched all 750 files before integration.
+- Build 27 signed archive and strict signature validation passed. The archive contains version 1.0 (27), bundle com.reffi.app and the OKDandan font. Full unit suite passed: 630 Swift Testing + 19 XCTest = 649. Localization: 510 keys / 342 literals / 0 missing. Earlier source manifest matched all 750 files before integration; only the merged string catalog differs within app sources.
+- App source commit: `2dcd49a`. Build 1.0 (27) upload accepted by App Store Connect at 2026-09-07 19:33 PDT. Xcode reported `Uploaded package is processing`, `Upload succeeded`, and `EXPORT SUCCEEDED`. Apple processing completion and tester availability are not yet verified.
+- Local evidence: `/tmp/reffi-build27-archive.log`, `/tmp/reffi-build27-tests.log`, `/tmp/reffi-build27-upload.log`. Website publication is assigned to [Heejae92 in issue #26](https://github.com/LittleGD/Reffi---Save-Your-Ingredients/issues/26).

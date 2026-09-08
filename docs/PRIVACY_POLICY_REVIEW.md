@@ -20,7 +20,7 @@ The privacy manifest matches the removal of analytics. Legacy Email/UserID funct
 
 The public homepage was fetched successfully. Its existing Privacy link is `#`, so the offline notice alone does not complete publication. `website-release/privacy.html` contains the same eight bilingual sections. `website-release/index.html` preserves the current landing page, links Privacy to `/privacy.html`, and corrects the recipe count from 128 to 250.
 
-This package is **not deployed**. The existing Vercel account was reached through GitHub sign-in; Vercel requires an authenticator code to finish login. The original homepage repository/path has also been requested. Publish in that existing project, verify the public URL without authentication, then enter it in App Store Connect. No replacement domain or speculative production project was created.
+Production deployment is **not verified**. The canonical source is now `site/`. Heejae92 owns the existing Vercel project; publication and verification are assigned in [issue #26](https://github.com/LittleGD/Reffi---Save-Your-Ingredients/issues/26). Publish in that project, verify the public URL without authentication, then enter it in App Store Connect. No Vercel login code is needed from Jongmin.
 
 ## Operating follow-through
 

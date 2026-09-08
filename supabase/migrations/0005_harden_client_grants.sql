@@ -1,4 +1,4 @@
--- 0004_harden_client_grants.sql — AI 캡 RPC·AI 테이블에서 클라이언트 롤(anon/authenticated)의 잔여 권한 회수.
+-- 0005_harden_client_grants.sql — AI 캡 RPC·AI 테이블에서 클라이언트 롤(anon/authenticated)의 잔여 권한 회수.
 -- 0003_account_deletion.sql 다음에 데이터베이스 소유자(postgres)로 적용한다. 재실행 안전(idempotent).
 --
 -- 배경(2026-09-07 실서버 실측): 0001의 `revoke all on function public.ai_try_consume from public`은
@@ -18,7 +18,7 @@ begin;
 -- 1. AI 캡 RPC — Edge Function(service_role)만 호출한다.
 --    본문은 0001 그대로 두고(이미 public. 한정 참조) search_path만 비운다(0002/0003과 같은 관례).
 --    주의: 0001을 다시 실행하면 CREATE OR REPLACE가 search_path를 public으로 되돌린다(ACL은 보존).
---    마이그레이션의 재실행 계약은 "전부를 순서대로"이므로 0004가 뒤따르면 다시 닫힌다 —
+--    마이그레이션의 재실행 계약은 "전부를 순서대로"이므로 0005가 뒤따르면 다시 닫힌다 —
 --    scripts/test-account-deletion.mjs가 이 재실행 순서를 그대로 검증한다.
 alter function public.ai_try_consume(uuid, int) set search_path = '';
 
