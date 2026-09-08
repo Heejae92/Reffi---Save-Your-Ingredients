@@ -125,3 +125,10 @@ The final device-targeted **Release build succeeded** with `CODE_SIGNING_ALLOWED
 Final localization gate: 501 keys / 342 literals / 0 missing. Privacy manifest validation and `git diff --check` passed. Eight Korean/English policy sections match between the app and website package. No commit, push, merge or new App Store upload was performed. Vercel is waiting for the operator's authenticator code; the published homepage and App Store Connect privacy metadata have not been changed.
 
 Evidence is retained under `output/release-p1p2-2026-09-07/`, including test/build logs, selected screenshots and source hashes. The current TestFlight build predates these edits. Its old email screens cannot sign in now that the live provider has been disabled.
+
+## Build 27 integration (2026-09-07)
+
+- Integrated remote main through d0a2b55, retaining site assets and client-role grant hardening. Email authentication UI and its obsolete tests are removed for the account-free release.
+- Local cleanup already occupies migration 0004; client grant hardening is numbered 0005 to avoid duplicate migration versions. The combined SQL harness passes.
+- Website source is `site/`; Heejae92 owns Vercel publication. The bilingual policy matches the app.
+- Build 27 archive and upload validation are pending. Earlier source manifest matched all 750 files before integration.

@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reffi | Eat it today, waste nothing.</title>
     <meta name="description" content="Reffi turns your grocery receipt into a fridge that counts down. Eat it today, waste nothing.">
-
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Story+Script&display=swap" rel="stylesheet">
-
+    
     <style>
         :root {
             /* Brand Colors */
@@ -21,12 +21,12 @@
             --c-amber: #F4C767;
             --c-terracotta: #F68D70;
             --c-white: #FFFFFF;
-
+            
             /* Typography */
             --font-body: 'Google Sans Flex', 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', system-ui, sans-serif;
             --font-title: 'Story Script', 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', system-ui, cursive;
             --font-num: 'Google Sans Flex', 'Pretendard Variable', Pretendard, system-ui, sans-serif;
-
+            
             /* Shadows & Layout */
             --shadow-paper: 0 8px 24px rgba(37, 33, 27, 0.08);
             --radius-paper: 3px 2px 4px 3px / 2px 4px 3px 4px;
@@ -69,6 +69,9 @@
             transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
+        .beta-status { flex-basis: 100%; margin: 0; font-size: .95rem; }
+        a:focus-visible { outline: 3px solid var(--c-blue); outline-offset: 5px; }
+
         /* Typography */
         h1, h2, h3, h4 {
             font-family: var(--font-body);
@@ -108,7 +111,7 @@
             font-size: 1.125rem;
             margin-bottom: 1.5rem;
         }
-
+        
         p:last-child {
             margin-bottom: 0;
         }
@@ -133,7 +136,7 @@
         .text-center {
             text-align: center;
         }
-
+        
         .story-heading {
             font-family: var(--font-title);
             font-weight: 400;
@@ -191,7 +194,7 @@
             box-shadow: 3px 6px 12px rgba(37, 33, 27, 0.08);
             border-color: var(--c-cocoa);
         }
-
+        
         .hero .btn-secondary:hover,
         .final-cta .btn-secondary:hover {
             transform: translateY(-2px);
@@ -206,7 +209,7 @@
         .receipt-wrapper:hover {
             transform: translateY(-4px) rotate(-1deg);
         }
-
+        
         .hero .receipt-wrapper:hover,
         .final-cta .receipt-wrapper:hover {
             transform: translateY(-4px);
@@ -225,20 +228,20 @@
 
         .zigzag-edges {
             clip-path: polygon(
-                0% 12px, 3% 0px, 6% 12px, 9% 0px, 12% 12px, 15% 0px,
-                18% 12px, 21% 0px, 24% 12px, 27% 0px, 30% 12px, 33% 0px,
-                36% 12px, 39% 0px, 42% 12px, 45% 0px, 48% 12px, 51% 0px,
-                54% 12px, 57% 0px, 60% 12px, 63% 0px, 66% 12px, 69% 0px,
-                72% 12px, 75% 0px, 78% 12px, 81% 0px, 84% 12px, 87% 0px,
+                0% 12px, 3% 0px, 6% 12px, 9% 0px, 12% 12px, 15% 0px, 
+                18% 12px, 21% 0px, 24% 12px, 27% 0px, 30% 12px, 33% 0px, 
+                36% 12px, 39% 0px, 42% 12px, 45% 0px, 48% 12px, 51% 0px, 
+                54% 12px, 57% 0px, 60% 12px, 63% 0px, 66% 12px, 69% 0px, 
+                72% 12px, 75% 0px, 78% 12px, 81% 0px, 84% 12px, 87% 0px, 
                 90% 12px, 93% 0px, 96% 12px, 100% 0px,
-                100% 100%, 96% calc(100% - 12px), 93% 100%, 90% calc(100% - 12px),
-                87% 100%, 84% calc(100% - 12px), 81% 100%, 78% calc(100% - 12px),
-                75% 100%, 72% calc(100% - 12px), 69% 100%, 66% calc(100% - 12px),
-                63% 100%, 60% calc(100% - 12px), 57% 100%, 54% calc(100% - 12px),
-                51% 100%, 48% calc(100% - 12px), 45% 100%, 42% calc(100% - 12px),
-                39% 100%, 36% calc(100% - 12px), 33% 100%, 30% calc(100% - 12px),
-                27% 100%, 24% calc(100% - 12px), 21% 100%, 18% calc(100% - 12px),
-                15% 100%, 12% calc(100% - 12px), 9% 100%, 6% calc(100% - 12px),
+                100% 100%, 96% calc(100% - 12px), 93% 100%, 90% calc(100% - 12px), 
+                87% 100%, 84% calc(100% - 12px), 81% 100%, 78% calc(100% - 12px), 
+                75% 100%, 72% calc(100% - 12px), 69% 100%, 66% calc(100% - 12px), 
+                63% 100%, 60% calc(100% - 12px), 57% 100%, 54% calc(100% - 12px), 
+                51% 100%, 48% calc(100% - 12px), 45% 100%, 42% calc(100% - 12px), 
+                39% 100%, 36% calc(100% - 12px), 33% 100%, 30% calc(100% - 12px), 
+                27% 100%, 24% calc(100% - 12px), 21% 100%, 18% calc(100% - 12px), 
+                15% 100%, 12% calc(100% - 12px), 9% 100%, 6% calc(100% - 12px), 
                 3% 100%, 0% calc(100% - 12px)
             );
         }
@@ -253,43 +256,43 @@
             max-width: 100%;
         }
 
-        .app-motion {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1206 / 2622;
-            overflow: hidden;
+        .app-motion { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 1206 / 2622; 
+            overflow: hidden; 
             border-radius: 28px;
         }
 
-        .app-motion img {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 400%;
-            height: 300%;
-            max-width: none;
-            display: block;
-            animation: reffi-frames 2.4s steps(1, end) infinite;
+        .app-motion img { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            width: 400%; 
+            height: 300%; 
+            max-width: none; 
+            display: block; 
+            animation: reffi-frames 2.4s steps(1, end) infinite; 
         }
 
-        @keyframes reffi-frames {
-            0% { transform: translate(0, 0); }
-            8.33% { transform: translate(-25%, 0); }
-            16.66% { transform: translate(-50%, 0); }
-            25% { transform: translate(-75%, 0); }
-            33.33% { transform: translate(0, -33.333%); }
-            41.66% { transform: translate(-25%, -33.333%); }
-            50% { transform: translate(-50%, -33.333%); }
-            58.33% { transform: translate(-75%, -33.333%); }
-            66.66% { transform: translate(0, -66.667%); }
-            75% { transform: translate(-25%, -66.667%); }
-            83.33% { transform: translate(-50%, -66.667%); }
-            91.66% { transform: translate(-75%, -66.667%); }
-            100% { transform: translate(-75%, -66.667%); }
+        @keyframes reffi-frames { 
+            0% { transform: translate(0, 0); } 
+            8.33% { transform: translate(-25%, 0); } 
+            16.66% { transform: translate(-50%, 0); } 
+            25% { transform: translate(-75%, 0); } 
+            33.33% { transform: translate(0, -33.333%); } 
+            41.66% { transform: translate(-25%, -33.333%); } 
+            50% { transform: translate(-50%, -33.333%); } 
+            58.33% { transform: translate(-75%, -33.333%); } 
+            66.66% { transform: translate(0, -66.667%); } 
+            75% { transform: translate(-25%, -66.667%); } 
+            83.33% { transform: translate(-50%, -66.667%); } 
+            91.66% { transform: translate(-75%, -66.667%); } 
+            100% { transform: translate(-75%, -66.667%); } 
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            .app-motion img { animation: none; }
+        @media (prefers-reduced-motion: reduce) { 
+            .app-motion img { animation: none; } 
         }
 
         /* Tabs & Chips */
@@ -483,7 +486,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
-
+        
         .hero-stage::-webkit-scrollbar {
             display: none;
         }
@@ -582,7 +585,7 @@
             animation: fadeIn 0.6s ease-out forwards;
             opacity: 0;
         }
-
+        
         .hero-content .eyebrow { animation-delay: 0.1s; }
         .hero-content h1 { animation-delay: 0.2s; }
         .hero-content .subline { animation-delay: 0.3s; }
@@ -726,7 +729,7 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-
+        
         .dashed-divider {
             border-top: 2px dashed rgba(37,33,27,0.15);
             margin: 1rem 0 1.5rem;
@@ -746,7 +749,7 @@
         .faq-item:first-child {
             border-top: 2px dashed rgba(37,33,27,0.15);
         }
-
+        
         .faq-q {
             margin-bottom: 0.5rem;
         }
@@ -756,7 +759,7 @@
             max-width: 800px;
             margin: 0 auto;
         }
-
+        
         .final-cta .receipt-inner {
             padding: 4rem 2rem;
             align-items: center;
@@ -803,12 +806,12 @@
         }
     </style>
 </head>
-<body>
+<body id="top">
 
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <a href="#" class="logo-link" aria-label="Reffi Home">
+            <a href="#top" class="logo-link" aria-label="Reffi Home">
                 <img src="resources/amE_138rZ2C58vVnuHm4PX.png" alt="Reffi Logo" class="logo-img">
             </a>
             <nav class="nav">
@@ -829,13 +832,14 @@
                     <div class="hero-content">
                         <span class="eyebrow">IPHONE APP FOR YOUR FRIDGE</span>
                         <h1 class="hero-title">Eat it today,<br>waste nothing.</h1>
-                        <p class="subline">Start free on iPhone.</p>
+                        <p class="subline">An iPhone beta is in development.</p>
                         <p>Reffi turns your grocery receipt into a fridge that counts down. When something is about to turn, it hands you recipe tickets that use it first.</p>
                         <div class="hero-actions">
-                            <a href="#" class="btn-primary">Join the iPhone beta</a>
+                            <a href="#how-it-works" class="btn-primary">See how Reffi works</a>
+                            <p class="beta-status">Public beta link coming soon.</p>
                         </div>
                     </div>
-
+                    
                     <div class="hero-visual">
                         <div class="hero-stage" id="hero-stage">
                             <div class="pile-wrapper">
@@ -844,11 +848,11 @@
                                 <img src="resources/aDPBmEky3-u3BYiUjT__Q6.png" class="food-piece" style="--delay: 0.18s; width: 105px; left: 50%; margin-left: -109px; bottom: 26px; --rot: 2deg; z-index: 2;" alt="Mushroom">
                                 <img src="resources/8I3fBUc04FwcLg-5J8HOHp.png" class="food-piece" style="--delay: 0.36s; width: 105px; left: 50%; margin-left: 4px; bottom: 26px; --rot: -2deg; z-index: 3;" alt="Broccoli">
                                 <img src="resources/9IppLhIJkeF3rMv8NaY4cU.png" class="food-piece" style="--delay: 0.54s; width: 105px; left: 50%; margin-left: 117px; bottom: 26px; --rot: 3deg; z-index: 4;" alt="Avocado">
-
+                                
                                 <img src="resources/9rwB6e4hXh-fe1H21xS__y.png" class="food-piece" style="--delay: 0.72s; width: 105px; left: 50%; margin-left: -165.5px; bottom: 135px; --rot: -3deg; z-index: 5;" alt="Meat">
                                 <img src="resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="food-piece" style="--delay: 0.90s; width: 105px; left: 50%; margin-left: -52.5px; bottom: 139px; --rot: -3deg; z-index: 6;" alt="Apple">
                                 <img src="resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="food-piece" style="--delay: 1.08s; width: 105px; left: 50%; margin-left: 60.5px; bottom: 166px; --rot: 4deg; z-index: 7;" alt="Pepper">
-
+                                
                                 <img src="resources/95gAVfTJv-kcfvWnV_C4J7.png" class="food-piece" style="--delay: 1.26s; width: 105px; left: 50%; margin-left: -52.5px; bottom: 252px; --rot: -2deg; z-index: 8;" alt="Eggplant">
                             </div>
                         </div>
@@ -885,7 +889,7 @@
                 <img src="resources/9rwB6e4hXh-fe1H21xS__y.png" class="bg-deco deco-inner left" style="top: 0; transform: rotate(-12deg);" alt="" aria-hidden="true">
                 <h2 class="story-heading">Sound familiar?</h2>
                 <p class="subline">Groceries you forgot are money in the trash.</p>
-
+                
                 <div class="bubble-grid">
                     <div class="speech-bubble">
                         <span class="eyebrow">Living alone</span>
@@ -900,7 +904,7 @@
                         <p>Typing every item into an app never lasts a week.</p>
                     </div>
                 </div>
-
+                
                 <p class="closing-line">Stop guessing. Reffi logs, ranks and reminds, in one place.</p>
             </div>
         </section>
@@ -909,7 +913,7 @@
         <section id="features" class="features">
             <img src="resources/9zmerpH2zUScmto_Orokgj.png" class="bg-deco deco-outer right" style="top: 96px; transform: rotate(15deg);" alt="" aria-hidden="true">
             <div class="container">
-
+                
                 <!-- Feature 1 -->
                 <div class="feature-row">
                     <div class="feature-text">
@@ -919,7 +923,7 @@
                             <span class="tab">Photo</span>
                             <span class="tab">By hand</span>
                         </div>
-                        <p>Snap the receipt. Groceries land in your fridge with use-by dates filled in. Everything is read on this device. Nothing is uploaded.</p>
+                        <p>Snap the receipt. Groceries land in your fridge with use-by dates filled in. Receipt text is read on this device. Receipt images are not uploaded.</p>
                     </div>
                     <div class="feature-image">
                         <div class="receipt-wrapper">
@@ -1038,7 +1042,7 @@
             <div class="container text-center">
                 <img src="resources/8I3fBUc04FwcLg-5J8HOHp.png" class="bg-deco deco-inner left" style="top: -40px; transform: rotate(5deg);" alt="" aria-hidden="true">
                 <h2 class="story-heading">Core values</h2>
-
+                
                 <div class="values-grid">
                     <div class="receipt-wrapper">
                         <div class="receipt-inner zigzag-edges" style="text-align: left;">
@@ -1063,9 +1067,9 @@
                     </div>
                     <div class="receipt-wrapper">
                         <div class="receipt-inner zigzag-edges" style="text-align: left;">
-                            <h3>Your data stays with you</h3>
+                            <h3>Your fridge stays on your phone</h3>
                             <div class="dashed-divider"></div>
-                            <p>Receipts are read on the phone and nothing is uploaded.</p>
+                            <p>Receipt images stay on your phone. Signing in and optional usage sharing involve separate server processing.</p>
                         </div>
                     </div>
                 </div>
@@ -1077,7 +1081,7 @@
             <div class="container">
                 <img src="resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="bg-deco deco-inner right" style="top: -60px; transform: rotate(-15deg);" alt="" aria-hidden="true">
                 <h2 class="text-center story-heading">FAQ</h2>
-
+                
                 <div class="faq-list">
                     <div class="faq-item">
                         <h3 class="faq-q">Which phones?</h3>
@@ -1085,7 +1089,7 @@
                     </div>
                     <div class="faq-item">
                         <h3 class="faq-q">Is it free?</h3>
-                        <p>The beta is free on TestFlight.</p>
+                        <p>The beta is free. The public TestFlight link will be added here when it is available.</p>
                     </div>
                     <div class="faq-item">
                         <h3 class="faq-q">Do I need an account?</h3>
@@ -1106,10 +1110,11 @@
                 <div class="receipt-wrapper">
                     <div class="receipt-inner zigzag-edges text-center">
                         <h2 class="cta-title">Start with the fridge you already have.</h2>
-                        <p>Join the iPhone beta and cook what is about to turn.</p>
-
+                        <p>See how Reffi helps you cook what is about to turn.</p>
+                        
                         <div class="cta-actions">
-                            <a href="#" class="btn-primary">Join the iPhone beta</a>
+                            <a href="#how-it-works" class="btn-primary">See how Reffi works</a>
+                            <p class="beta-status">Public beta link coming soon.</p>
                         </div>
                     </div>
                 </div>
@@ -1123,11 +1128,11 @@
             <img src="resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="bg-deco deco-inner right" style="top: 0; transform: rotate(-5deg);" alt="" aria-hidden="true">
             <img src="resources/amE_138rZ2C58vVnuHm4PX.png" alt="Reffi Logo" class="logo-img" style="margin: 0 auto 1rem;">
             <p class="subline" style="margin-bottom: 0;">Eat it today, waste nothing.</p>
-
+            
             <div class="footer-links">
-                <a href="/privacy.html" title="Receipts and fridge data stay on your device.">Privacy</a>
+                <a href="privacy.html">Privacy Policy</a>
             </div>
-
+            
             <span class="eyebrow footer-copy">Copyright Reffi</span>
         </div>
     </footer>
@@ -1136,27 +1141,27 @@
         document.addEventListener("DOMContentLoaded", function() {
             const stage = document.getElementById('hero-stage');
             if (!stage) return;
-
+            
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+            
             if (!prefersReducedMotion) {
                 function playHeroAnimation() {
                     // Reset animation state
                     stage.classList.remove('is-animating', 'fade-out');
                     void stage.offsetWidth; // Force reflow
-
+                    
                     // Start sequence
                     stage.classList.add('is-animating');
-
+                    
                     // Fade out pieces after 3s of resting (last piece settles ~2.06s)
                     setTimeout(() => {
                         stage.classList.add('fade-out');
                     }, 5060);
-
+                    
                     // Restart loop after fade out completes
                     setTimeout(playHeroAnimation, 5460);
                 }
-
+                
                 // Initialize loop with a small delay for smoother page load
                 setTimeout(playHeroAnimation, 100);
             } else {

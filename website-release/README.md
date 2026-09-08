@@ -1,1 +1,1 @@
-Publishing package for https://reffi-site.vercel.app. privacy.html matches the account-free app policy. index.html preserves the public landing page with Privacy linked and the recipe count corrected. Verify the source project before deployment; this folder has not been deployed.
+The canonical website source is now ../site/. Heejae (GitHub: Heejae92) owns the Vercel deployment. This folder preserves the earlier handoff snapshot; deploy site/ with its resources and security headers, not this snapshot.
