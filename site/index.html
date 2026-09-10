@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reffi | Eat it today, waste nothing.</title>
     <meta name="description" content="Reffi turns your grocery receipt into a fridge that counts down. Eat it today, waste nothing.">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F5EC">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1C1914">
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
@@ -22,14 +24,37 @@
             font-display: swap;
         }
         :root {
-            /* Brand Colors */
-            --c-blue: #176AB0;
-            --c-cream: #F8F5EC;
-            --c-cocoa: #25211B;
-            --c-sage: #ADE393;
-            --c-amber: #F4C767;
-            --c-terracotta: #F68D70;
-            --c-white: #FFFFFF;
+            color-scheme: light dark;
+
+            /* Colour tokens — design_system.md §2.3 neutral ramp and §2.7 light/dark table, OKLCH converted
+               to sRGB. Surfaces follow the app: canvas is the page, receipt is the receipt card, paper is the
+               bright chip/bubble face, sub is the pressed sub-surface. Illustration PNGs are scheme-invariant (§2.8). */
+            --canvas: #F8F5EC;   --canvas-rgb: 248, 245, 236;   /* neutral-50   oklch(97% .012 90)   */
+            --paper: #FDFCF7;                                   /* paper        oklch(99% .006 90)   */
+            --receipt: #FBFAF7;                                 /* receipt      oklch(98.5% .004 90) */
+            --sub: #ECE9E4;                                     /* neutral-200  oklch(93.5% .008 85) */
+            --ink: #25211B;      --ink-rgb: 37, 33, 27;         /* neutral-900  oklch(25% .012 80)   */
+            --ink2: #544F47;                                    /* neutral-700  oklch(43% .014 80)   */
+            --muted: #6A655E;                                   /* neutral-500  oklch(51% .013 80)   */
+            --shadow-rgb: 37, 33, 27;                           /* shadowTint: light ink, dark pure black */
+            --blue: #176AB0;                                    /* blue         oklch(51.4% .134 249.8) */
+            --blue-hover: #004985;                              /* blueDark     oklch(40% .12 250)   */
+            --fresh: #ADE393;                                   /* fresh        oklch(86% .120 136)  */
+            --soon: #F4C767;                                    /* soon         oklch(85% .125 84)   */
+            --urgent: #F68D70;                                  /* urgent       oklch(75% .135 36)   */
+            --on-accent: #FFFFFF;                               /* content on blue, fixed (§2.7)     */
+            --edge-onfill: rgba(255, 255, 255, 0.14);           /* paperEdgeOnFill                   */
+            --device: #25211B;                                  /* phone mock-up frame: fixed like illustration ink */
+
+            /* Legacy names still used below — aliases onto the tokens above */
+            --c-blue: var(--blue);
+            --c-blue-dark: var(--blue-hover);
+            --c-cream: var(--canvas);
+            --c-cocoa: var(--ink);
+            --c-sage: var(--fresh);
+            --c-amber: var(--soon);
+            --c-terracotta: var(--urgent);
+            --c-white: var(--on-accent);
             
             /* Typography */
             --font-body: 'Google Sans Flex', 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', system-ui, sans-serif;
@@ -37,7 +62,7 @@
             --font-num: 'Google Sans Flex', 'Pretendard Variable', Pretendard, system-ui, sans-serif;
             
             /* Shadows & Layout */
-            --shadow-paper: 0 8px 24px rgba(37, 33, 27, 0.08);
+            --shadow-paper: 0 8px 24px rgba(var(--shadow-rgb), 0.08);
             --radius-paper: 3px 2px 4px 3px / 2px 4px 3px 4px;
             --max-width: 1100px;
             --header-height: 80px;
@@ -48,6 +73,27 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        /* Dark scheme — §2.8: warm charcoal, never pure black surfaces; ink flips to cream, shadows to black.
+           Screenshots inside the phone frames stay light: they are pictures of the light app. */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --canvas: #1C1914;   --canvas-rgb: 28, 25, 20;      /* oklch(21.5% .010 78) */
+                --paper: #373531;                                   /* oklch(33% .008 82)   */
+                --receipt: #383633;                                 /* oklch(33.5% .007 83) */
+                --sub: #35322E;                                     /* oklch(32% .008 80)   */
+                --ink: #EBE7E0;      --ink-rgb: 235, 231, 224;      /* oklch(93% .010 85)   */
+                --ink2: #C5C0B8;                                    /* oklch(81% .012 82)   */
+                --muted: #A5A199;                                   /* oklch(71% .012 80)   */
+                --shadow-rgb: 0, 0, 0;
+                --blue: #3978B5;                                    /* oklch(56% .115 250), white on it 4.6:1 */
+                --blue-hover: #1D66A7;                              /* one step deeper so white text keeps ≥4.5:1 */
+                --fresh: #38572D;                                   /* oklch(42% .075 138)  */
+                --soon: #684E15;                                    /* oklch(44% .080 82)   */
+                --urgent: #813F30;                                  /* oklch(45% .095 34)   */
+                --edge-onfill: rgba(255, 255, 255, 0.10);
+            }
         }
 
         html {
@@ -217,12 +263,12 @@
             position: absolute;
             inset: 0;
             clip-path: inherit;
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+            box-shadow: inset 0 0 0 1px var(--edge-onfill);
             pointer-events: none;
         }
 
         .btn-primary:hover {
-            background-color: var(--c-blue-dark, #004985);
+            background-color: var(--blue-hover);
         }
 
         .btn-primary:active {
@@ -236,19 +282,19 @@
         .btn-secondary {
             background-color: var(--c-cream);
             color: var(--c-cocoa);
-            border: 1px dashed rgba(37, 33, 27, 0.3);
+            border: 1px dashed rgba(var(--ink-rgb), 0.3);
             padding: 0.875rem 1.75rem;
             border-radius: var(--radius-paper);
             font-weight: 500;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 2px 4px 8px rgba(37, 33, 27, 0.05);
+            box-shadow: 2px 4px 8px rgba(var(--shadow-rgb), 0.05);
         }
 
         .btn-secondary:hover {
             transform: translateY(-2px) rotate(-1deg);
-            box-shadow: 3px 6px 12px rgba(37, 33, 27, 0.08);
+            box-shadow: 3px 6px 12px rgba(var(--shadow-rgb), 0.08);
             border-color: var(--c-cocoa);
         }
         
@@ -273,9 +319,9 @@
         }
 
         .receipt-inner {
-            background-color: var(--c-cream);
+            background-color: var(--receipt);
             padding: 2.5rem 1.5rem;
-            border: 1px solid rgba(37, 33, 27, 0.03);
+            border: 1px solid rgba(var(--ink-rgb), 0.03);
             border-top: none;
             border-bottom: none;
             height: 100%;
@@ -305,9 +351,9 @@
 
         .iphone-frame {
             border-radius: 36px;
-            background-color: var(--c-cocoa);
+            background-color: var(--device);
             padding: 10px;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 4px 12px rgba(37,33,27,0.15);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 4px 12px rgba(var(--shadow-rgb), 0.15);
             margin: 0 auto;
             width: 300px;
             max-width: 100%;
@@ -365,8 +411,8 @@
         .tab {
             --cut: 9px;
             --j: 1px;
-            --edge: rgba(37,33,27,0.35);
-            --fill: var(--c-cream);
+            --edge: rgba(var(--ink-rgb), 0.35);
+            --fill: var(--paper);
             position: relative;
             isolation: isolate;
             background-color: var(--edge);
@@ -455,7 +501,7 @@
             position: absolute;
             opacity: 0.95;
             pointer-events: none;
-            filter: drop-shadow(0 8px 24px rgba(37, 33, 27, 0.08));
+            filter: drop-shadow(0 8px 24px rgba(var(--shadow-rgb), 0.08));
         }
 
         section, footer {
@@ -515,10 +561,10 @@
             left: 0;
             width: 100%;
             height: var(--header-height);
-            background-color: rgba(248, 245, 236, 0.95);
+            background-color: rgba(var(--canvas-rgb), 0.95);
             backdrop-filter: blur(8px);
             z-index: 300;
-            border-bottom: 2px dashed rgba(37,33,27,0.1);
+            border-bottom: 2px dashed rgba(var(--ink-rgb), 0.1);
             display: flex;
             align-items: center;
         }
@@ -649,7 +695,7 @@
             opacity: 0;
             transform-origin: 50% 50%;
             will-change: transform;
-            filter: drop-shadow(0 6px 14px rgba(37, 33, 27, 0.10));
+            filter: drop-shadow(0 6px 14px rgba(var(--shadow-rgb), 0.10));
             pointer-events: none;
             user-select: none;
         }
@@ -693,9 +739,9 @@
 
         /* Stats Strip */
         .stats {
-            background-color: rgba(248,245,236,0.6);
-            border-top: 2px dashed rgba(37,33,27,0.1);
-            border-bottom: 2px dashed rgba(37,33,27,0.1);
+            background-color: var(--canvas);
+            border-top: 2px dashed rgba(var(--ink-rgb), 0.1);
+            border-bottom: 2px dashed rgba(var(--ink-rgb), 0.1);
             padding: 3rem 0;
         }
 
@@ -753,8 +799,8 @@
         }
 
         .speech-bubble {
-            background: var(--c-cream);
-            border: 1px solid rgba(37,33,27,0.05);
+            background: var(--paper);
+            border: 1px solid rgba(var(--ink-rgb), 0.05);
             border-radius: var(--radius-paper);
             padding: 2rem;
             position: relative;
@@ -770,8 +816,8 @@
             left: 30px;
             border-width: 14px 18px 0 0;
             border-style: solid;
-            border-color: var(--c-cream) transparent transparent transparent;
-            filter: drop-shadow(2px 2px 2px rgba(37,33,27,0.05));
+            border-color: var(--paper) transparent transparent transparent;
+            filter: drop-shadow(2px 2px 2px rgba(var(--shadow-rgb), 0.05));
         }
 
         .speech-bubble::before {
@@ -781,7 +827,7 @@
             left: 30px;
             border-width: 15px 19px 0 0;
             border-style: solid;
-            border-color: rgba(37,33,27,0.05) transparent transparent transparent;
+            border-color: rgba(var(--ink-rgb), 0.05) transparent transparent transparent;
             z-index: -1;
         }
 
@@ -837,7 +883,7 @@
         }
         
         .dashed-divider {
-            border-top: 2px dashed rgba(37,33,27,0.15);
+            border-top: 2px dashed rgba(var(--ink-rgb), 0.15);
             margin: 1rem 0 1.5rem;
         }
 
@@ -848,12 +894,12 @@
         }
 
         .faq-item {
-            border-bottom: 2px dashed rgba(37,33,27,0.15);
+            border-bottom: 2px dashed rgba(var(--ink-rgb), 0.15);
             padding: 2rem 0;
         }
 
         .faq-item:first-child {
-            border-top: 2px dashed rgba(37,33,27,0.15);
+            border-top: 2px dashed rgba(var(--ink-rgb), 0.15);
         }
         
         .faq-q {
@@ -881,7 +927,7 @@
 
         /* Footer */
         .footer {
-            border-top: 2px dashed rgba(37,33,27,0.15);
+            border-top: 2px dashed rgba(var(--ink-rgb), 0.15);
             padding: 5rem 0;
             text-align: center;
             position: relative;
