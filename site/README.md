@@ -1,6 +1,6 @@
 # Reffi 소개 사이트 (정적)
 
-Google Labs Pomelli로 만든 앱 소개 페이지의 정적 내보내기입니다. `index.html` 한 장과 `resources/` 이미지 14장으로 구성되며, 외부 의존은 폰트 서버 두 곳(Google Fonts의 Google Sans Flex, jsDelivr의 OK단단체)만 있습니다. 자세한 내용은 아래 "제3자 접속처와 라이선스"를 참고합니다. 스크립트는 히어로 낙하 애니메이션용 인라인 코드 하나뿐이고, 추적·분석 코드는 없습니다.
+Google Labs Pomelli로 만든 앱 소개 페이지의 정적 내보내기입니다. `index.html` 한 장과 `resources/` 이미지 14장, 루트의 `favicon.ico`(16·32·48, iOS식 둥근 모서리)와 `apple-touch-icon.png`(180, 정사각)로 구성되며, 두 아이콘은 앱의 `AppIcon.appiconset/reffi-icon-1024.png`에서 생성했습니다. 외부 의존은 폰트 서버 두 곳(Google Fonts의 Google Sans Flex, jsDelivr의 OK단단체)만 있습니다. 자세한 내용은 아래 "제3자 접속처와 라이선스"를 참고합니다. 스크립트는 히어로 낙하 애니메이션용 인라인 코드 하나뿐이고, 추적·분석 코드는 없습니다.
 
 - 원본 편집: Pomelli 웹사이트 에디터(버전 V15 기준). Pomelli에서 수정하면 이 폴더를 다시 내보내야 합니다.
 - 이미지: `resources/<id>.png`는 앱에서 뽑은 재료 글리프 8종(투명 PNG, 여백 트림, 긴 변 480px 이하), 워드마크, 화면 스프라이트 시트 5장(4×3, 12프레임, 1208×1968)입니다. 현재 아트워크는 main `acfbff1`(빌드 27) 기준입니다. 글리프는 `PaperSilhouette`를 `ImageRenderer`로 투명 배경 렌더한 것이고, 시트는 시뮬레이터 녹화 프레임을 격자로 합친 것입니다. 앱 일러스트가 바뀌면 같은 파일명으로 덮어쓰기만 하면 되고 `index.html`은 바꾸지 않습니다. 시트는 `.app-motion` CSS가 프레임 단위로 재생합니다.
