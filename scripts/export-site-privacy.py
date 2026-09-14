@@ -21,6 +21,9 @@ def localized(value, language):
 output = root / 'site/privacy.html'
 page = output.read_text()
 for language in ['ko', 'en']:
+    effective = re.search(r'Text\("(Effective date: [^"]+)"\)', source).group(1)
+    date_pattern = r'(<article id="' + language + r'"[^>]*>.*?</h1>)<p>.*?</p>'
+    page = re.sub(date_pattern, lambda match: match[1] + '<p>' + localized(effective, language) + '</p>', page, flags=re.S)
     content = ''.join('<h2>' + localized(title, language) + '</h2><p>' + localized(body, language) + '</p>' for title, body in sections)
     pattern = r'(<article id="' + language + r'"[^>]*>.*?)(<h2>.*?)(</article>)'
     page, count = re.subn(pattern, lambda match: match[1] + content + match[3], page, flags=re.S)

@@ -71,6 +71,8 @@ final class ReleaseFixesUITests: XCTestCase {
         finish.tap()
         let milk = app.buttons["Milk"]
         XCTAssertTrue(milk.waitForExistence(timeout: 6))
+        XCTAssertFalse(app.buttons["Confirm & finish"].isEnabled)
+        app.buttons["leftover.usedAll.egg"].tap()
         milk.tap()
         let quantity = app.textFields["leftover.quantity.milk"]
         XCTAssertTrue(quantity.waitForExistence(timeout: 5))

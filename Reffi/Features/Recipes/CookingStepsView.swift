@@ -34,6 +34,7 @@ struct CookingStepsView: View {
     /// 상태가 store에 바로 반영되므로, 여기 로컬 스냅샷을 따로 들지 않는다).
     @State private var showKitchenCopy = false
     @State private var remainingInput: [UUID: String] = [:]
+    @State private var reviewedAmounts: Set<UUID> = []
     @State private var leftovers: Set<UUID> = []   // '조금 남았어요'로 표시한 재료
     @State private var shareImage: Image?   // 공유 카드 오프스크린 렌더 결과 — 아래 ShareCardKey가 바뀔 때만 갱신
 
@@ -237,6 +238,7 @@ struct CookingStepsView: View {
                     if reservedIngredients.isEmpty {
                         if store.finishCooking() { finishHaptic += 1 }
                     } else {
+                        reviewedAmounts = []
                         leftovers = []
                         remainingInput = [:]
                         showFinishSheet = true
@@ -270,7 +272,7 @@ struct CookingStepsView: View {
         SheetShell(title: "Anything left over?", showsClose: false) {
             VStack(spacing: 0) {
                 // 첫 콘텐츠라 상단 패딩을 갖지 않는다 — 헤더가 이미 `headerGap`을 줬다(§14.8 헤더 간격 계약).
-                Text("Enter how much is left. Unselected ingredients will be used up.")
+                Text("Check each ingredient. Enter what remains, or confirm you used it all.")
                     .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .sheetInset()
@@ -296,18 +298,17 @@ struct CookingStepsView: View {
             .disabled(remainingQuantities == nil)
         }
         // 목록이 재료 수에 따라 늘어나므로(데이터 기반) `.medium`만으로는 넘칠 수 있어 `.large`를 더한다(§14.5).
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
     }
 
-    /// 재료 한 줄 — 탭으로 '다 썼어요 ↔ 조금 남았어요' 토글. 기본은 다 씀(마찰 0).
+    /// Every ingredient starts unreviewed; remaining stock and complete use are explicit choices.
     private func leftoverRow(_ ing: Ingredient) -> some View {
         let left = leftovers.contains(ing.id)
         return VStack(alignment: .leading, spacing: ReffiSpace.s2) {
         Button {
-            if left { leftovers.remove(ing.id) } else {
-                leftovers.insert(ing.id)
-                remainingInput[ing.id] = ing.quantity.halved.inputText
-            }
+            reviewedAmounts.insert(ing.id)
+            leftovers.insert(ing.id)
+            if remainingInput[ing.id] == nil { remainingInput[ing.id] = "" }
         } label: {
             HStack(spacing: ReffiSpace.s3) {
                 PaperSilhouette(glyph: ing.glyph, fresh: ing.freshness)
@@ -321,7 +322,7 @@ struct CookingStepsView: View {
                     }
                 }
                 Spacer(minLength: ReffiSpace.s2)
-                Text(left ? "Some left" : "Used it all")
+                Text(left ? "Some left" : (reviewedAmounts.contains(ing.id) ? "Used it all" : "Check amount"))
                     .reffiType(.pillLabel)
                     .foregroundStyle(left ? ReffiColor.soonDark : ReffiColor.freshDark)
                     .padding(.horizontal, ReffiSpace.s3)
@@ -336,8 +337,14 @@ struct CookingStepsView: View {
         }
         .buttonStyle(.reffiPress)
         .accessibilityLabel(Text(verbatim: ing.displayName))   // 재료명은 데이터 — 번역 키가 아니다(§i18n)
-        .accessibilityValue(left ? Text("Some left") : Text("Used it all"))
-        .accessibilityHint(Text("Toggles whether some is left over"))
+        .accessibilityValue(left ? Text("Some left") : (reviewedAmounts.contains(ing.id) ? Text("Used it all") : Text("Check amount")))
+        .accessibilityHint(Text("Enter the remaining amount below"))
+        Button("Used it all") {
+            reviewedAmounts.insert(ing.id)
+            leftovers.remove(ing.id)
+        }
+        .reffiType(.caption).frame(minHeight: 44)
+        .accessibilityIdentifier("leftover.usedAll.\(ing.canonicalID ?? ing.id.uuidString)")
         if left {
             HStack {
                 Text("Remaining").reffiType(.body)
@@ -367,6 +374,7 @@ struct CookingStepsView: View {
     }
 
     private var remainingQuantities: [UUID: Quantity]? {
+        guard reservedIngredients.allSatisfy({ reviewedAmounts.contains($0.id) }) else { return nil }
         var result: [UUID: Quantity] = [:]
         for ingredient in reservedIngredients where leftovers.contains(ingredient.id) {
             guard validRemaining(for: ingredient),

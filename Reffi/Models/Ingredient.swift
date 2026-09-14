@@ -316,6 +316,10 @@ struct Ingredient: Identifiable, Codable, Equatable {
         return min(expiresAt, Self.day(offset: days, from: openedAt))
     }
 
+    var effectiveExpiryIsEstimated: Bool {
+        expiryIsEstimated || (storage == .freezer && frozenAt != nil) || unfrozenExpiresAt < expiresAt
+    }
+
     var effectiveExpiresAt: Date {
         guard storage == .freezer, let frozenAt else { return unfrozenExpiresAt }
         guard Self.days(from: frozenAt, to: unfrozenExpiresAt) >= 0 else { return unfrozenExpiresAt }
@@ -347,7 +351,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
     var canFreeze: Bool { canFreeze(asOf: Date()) }
 
     /// 남은 일수 라벨(로컬라이즈). 데이터성 숫자(§3.4).
-    var dDayText: String { (expiryIsEstimated ? "≈ " : "") + Self.dDayText(daysLeft: effectiveDaysLeft) }
+    var dDayText: String { (effectiveExpiryIsEstimated ? "≈ " : "") + Self.dDayText(daysLeft: effectiveDaysLeft) }
 
     /// 앱 전역의 **유일한** D-day 표기 포맷터(§3.4) — 재고 카드·배지·도장·온보딩 데모가 전부 여기를 탄다.
     /// 화면마다 다른 표기를 손으로 적으면 온보딩이 가르친 표기를 본 앱이 한 번도 쓰지 않는 일이 생긴다
@@ -375,7 +379,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
     /// 표기와 문구를 **한 쌍으로** 여기 둔다 — 화면마다 손으로 적으면 한쪽만 고쳐져 둘이 어긋난다.
     var dDayAccessibilityText: String {
         let value = Self.dDayAccessibilityText(daysLeft: effectiveDaysLeft)
-        return expiryIsEstimated ? AppLanguage.localizedNow("Estimated: \(value)") : value
+        return effectiveExpiryIsEstimated ? AppLanguage.localizedNow("Estimated: \(value)") : value
     }
 
     static func dDayAccessibilityText(daysLeft: Int) -> String {

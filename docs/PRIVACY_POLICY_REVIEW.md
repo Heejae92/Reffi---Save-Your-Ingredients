@@ -1,3 +1,9 @@
+# September 13 implementation update
+
+The offline and exported bilingual policy now includes local inventory recovery copies and the existing jsDelivr font connection. Effective date: September 13, 2026. Current-data reset clears its recovery copies; device erasure clears all inventory recovery copies. The public September 7 policy was verified during the review, but this update requires deployment by Heejae. See `WEBSITE_RELEASE_HANDOFF.md`. This is an implementation review, not a legal-compliance guarantee.
+
+---
+
 # Reffi privacy policy and publication
 
 Updated 2026-09-07 for the account-free release. Operators: Jongmin Lee and Heejae Eo. Contact: lee1993ljm@gmail.com. General audiences in the US and South Korea. Homepage: https://reffi-site.vercel.app.

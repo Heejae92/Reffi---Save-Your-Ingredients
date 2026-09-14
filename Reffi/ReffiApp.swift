@@ -161,7 +161,24 @@ private struct RootGateView: View {
 
     var body: some View {
         ZStack {
-            if showingSplash {
+            if store.hasLoadError {
+                ScrollView {
+                VStack(spacing: ReffiSpace.s5) {
+                    Text("Couldn't open your fridge").reffiType(.heading)
+                    Text("Your saved file is still on this device. Reffi won't replace it with an empty fridge. Try again, or contact us for help.").reffiType(.body)
+                    PaperButton(title: "Try again") { store.retryLoad() }
+                    if store.canRestoreBackup {
+                        Text("The previous save may not include your latest changes. The unreadable file will be kept.").reffiType(.caption)
+                        Button("Restore previous save") { store.restoreBackup() }.frame(minHeight: 44)
+                    }
+                    Link("Email the privacy contact", destination: URL(string: "mailto:lee1993ljm@gmail.com")!)
+                }
+                .padding(ReffiSpace.s5)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(PaperCanvasBackground())
+                .accessibilityIdentifier("storage.loadError")
+            } else if showingSplash {
                 splash
                     // 준비가 끝나면 스플래시 표면이 위로 빠져 다음 화면을 드러낸다.
                     .transition(.move(edge: .top))
@@ -178,6 +195,7 @@ private struct RootGateView: View {
             .environment(\.locale, AppLanguage.resolve(stored: languageRaw).resolvedLocale)
             .onChange(of: auth.accountUserID, initial: true) { _, _ in reconcileDataOwner() }
             .onChange(of: auth.restoring) { _, _ in reconcileDataOwner() }
+            .onChange(of: store.hasLoadError) { _, failed in if !failed { reconcileDataOwner() } }
             .onChange(of: auth.retainsLocalDataOwner) { _, _ in reconcileDataOwner() }
             .paperDialog(isPresented: $dataError, title: "Couldn't switch accounts",
                          message: "Your saved data is still on this device. Try again to open this account.",

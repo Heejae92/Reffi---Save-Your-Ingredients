@@ -1653,3 +1653,10 @@ SheetHeader(title: LocalizedStringKey, showsClose: Bool = false, onClose: (() ->
 - `.medium`을 여는 시트는 스크롤한다.
 - 표지형 시트에서 좌측은 헤더 하나다 — 푸터·오류 줄이 좌측으로 돌아오면 축이 둘이 된다.
 
+
+## MVP reliability follow-up (2026-09-13)
+
+- Inventory read failures show a blocking recovery screen instead of an empty fridge. Original files remain intact; previous-save restoration is explicit.
+- At 12 or more items, the fridge starts in List view if the user has never chosen a view. Explicit choices remain respected.
+- Frozen management dates always carry an estimated marker; package dates remain separate.
+- Cooking completion requires reviewing each ingredient. Remaining quantity starts blank, and using the entire stock is explicit.

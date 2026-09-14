@@ -2032,39 +2032,59 @@
         {
           "ref": "miso",
           "en": "miso paste",
-          "ko": "미소 된장"
+          "ko": "미소 된장",
+          "amount": {
+            "en": "1½ tbsp, adjust to taste",
+            "ko": "1½큰술, 간을 보며 조절"
+          }
         },
         {
           "ref": "tofu",
           "en": "tofu (small cubes)",
-          "ko": "두부 (작게 썬 것)"
+          "ko": "두부 (작게 썬 것)",
+          "amount": {
+            "en": "150 g",
+            "ko": "150g"
+          }
         },
         {
           "ref": "seaweed",
           "en": "dried wakame seaweed",
-          "ko": "건조 미역"
+          "ko": "건조 미역",
+          "amount": {
+            "en": "2 g dried",
+            "ko": "건조 2g"
+          }
         },
         {
           "ref": "green-onion",
           "en": "green onion",
-          "ko": "쪽파"
+          "ko": "쪽파",
+          "amount": {
+            "en": "1 stalk",
+            "ko": "1대"
+          }
         },
         {
           "ref": "stock",
           "en": "dashi stock (or water)",
-          "ko": "가쓰오 육수 (또는 물)"
+          "ko": "가쓰오 육수 (또는 물)",
+          "amount": {
+            "en": "500 ml",
+            "ko": "500ml"
+          }
         }
       ],
       "steps": {
         "en": [
-          "Soak a small handful of dried wakame in water until it softens.",
+          "Soak the 2 g of dried wakame in water for about 5 minutes until soft, then drain.",
           "Bring the dashi to a gentle simmer and add the tofu cubes.",
           "Turn the heat to low and dissolve the miso paste through a strainer or ladle.",
           "Add the wakame and warm through without letting the soup boil hard.",
           "Serve topped with thinly sliced green onion."
         ],
         "ko": [
-          "건미역 한 줌을 물에 불려 부드럽게 만든다.",
+          "건미역 2g을 물에 약 5분간 불려 부드러워지면 물기를 뺀다.",
           "육수를 약하게 끓이고 두부를 넣는다.",
           "불을 줄이고 미소 된장을 체나 국자에 대고 풀어 넣는다.",
           "미역을 넣고 국이 세게 끓지 않도록 데운다.",
@@ -3904,37 +3924,65 @@
         {
           "ref": "tomato",
           "en": "tomatoes (thickly sliced)",
-          "ko": "토마토 (도톰하게 썬 것)"
+          "ko": "토마토 (도톰하게 썬 것)",
+          "amount": {
+            "en": "2 medium (about 300 g)",
+            "ko": "중간 크기 2개 (약 300g)"
+          }
         },
         {
           "ref": "mozzarella",
           "en": "fresh mozzarella (sliced)",
-          "ko": "생 모짜렐라 (슬라이스)"
+          "ko": "생 모짜렐라 (슬라이스)",
+          "amount": {
+            "en": "150 g",
+            "ko": "150g"
+          }
         },
         {
           "ref": "olive-oil",
           "en": "olive oil",
-          "ko": "올리브오일"
+          "ko": "올리브오일",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "vinegar",
           "en": "vinegar (balsamic if available)",
-          "ko": "식초 (발사믹 권장)"
+          "ko": "식초 (발사믹 권장)",
+          "amount": {
+            "en": "1 tsp",
+            "ko": "1작은술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "a pinch, to taste",
+            "ko": "한 꼬집, 기호에 맞게"
+          }
         },
         {
           "ref": "black-pepper",
           "en": "black pepper",
-          "ko": "후추"
+          "ko": "후추",
+          "amount": {
+            "en": "a pinch",
+            "ko": "한 꼬집"
+          }
         },
         {
           "ref": "basil",
           "en": "fresh basil",
-          "ko": "바질 잎"
+          "ko": "바질 잎",
+          "amount": {
+            "en": "6–8 leaves",
+            "ko": "6~8장"
+          }
         }
       ],
       "steps": {
@@ -8625,37 +8673,65 @@
         {
           "ref": "pasta",
           "en": "pasta",
-          "ko": "파스타면"
+          "ko": "파스타면",
+          "amount": {
+            "en": "180 g dried",
+            "ko": "마른 면 180g"
+          }
         },
         {
           "ref": "pesto",
           "en": "basil pesto",
-          "ko": "바질페스토"
+          "ko": "바질페스토",
+          "amount": {
+            "en": "3 tbsp",
+            "ko": "3큰술"
+          }
         },
         {
           "ref": "parmesan",
           "en": "parmesan (grated)",
-          "ko": "파마산 (간 것)"
+          "ko": "파마산 (간 것)",
+          "amount": {
+            "en": "15 g",
+            "ko": "15g"
+          }
         },
         {
           "ref": "garlic",
           "en": "garlic (sliced)",
-          "ko": "마늘 (편썬 것)"
+          "ko": "마늘 (편썬 것)",
+          "amount": {
+            "en": "2 cloves",
+            "ko": "2쪽"
+          }
         },
         {
           "ref": "cherry-tomato",
           "en": "cherry tomatoes (halved)",
-          "ko": "방울토마토 (반 가른 것)"
+          "ko": "방울토마토 (반 가른 것)",
+          "amount": {
+            "en": "150 g",
+            "ko": "150g"
+          }
         },
         {
           "ref": "olive-oil",
           "en": "olive oil",
-          "ko": "올리브유"
+          "ko": "올리브유",
+          "amount": {
+            "en": "1 tbsp",
+            "ko": "1큰술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "for pasta water; adjust sauce to taste",
+            "ko": "면 삶는 물용, 소스는 간을 보며 추가"
+          }
         }
       ],
       "steps": {
@@ -13673,37 +13749,61 @@
       },
       "cuisine": "indian",
       "servings": 3,
-      "minutes": 10,
+      "minutes": 20,
       "ingredients": [
         {
           "ref": "yogurt",
           "en": "plain yogurt",
-          "ko": "플레인요거트"
+          "ko": "플레인요거트",
+          "amount": {
+            "en": "250 g",
+            "ko": "250g"
+          }
         },
         {
           "ref": "cucumber",
           "en": "cucumber",
-          "ko": "오이"
+          "ko": "오이",
+          "amount": {
+            "en": "½ medium (about 100 g)",
+            "ko": "중간 크기 ½개 (약 100g)"
+          }
         },
         {
           "ref": "mint",
           "en": "mint",
-          "ko": "민트"
+          "ko": "민트",
+          "amount": {
+            "en": "1 tbsp chopped",
+            "ko": "다진 것 1큰술"
+          }
         },
         {
           "ref": "salt",
           "en": "salt",
-          "ko": "소금"
+          "ko": "소금",
+          "amount": {
+            "en": "¼ tsp, to taste",
+            "ko": "¼작은술, 기호에 맞게"
+          }
         },
         {
           "ref": "black-pepper",
           "en": "black pepper",
-          "ko": "후추"
+          "ko": "후추",
+          "amount": {
+            "en": "a pinch",
+            "ko": "한 꼬집"
+          }
         },
         {
           "ref": "garlic",
           "en": "garlic",
-          "ko": "마늘"
+          "ko": "마늘",
+          "amount": {
+            "en": "½ small clove, finely grated",
+            "ko": "작은 것 ½쪽, 곱게 간 것"
+          }
         }
       ],
       "steps": {

@@ -5713,34 +5713,242 @@
         }
       }
     },
-    "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. The current local fridge remains accessible if a saved account session expires. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups.": {
+    "Couldn't open your fridge": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. The current local fridge remains accessible if a saved account session expires. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups."
+            "value": "Couldn't open your fridge"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "기기 내 기록은 직접 삭제하거나 현재 데이터를 초기화하거나 기기의 앱 데이터를 지우거나 앱을 삭제할 때까지 보관합니다. 이 기기에서 지우기는 모든 로컬 냉장고·프로필 사본을 지우며, 이전 서버 계정을 삭제하지는 않습니다. 저장된 계정 세션이 만료되어도 현재 기기의 냉장고는 계속 열 수 있습니다. 이전 버전의 미전송 분석 기록은 비우고 새로운 사용 기록은 남기지 않습니다. 기존 서버 계정과 앱 사용 기록은 계정 삭제 또는 본인 확인을 마친 삭제 요청 시까지 보관합니다. 앱의 계정 삭제는 서버의 해당 계정과 사용 기록을 삭제한 후 성공이 확인되면 해당 계정의 로컬 데이터를 지웁니다. 실패하면 안내합니다. 문의 메일은 요청 처리와 후속 대응에 필요한 동안만 보관하고, 더 이상 필요하지 않으면 삭제합니다. 법령상 보관 의무가 있으면 그 근거와 기간을 안내합니다. 제공업체의 보안 로그와 복구용 사본은 해당 업체의 보관 절차에 따르므로 활성 기록과 동시에 즉시 삭제되지 않을 수 있습니다. 이 프로젝트에는 예약된 데이터베이스 백업이 없습니다. 기기 시스템 백업은 Apple 설정에 따라 관리됩니다. 앱을 삭제해도 서버 계정이나 시스템 백업 사본까지 삭제되지는 않습니다."
+            "value": "냉장고를 열지 못했어요"
           }
         }
       }
     },
-    "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Our homepage also loads Google Fonts, which sends font requests and connection information to Google. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information.": {
+    "Your saved file is still on this device. Reffi won't replace it with an empty fridge. Try again, or contact us for help.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Our homepage also loads Google Fonts, which sends font requests and connection information to Google. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information."
+            "value": "Your saved file is still on this device. Reffi won't replace it with an empty fridge. Try again, or contact us for help."
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "영상 버튼을 누르면 현재 앱 언어로 YouTube 검색을 엽니다. 검색어에는 레시피나 재료 이름이 들어갈 수 있으며 직접 입력한 이름도 포함될 수 있습니다. YouTube와 Google은 검색어, 접속 정보와 쿠키 등을 자사의 개인정보처리방침에 따라 처리할 수 있습니다. 홈페이지를 열면 브라우저가 호스팅 제공업체 Vercel에 접속하며 웹 요청과 접속 정보가 처리됩니다. 홈페이지 글꼴은 Google Fonts에서 불러오므로 Google에도 글꼴 요청과 접속 정보가 전달됩니다. 개인정보 문의를 보내면 이메일 주소, 메시지와 직접 첨부한 자료를 Google LLC의 Gmail을 통해 운영자가 받습니다. 문의 답변, 필요한 경우의 요청자 확인과 권리 보호에 사용합니다. 이들 제공업체는 미국을 포함한 여러 국가에서 운영되며 정보가 거주 국가 밖에서 처리될 수 있습니다. 외부 링크를 열지 않거나 이메일을 보내지 않을 수 있으며, 기기 내 재고 관리 기능은 계속 사용할 수 있습니다. 비밀번호나 불필요한 민감정보는 보내지 마세요."
+            "value": "저장된 파일은 이 기기에 그대로 있어요. 빈 냉장고로 덮어쓰지 않아요. 다시 시도하거나 문의해 주세요."
+          }
+        }
+      }
+    },
+    "Original use-by": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original use-by"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "원래 소비기한"
+          }
+        }
+      }
+    },
+    "Freezer reminders use an estimated 14-day check-in, not a confirmed use-by date. Check the packaging and the food's condition.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Freezer reminders use an estimated 14-day check-in, not a confirmed use-by date. Check the packaging and the food's condition."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉동 알림은 냉동한 날부터 14일 뒤에 확인하도록 정한 예상 관리일이에요. 확정된 소비기한이 아니므로 포장 안내와 식품 상태를 확인해 주세요."
+          }
+        }
+      }
+    },
+    "Check your frozen food": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your frozen food"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉동 식품을 확인해 주세요"
+          }
+        }
+      }
+    },
+    "%@. Review the packaging and condition before using.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Review the packaging and condition before using."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. 사용 전에 포장 안내와 상태를 확인해 주세요."
+          }
+        }
+      }
+    },
+    "Check each ingredient. Enter what remains, or confirm you used it all.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check each ingredient. Enter what remains, or confirm you used it all."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재료마다 남은 양을 입력하거나 모두 사용했는지 확인해 주세요."
+          }
+        }
+      }
+    },
+    "Check amount": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check amount"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사용량 확인"
+          }
+        }
+      }
+    },
+    "Restore previous save": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore previous save"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이전 저장본 복구"
+          }
+        }
+      }
+    },
+    "The previous save may not include your latest changes. The unreadable file will be kept.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The previous save may not include your latest changes. The unreadable file will be kept."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이전 저장본에는 최근 변경이 없을 수 있어요. 읽을 수 없는 원본 파일도 보관해요."
+          }
+        }
+      }
+    },
+    "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Our homepage loads Google Fonts and an OKDandan font from jsDelivr, sending font requests and connection information to those providers. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tapping Videos opens a YouTube search in the current app language. The query can contain a recipe or ingredient name, including a name you entered. YouTube and Google may process the search, connection information and cookies under their own privacy policy. Opening our website connects your browser to its hosting provider, Vercel, which processes web requests and connection information. Our homepage loads Google Fonts and an OKDandan font from jsDelivr, sending font requests and connection information to those providers. Sending a privacy inquiry gives the operators your email address, message and chosen attachments through Gmail, provided by Google LLC. We use inquiries to respond, verify requests when necessary and protect user rights. These providers operate internationally, including in the United States, and information may be processed outside your country. You can avoid these optional transfers by not opening external links or sending email. Local inventory functions remain available. Do not email passwords or unnecessary sensitive information."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영상 버튼을 누르면 현재 앱 언어로 YouTube 검색을 엽니다. 검색어에는 레시피나 재료 이름이 들어갈 수 있으며 직접 입력한 이름도 포함될 수 있습니다. YouTube와 Google은 검색어, 접속 정보와 쿠키 등을 자사의 개인정보처리방침에 따라 처리할 수 있습니다. 홈페이지를 열면 브라우저가 호스팅 제공업체 Vercel에 접속하며 웹 요청과 접속 정보가 처리됩니다. 홈페이지는 Google Fonts와 jsDelivr의 OK단단체를 불러오므로 해당 제공업체에도 글꼴 요청과 접속 정보가 전달됩니다. 개인정보 문의를 보내면 이메일 주소, 메시지와 직접 첨부한 자료를 Google LLC의 Gmail을 통해 운영자가 받습니다. 문의 답변, 필요한 경우의 요청자 확인과 권리 보호에 사용합니다. 이들 제공업체는 미국을 포함한 여러 국가에서 운영되며 정보가 거주 국가 밖에서 처리될 수 있습니다. 외부 링크를 열지 않거나 이메일을 보내지 않을 수 있으며, 기기 내 재고 관리 기능은 계속 사용할 수 있습니다. 비밀번호나 불필요한 민감정보는 보내지 마세요."
+          }
+        }
+      }
+    },
+    "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. For recovery, the app keeps the previous successful inventory save on this device. Restoring it can omit later changes; an unreadable original is preserved. Resetting the current data removes its recovery copies, and Erase this device removes all local inventory recovery copies. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. The current local fridge remains accessible if a saved account session expires. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local records stay until you delete them, reset the current data, erase this device’s app data or delete the app. For recovery, the app keeps the previous successful inventory save on this device. Restoring it can omit later changes; an unreadable original is preserved. Resetting the current data removes its recovery copies, and Erase this device removes all local inventory recovery copies. Erase this device clears all local fridge and profile copies; it does not delete an earlier server account. The current local fridge remains accessible if a saved account session expires. Unsent analytics queues from previous versions are cleared and new events are not recorded. Existing server account and application usage records remain until account deletion or a verified deletion request. In-app account deletion clears the active account and its usage records on the server, then clears that account’s local data after success. Failures are reported. Inquiry messages are kept only as needed to resolve and follow up on the request, then deleted when no longer needed, unless applicable law requires retention. If a specific legal retention requirement applies, we will explain its basis and duration. Provider security logs and recovery copies follow the provider’s retention processes and may not be erased immediately with active records. This project has no scheduled database backups. Device system backups are controlled by your Apple settings. Deleting the app does not delete a server account or copies in system backups."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 내 기록은 직접 삭제하거나 현재 데이터를 초기화하거나 기기의 앱 데이터를 지우거나 앱을 삭제할 때까지 보관합니다. 복구를 위해 이 기기에 직전 정상 재고 저장본을 보관합니다. 복구 시 최근 변경이 빠질 수 있으며 읽을 수 없는 원본도 보존합니다. 현재 데이터 초기화는 해당 복구 사본을, 이 기기 지우기는 모든 재고 복구 사본을 함께 삭제합니다. 이 기기에서 지우기는 모든 로컬 냉장고·프로필 사본을 지우며, 이전 서버 계정을 삭제하지는 않습니다. 저장된 계정 세션이 만료되어도 현재 기기의 냉장고는 계속 열 수 있습니다. 이전 버전의 미전송 분석 기록은 비우고 새로운 사용 기록은 남기지 않습니다. 기존 서버 계정과 앱 사용 기록은 계정 삭제 또는 본인 확인을 마친 삭제 요청 시까지 보관합니다. 앱의 계정 삭제는 서버의 해당 계정과 사용 기록을 삭제한 후 성공이 확인되면 해당 계정의 로컬 데이터를 지웁니다. 실패하면 안내합니다. 문의 메일은 요청 처리와 후속 대응에 필요한 동안만 보관하고, 더 이상 필요하지 않으면 삭제합니다. 법령상 보관 의무가 있으면 그 근거와 기간을 안내합니다. 제공업체의 보안 로그와 복구용 사본은 해당 업체의 보관 절차에 따르므로 활성 기록과 동시에 즉시 삭제되지 않을 수 있습니다. 이 프로젝트에는 예약된 데이터베이스 백업이 없습니다. 기기 시스템 백업은 Apple 설정에 따라 관리됩니다. 앱을 삭제해도 서버 계정이나 시스템 백업 사본까지 삭제되지는 않습니다."
+          }
+        }
+      }
+    },
+    "Effective date: September 13, 2026": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effective date: September 13, 2026"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "시행일: 2026년 9월 13일"
+          }
+        }
+      }
+    },
+    "Check your ingredients": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your ingredients"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재료를 확인해 주세요"
+          }
+        }
+      }
+    },
+    "%@. Some dates are estimates. Check the packaging and condition before using.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Some dates are estimates. Check the packaging and condition before using."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. 일부 날짜는 예상치예요. 사용 전에 포장 안내와 상태를 확인해 주세요."
           }
         }
       }

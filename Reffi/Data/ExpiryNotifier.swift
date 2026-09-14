@@ -51,22 +51,17 @@ enum ExpiryNotifier {
 
             let content = UNMutableNotificationContent()
             content.sound = .default
-            let frozenDue = dueToday.filter(\.isFrozen)
-            // 이름은 전부 `displayName` — 저장 `name`은 담던 순간의 표기라 로케일이 박제된다
-            // (§Ingredient.displayName). 알림은 기기 언어로 오는데 재료만 옛 표기면 문장 하나가 두 언어로 갈린다.
-            if dueToday.isEmpty {
+            let estimatedDue = (dueToday + dueTomorrow).contains { $0.effectiveExpiryIsEstimated }
+            if estimatedDue {
+                let names = (dueToday + dueTomorrow).prefix(4).map(\.displayName).joined(separator: ", ")
+                content.title = AppLanguage.localizedNow("Check your ingredients")
+                content.body = AppLanguage.localizedNow("\(names). Some dates are estimates. Check the packaging and condition before using.")
+            } else if dueToday.isEmpty {
                 let names = dueTomorrow.prefix(4).map(\.displayName).joined(separator: ", ")
                 content.title = String(localized: "Expiring tomorrow",
                                        comment: "Notification title when items expire tomorrow")
                 content.body = String(localized: "\(names). Plan a dish before they turn.",
                                       comment: "Notification body listing items expiring tomorrow")
-            } else if frozenDue.count == dueToday.count {
-                // 오늘 만료분이 전부 냉동 유예 — 해동 리드타임을 반영한 문구.
-                let names = frozenDue.prefix(4).map(\.displayName).joined(separator: ", ")
-                content.title = String(localized: "Freezer time's up",
-                                       comment: "Notification title when frozen items reach grace deadline")
-                content.body = String(localized: "\(names). Thaw and cook them today.",
-                                      comment: "Notification body listing frozen items to thaw today")
             } else {
                 // 제목 카운트와 본문 나열을 '오늘 만료'로 일치시키고, 내일 건은 별도 문장으로.
                 let names = dueToday.prefix(4).map(\.displayName).joined(separator: ", ")

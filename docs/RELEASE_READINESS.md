@@ -1,3 +1,18 @@
+# Current MVP status, 2026-09-13
+
+This section supersedes the historical release notes below.
+
+Validation: 652 unit tests passed (633 Swift Testing + 19 XCTest). Seven distinct relevant UI scenarios passed across the integration and final runs, including both registration languages, exact remaining stock, recipe amounts, onboarding, large Korean privacy text and guest data controls. Localization: 523 keys / 347 literals / 0 missing. Bilingual policy export and the homepage CSP script hash check passed. Logs: `/tmp/reffi-mvp-fixes-tests2.log`, `/tmp/reffi-mvp-fixes-final.log`.
+
+- Read failures preserve the original inventory and block normal access and writes. Retry and explicit recovery from a previous valid save are available; the unreadable source is preserved during recovery. Reset clears recovery copies.
+- Frozen dates are estimated 14-day management reminders; original package dates remain separately editable.
+- Cooking completion requires every ingredient to be reviewed before any stock is removed.
+- 309 recipes, 18 with complete bilingual amounts. Website wording is 250+ / over 250 recipes.
+- Public privacy publication was verified on September 13 before this change; issue #26 is closed. The updated recovery/CDN disclosures and homepage copy require a new deployment by Heejae.
+- Actual-device camera, notification delivery and App Store Connect privacy metadata still require verification. Do not treat local tests as completion of those checks.
+
+---
+
 # Reffi release readiness
 
 ## Current P1/P2 fixes, 2026-09-07
@@ -124,7 +139,7 @@ The final device-targeted **Release build succeeded** with `CODE_SIGNING_ALLOWED
 
 Final localization gate: 501 keys / 342 literals / 0 missing. Privacy manifest validation and `git diff --check` passed. Eight Korean/English policy sections match between the app and website package. Those checks preceded the build 27 integration recorded below. Vercel publication is assigned to Heejae92 in issue #26; public publication and App Store Connect privacy metadata remain unverified.
 
-Evidence is retained under `output/release-p1p2-2026-09-07/`, including test/build logs, selected screenshots and source hashes. The current TestFlight build predates these edits. Its old email screens cannot sign in now that the live provider has been disabled.
+Evidence is retained under `output/release-p1p2-2026-09-07/`, including test/build logs, selected screenshots and source hashes. This paragraph described the earlier pre-build-27 candidate; builds 27 and 28 subsequently included the account-free changes.
 
 ## Build 27 integration (2026-09-07)
 

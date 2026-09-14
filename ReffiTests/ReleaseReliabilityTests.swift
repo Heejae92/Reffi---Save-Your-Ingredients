@@ -87,3 +87,60 @@ struct ReleaseReliabilityTests {
         #expect(store.activeCook == session)
     }
 }
+
+@Suite @MainActor
+struct InventoryRecoveryTests {
+    @Test func unreadableInventoryCannotBeOverwrittenAndRetryRestoresIt() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let url = dir.appendingPathComponent("fridge-guest.json")
+        let broken = Data("{broken".utf8)
+        try broken.write(to: url)
+        let store = FridgeStore(storageURL: url)
+        #expect(store.hasLoadError)
+        #expect(!store.retrySave())
+        #expect(try Data(contentsOf: url) == broken)
+        let ingredient = Ingredient(name: "Milk", category: "Dairy", expiresAt: Ingredient.day(offset: 4))
+        let snap = FridgeStore.Snapshot(ingredients: [ingredient], history: [], dismissedToBuy: [], counterIDs: [])
+        try JSONEncoder().encode(snap).write(to: url)
+        store.retryLoad()
+        #expect(!store.hasLoadError)
+        #expect(store.ingredients.first?.id == ingredient.id)
+    }
+
+    @Test func explicitBackupRecoveryPreservesUnreadableOriginal() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let url = dir.appendingPathComponent("fridge-guest.json")
+        let original = Ingredient(name: "Milk", category: "Dairy", expiresAt: Ingredient.day(offset: 4))
+        let writer = FridgeStore(ingredients: [original], persistenceURL: url)
+        #expect(writer.retrySave())
+        #expect(writer.retrySave())
+        let broken = Data("{broken".utf8)
+        try broken.write(to: url)
+        let reader = FridgeStore(storageURL: url)
+        #expect(reader.canRestoreBackup)
+        reader.restoreBackup()
+        #expect(!reader.hasLoadError)
+        #expect(reader.ingredients.first?.id == original.id)
+        let preserved = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil).filter { $0.lastPathComponent.contains("unreadable-") }
+        #expect(preserved.count == 1)
+        #expect(try Data(contentsOf: preserved[0]) == broken)
+        reader.resetAllData()
+        #expect(!FileManager.default.fileExists(atPath: preserved[0].path))
+        #expect(!FileManager.default.fileExists(atPath: FridgeStore.backupURL(for: url).path))
+    }
+
+    @Test func frozenManagementDatesAreAlwaysEstimated() {
+        var ingredient = Ingredient(name: "Milk", category: "Dairy", expiresAt: Ingredient.day(offset: 4))
+        #expect(!ingredient.expiryIsEstimated)
+        ingredient.storage = .freezer
+        ingredient.frozenAt = Date()
+        #expect(ingredient.effectiveExpiryIsEstimated)
+        #expect(ingredient.dDayText.hasPrefix("≈"))
+        ingredient.storage = .fridge
+        #expect(!ingredient.effectiveExpiryIsEstimated)
+    }
+}

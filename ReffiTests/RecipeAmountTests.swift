@@ -27,7 +27,7 @@ struct RecipeAmountTests {
         let ids: Set<String> = ["kimchi-jjigae", "doenjang-jjigae", "kimchi-fried-rice",
             "egg-fried-rice", "gyeran-mari", "kongnamul-guk", "dubu-jorim", "bok-choy-stir-fry",
             "tomato-egg-stir-fry", "tomato-pasta", "aglio-e-olio", "scrambled-eggs",
-            "french-toast", "grilled-cheese"]
+            "french-toast", "grilled-cheese", "miso-soup", "caprese-salad", "pesto-pasta", "indian-yogurt-raita"]
         let recipes = RecipeCatalog.loadSeed().filter { ids.contains($0.id) }
         #expect(recipes.count == ids.count)
         for recipe in recipes {

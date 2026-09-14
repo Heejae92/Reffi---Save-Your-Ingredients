@@ -201,7 +201,7 @@ struct IngredientEditView: View {
             ReffiRule(.ticket)
 
             HStack {
-                Text(draft.expiryIsEstimated ? "Estimated use-by" : "Use by").reffiType(.body).foregroundStyle(ReffiColor.ink)
+                Text(draft.storage == .freezer ? "Original use-by" : (draft.expiryIsEstimated ? "Estimated use-by" : "Use by")).reffiType(.body).foregroundStyle(ReffiColor.ink)
                 Spacer()
                 // 날짜 휠·달력 표기는 기기 로케일을 따른다(38차 — 앱 언어 선택과 분리).
                 DatePicker("", selection: $draft.expiresAt,
@@ -235,6 +235,10 @@ struct IngredientEditView: View {
 
     private var deleteSection: some View {
         VStack(alignment: .leading, spacing: ReffiSpace.s2) {
+            if draft.storage == .freezer {
+                Text("Freezer reminders use an estimated 14-day check-in, not a confirmed use-by date. Check the packaging and the food's condition.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+            }
             if draft.expiryIsEstimated {
                 Text("This date is an estimate. Check the packaging and the food before using it.")
                     .reffiType(.caption).foregroundStyle(ReffiColor.ink2)

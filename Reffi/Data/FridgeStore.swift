@@ -122,6 +122,9 @@ final class FridgeStore {
     var isPristine: Bool { ingredients.isEmpty && history.isEmpty && manualToBuy.isEmpty }
 
     private(set) var hasSaveError = false
+    private(set) var hasLoadError = false
+    private var failedLoadURL: URL?
+    private var clearsRecoveryCopies = false
     private let persists: Bool
     private var storageURL = DataOwner.storageURL()
     private let counterCapacity = 6
@@ -143,18 +146,21 @@ final class FridgeStore {
 
     // MARK: - Init / 영속화
 
-    /// 앱 기동용 — 디스크에서 복원. 디코드 실패 파일은 **덮어쓰지 않고 격리**한 뒤 빈 상태로 시작한다.
-    init() {
+    /// Restore saved stock. Read failures preserve the source and block normal access until recovery.
+    init(storageURL override: URL? = nil) {
         persists = true
-        let initialURL = DataOwner.storageURL()
+        let initialURL = override ?? DataOwner.storageURL()
+        storageURL = initialURL
         seedRecipes = RecipeCatalog.loadSeed()
         seedIDF = IngredientIDF(recipes: seedRecipes)   // 시드 1패스 — 마이크로초 단위(48차 E2)
         var snap: Snapshot?
-        let loadURL = FileManager.default.fileExists(atPath: initialURL.path) ? initialURL : Self.storeURL
-        if let data = try? Data(contentsOf: loadURL) {
-            snap = Self.decodeSnapshot(data)
-            if snap == nil {
-                Self.quarantineStore(at: loadURL)
+        let loadURL = override != nil || FileManager.default.fileExists(atPath: initialURL.path) ? initialURL : Self.storeURL
+        if FileManager.default.fileExists(atPath: loadURL.path) {
+            do { snap = try JSONDecoder().decode(Snapshot.self, from: Data(contentsOf: loadURL)) }
+            catch {
+                hasLoadError = true
+                failedLoadURL = loadURL
+                Self.log.error("Unable to open inventory; original file preserved")
             }
         }
         if loadURL != initialURL, let snap {
@@ -279,19 +285,6 @@ final class FridgeStore {
         }
     }
 
-    /// 손상/비호환 파일 격리 — `fridge-v1.corrupt-<ts>.json`으로 보존(조용한 데이터 소실 방지).
-    private static func quarantineStore(at source: URL) {
-        let ts = Int(Date().timeIntervalSince1970)
-        let dest = source.deletingLastPathComponent()
-            .appendingPathComponent("fridge-v1.corrupt-\(ts).json")
-        do {
-            try FileManager.default.moveItem(at: source, to: dest)
-            log.error("store quarantined to \(dest.lastPathComponent)")
-        } catch {
-            log.error("store quarantine failed: \(String(describing: error))")
-        }
-    }
-
     /// 디스크 쓰기 직렬 큐. 저장 성공을 확인할 때는 동기적으로 완료를 기다린다.
     private static let ioQueue = DispatchQueue(label: "com.reffi.app.store-io", qos: .utility)
 
@@ -301,6 +294,7 @@ final class FridgeStore {
     /// 메모리 전용 스토어(프리뷰·테스트)는 아무것도 하지 않는다.
     @discardableResult
     private func persist(reschedulesAlerts: Bool = true) -> Bool {
+        guard !hasLoadError else { return false }
         guard persists else { return true }
         trimHistoryIfNeeded()
         if reschedulesAlerts { ExpiryNotifier.reschedule(for: ingredients) }
@@ -310,7 +304,22 @@ final class FridgeStore {
             let url = storageURL
             // Confirm the atomic write before the UI announces success. Keep the current
             // in-memory snapshot on failure so retry can save every pending change.
-            try Self.ioQueue.sync { try data.write(to: url, options: .atomic) }
+            try Self.ioQueue.sync {
+                if !clearsRecoveryCopies, let previous = try? Data(contentsOf: url), Self.decodeSnapshot(previous) != nil {
+                    try previous.write(to: Self.backupURL(for: url), options: .atomic)
+                }
+                try data.write(to: url, options: .atomic)
+                if !clearsRecoveryCopies && !FileManager.default.fileExists(atPath: Self.backupURL(for: url).path) {
+                    try data.write(to: Self.backupURL(for: url), options: .atomic)
+                }
+            }
+            if clearsRecoveryCopies {
+                let copies = try FileManager.default.contentsOfDirectory(at: url.deletingLastPathComponent(), includingPropertiesForKeys: nil)
+                for copy in copies where copy.lastPathComponent.hasPrefix(url.lastPathComponent + ".") {
+                    try FileManager.default.removeItem(at: copy)
+                }
+                clearsRecoveryCopies = false
+            }
             hasSaveError = false
             return true
         } catch {
@@ -322,6 +331,41 @@ final class FridgeStore {
 
     @discardableResult
     func retrySave() -> Bool { persist() }
+
+    nonisolated static func backupURL(for url: URL) -> URL { url.appendingPathExtension("backup") }
+
+    var canRestoreBackup: Bool {
+        guard let url = failedLoadURL,
+              let data = try? Data(contentsOf: Self.backupURL(for: url)) else { return false }
+        return Self.decodeSnapshot(data) != nil
+    }
+
+    /// An explicit recovery preserves the unreadable source before replacing it.
+    func restoreBackup() {
+        guard let url = failedLoadURL else { return }
+        do {
+            let data = try Data(contentsOf: Self.backupURL(for: url))
+            let snap = try JSONDecoder().decode(Snapshot.self, from: data)
+            let preserved = url.appendingPathExtension("unreadable-" + UUID().uuidString)
+            try FileManager.default.copyItem(at: url, to: preserved)
+            try data.write(to: url, options: .atomic)
+            restore(snap)
+            storageURL = url
+            failedLoadURL = nil
+            hasLoadError = false
+        } catch { Self.log.error("Inventory recovery failed; original preserved") }
+    }
+
+    /// Keep unreadable data untouched, and retry only the original file.
+    func retryLoad() {
+        guard let url = failedLoadURL,
+              let data = try? Data(contentsOf: url),
+              let snap = Self.decodeSnapshot(data) else { return }
+        restore(snap)
+        storageURL = url
+        failedLoadURL = nil
+        hasLoadError = false
+    }
 
     var snapshot: Snapshot {
         Snapshot(schemaVersion: Self.currentSchemaVersion,
@@ -336,6 +380,7 @@ final class FridgeStore {
     /// 전환 전에 이전 파일과 새 파일을 모두 저장한다. 실패하면 현재 화면/소유자를 유지한다.
     @discardableResult
     func switchAccount(to owner: String?, inheritGuest: Bool, directory: URL? = nil) throws -> Bool {
+        guard !hasLoadError else { throw CocoaError(.fileReadCorruptFile) }
         let nextURL = directory?.appendingPathComponent("fridge-\(DataOwner.scope(owner)).json") ?? DataOwner.storageURL(owner: owner)
         let exists = FileManager.default.fileExists(atPath: nextURL.path)
         let next: Snapshot
@@ -1290,7 +1335,7 @@ final class FridgeStore {
         Self.ioQueue.sync {}
         let directory = storageURL.deletingLastPathComponent()
         let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
-        for file in files where file.lastPathComponent.hasPrefix("fridge-") && file.pathExtension == "json" {
+        for file in files where file.lastPathComponent.hasPrefix("fridge-") {
             try FileManager.default.removeItem(at: file)
         }
         resetAllData()
@@ -1311,6 +1356,7 @@ final class FridgeStore {
         pendingUndo = nil
         activeCook = nil
         userRecipes = []
+        clearsRecoveryCopies = true
         persist()
         track(.dataReset)
     }

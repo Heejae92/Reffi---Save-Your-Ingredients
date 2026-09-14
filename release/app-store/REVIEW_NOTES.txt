@@ -1,0 +1,5 @@
+Reffi is a local-first fridge inventory app. No sign-in or demo account is required. Complete onboarding, add an ingredient by hand, and open the fridge to edit quantities or dates. Settings also offers a sample fridge for exploration.
+
+Receipt scanning is optional and uses on-device Apple Vision recognition. Camera access is requested only for scanning; manual entry is available. Notifications are optional local reminders. The recipe video button opens an external YouTube search, not embedded video content.
+
+New account registration and sign-in are unavailable. Account deletion is retained only for installations with an existing legacy account session. There are no ads, purchases or usage analytics in this version.
