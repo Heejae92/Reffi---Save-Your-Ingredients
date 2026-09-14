@@ -4,6 +4,17 @@
       "filename" : "reffi-logo.svg",
       "idiom" : "universal",
       "scale" : "1x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "reffi-logo-dark.svg",
+      "idiom" : "universal",
+      "scale" : "1x"
     }
   ],
   "info" : {
