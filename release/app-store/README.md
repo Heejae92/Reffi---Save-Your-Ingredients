@@ -1,3 +1,11 @@
+# Build 30 update, September 14, 2026
+
+Heejae's PR #30 (main c9a4bca) adds the dark-appearance white wordmark. Build source: a770e83. Version 1.0 (30) was signed, archived and uploaded successfully. Asset catalog inspection confirmed the normal and UIAppearanceDark wordmarks at all three scales and as vectors. Localization: 523 keys / 347 literals / 0 missing. No service logic changed.
+
+Archive: /tmp/Reffi-build30.xcarchive. Logs: /tmp/reffi-build30-archive.log and /tmp/reffi-build30-upload.log. Apple processing completed (Ready to Submit). Build 30 replaced build 29 in the saved version 1.0 and the review draft; App Store Connect confirmed Item Ready to Submit, 1.0 (30). Submit for Review was not clicked. Existing manual release settings were preserved.
+
+---
+
 # Reffi App Store preparation, September 13, 2026
 
 Candidate: 1.0 (29), com.reffi.app, iOS 18+, iPhone. App Store Connect app ID: 6795009532.
