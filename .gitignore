@@ -53,6 +53,9 @@ GoogleService-Info.plist
 .netrc
 .claude/settings.local.json
 
+# Vercel CLI 링크 폴더(site/에서 `vercel link` 시 생성) — 프로젝트/조직 ID, 커밋 대상 아님
+.vercel/
+
 # Supabase 로컬 개발 — 시크릿 담긴 env/임시 파일 커밋 금지(docs/AI_SETUP.md 5.1 참고)
 supabase/.env.local
 supabase/.temp/
