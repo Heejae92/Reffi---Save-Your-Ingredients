@@ -9,7 +9,7 @@ Validation: 652 unit tests passed (633 Swift Testing + 19 XCTest). Seven distinc
 - Cooking completion requires every ingredient to be reviewed before any stock is removed.
 - 309 recipes, 18 with complete bilingual amounts. Website wording is 250+ / over 250 recipes.
 - Public privacy publication was verified on September 13 before this change; issue #26 is closed. The updated recovery/CDN disclosures and homepage copy require a new deployment by Heejae.
-- Actual-device camera, notification delivery and App Store Connect privacy metadata still require verification. Do not treat local tests as completion of those checks.
+- Owner confirmed receipt-camera registration and notification delivery on an actual iPhone on September 13. Build 29 archive/upload succeeded and Apple processing completed; selected for version 1.0. English/Korean store metadata and screenshots, free US/Korea availability and manual release were saved. Latest website deployment and the final User ID privacy-label purpose publication remain pending. See release/app-store/README.md. No App Review submission occurred.
 
 ---
 
