@@ -1,3 +1,17 @@
+# Submitted for App Review, September 14, 2026
+
+Version 1.0 (30) was submitted for App Review at 6:27 PM (App Store Connect local time). Status: Waiting for Review. Manual release after approval is unchanged.
+
+Screenshots were replaced with the owner's marketing previews in `en-US/` and `ko/` (three per locale, 1320 x 2868, iPhone 6.9" slot, order: receipt, countdown, tickets). The old 6.5" real captures were deleted on the owner's instruction so every iPhone size falls back to the new 6.9" set. Local originals of the old captures remain in `output/app-store/screenshots/`.
+
+Final check before submission: build 30 selected; en/ko promotional text, description and keywords match this folder; no em dashes in store copy; support and marketing URL https://reffi-site.vercel.app; privacy URL returns HTTP 200 with the September 13 effective date; homepage shows 250+; privacy details published; Food & Drink; public distribution in 2 countries; Mac and Vision Pro off; ITSAppUsesNonExemptEncryption false; review contact and notes filled, sign-in not required. Screenshot UI strings match `Localizable.xcstrings` in the build source.
+
+Open, not blocking: the published privacy label still lists Analytics as a User ID purpose while the review notes say there is no usage analytics (over-disclosure, pending owner decision). The Korean keywords include 유통기한 as a search term only.
+
+App Store Connect gotchas seen here: while the version sits in a draft review submission, its screenshots are read-only; removing the item from the draft (and re-running Add for Review) unlocks them. The 6.9" slot only appeared after the 6.5" set was emptied. Multi-file uploads landed out of order, so upload one file at a time.
+
+---
+
 # Build 30 update, September 14, 2026
 
 Heejae's PR #30 (main c9a4bca) adds the dark-appearance white wordmark. Build source: a770e83. Version 1.0 (30) was signed, archived and uploaded successfully. Asset catalog inspection confirmed the normal and UIAppearanceDark wordmarks at all three scales and as vectors. Localization: 523 keys / 347 literals / 0 missing. No service logic changed.
