@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reffi | Eat it today, waste nothing.</title>
-    <meta name="description" content="Reffi turns your grocery receipt into a fridge that counts down. Eat it today, waste nothing.">
-    <link rel="canonical" href="https://reffi-site.vercel.app/">
+    <title>Reffi | 오늘 먹고, 버리지 않아요.</title>
+    <meta name="description" content="Reffi는 장본 영수증을 소비기한이 카운트다운되는 냉장고로 바꿔요. 오늘 먹고, 버리지 않아요.">
+    <link rel="canonical" href="https://reffi-site.vercel.app/ko/">
     <link rel="alternate" hreflang="en" href="https://reffi-site.vercel.app/">
     <link rel="alternate" hreflang="ko" href="https://reffi-site.vercel.app/ko/">
     <link rel="alternate" hreflang="x-default" href="https://reffi-site.vercel.app/">
@@ -14,18 +14,18 @@
     <meta name="naver-site-verification" content="689fefe40f3acd640c0f90d94af60acba42138b9">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Reffi">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:url" content="https://reffi-site.vercel.app/">
-    <meta property="og:title" content="Reffi | Eat it today, waste nothing.">
-    <meta property="og:description" content="Reffi turns your grocery receipt into a fridge that counts down. Eat it today, waste nothing.">
-    <meta property="og:image" content="https://reffi-site.vercel.app/og-image.png">
+    <meta property="og:locale" content="ko_KR">
+    <meta property="og:url" content="https://reffi-site.vercel.app/ko/">
+    <meta property="og:title" content="Reffi | 오늘 먹고, 버리지 않아요.">
+    <meta property="og:description" content="Reffi는 장본 영수증을 소비기한이 카운트다운되는 냉장고로 바꿔요. 오늘 먹고, 버리지 않아요.">
+    <meta property="og:image" content="https://reffi-site.vercel.app/og-image-ko.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Reffi: a fridge list that counts down to each use-by date">
+    <meta property="og:image:alt" content="Reffi: 소비기한까지 남은 날을 세어 주는 냉장고 목록">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Reffi | Eat it today, waste nothing.">
-    <meta name="twitter:description" content="Reffi turns your grocery receipt into a fridge that counts down. Eat it today, waste nothing.">
-    <meta name="twitter:image" content="https://reffi-site.vercel.app/og-image.png">
+    <meta name="twitter:title" content="Reffi | 오늘 먹고, 버리지 않아요.">
+    <meta name="twitter:description" content="Reffi는 장본 영수증을 소비기한이 카운트다운되는 냉장고로 바꿔요. 오늘 먹고, 버리지 않아요.">
+    <meta name="twitter:image" content="https://reffi-site.vercel.app/og-image-ko.png">
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
@@ -33,6 +33,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@5c41199ea0024a9e0b2cb31735265056e5472d76/dist/web/static/pretendard-dynamic-subset.min.css" rel="stylesheet">
         
     <style>
         @font-face {
@@ -53,9 +54,9 @@
             --c-white: #FFFFFF;
             
             /* Typography */
-            --font-body: 'Google Sans Flex', 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', system-ui, sans-serif;
+            --font-body: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', system-ui, sans-serif;
             --font-title: 'OkDandan', 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', system-ui, sans-serif;
-            --font-num: 'Google Sans Flex', 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+            --font-num: 'Google Sans Flex', 'Pretendard', system-ui, sans-serif;
             
             /* Shadows & Layout */
             --shadow-paper: 0 8px 24px rgba(37, 33, 27, 0.08);
@@ -70,6 +71,9 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        /* Korean copy: keep words whole at line ends */
+        body { word-break: keep-all; }
 
         html {
             scroll-behavior: smooth;
@@ -954,11 +958,11 @@
       "@context": "https://schema.org",
       "@type": "MobileApplication",
       "name": "Reffi",
-      "url": "https://reffi-site.vercel.app/",
-      "description": "Reffi turns your grocery receipt into a fridge that counts down. Eat it today, waste nothing.",
+      "url": "https://reffi-site.vercel.app/ko/",
+      "description": "Reffi는 장본 영수증을 소비기한이 카운트다운되는 냉장고로 바꿔요. 오늘 먹고, 버리지 않아요.",
       "applicationCategory": "LifestyleApplication",
       "operatingSystem": "iOS 18 or later",
-      "image": "https://reffi-site.vercel.app/og-image.png",
+      "image": "https://reffi-site.vercel.app/og-image-ko.png",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "author": { "@type": "Organization", "name": "Reffi", "url": "https://reffi-site.vercel.app/" },
       "inLanguage": ["en", "ko"]
@@ -970,16 +974,16 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <a href="#top" class="logo-link" aria-label="Reffi Home">
-                <img src="resources/reffi-logo.svg" class="logo-image" alt="Reffi logo">
+            <a href="#top" class="logo-link" aria-label="Reffi 홈">
+                <img src="/resources/reffi-logo.svg" class="logo-image" alt="Reffi 로고">
             </a>
             <nav class="nav">
                 <div class="nav-links">
-                    <a href="#how-it-works">How it works</a>
-                    <a href="#features">Features</a>
-                    <a href="#faq">FAQ</a>
+                    <a href="#how-it-works">이렇게 써요</a>
+                    <a href="#features">기능</a>
+                    <a href="#faq">자주 묻는 질문</a>
                 </div>
-                <a href="/ko/" class="tab lang-switch" hreflang="ko" lang="ko">한국어</a>
+                <a href="/" class="tab lang-switch" hreflang="en" lang="en">English</a>
             </nav>
         </div>
     </header>
@@ -990,26 +994,26 @@
             <div class="container">
                 <div class="hero-grid">
                     <div class="hero-content">
-                        <span class="eyebrow">IPHONE APP FOR YOUR FRIDGE</span>
-                        <h1 class="hero-title">Eat it today,<br>waste nothing.</h1>
-                        <p class="subline">Coming soon to the App Store for iPhone.</p>
-                        <p>Reffi turns your grocery receipt into a fridge that counts down. When something is about to turn, it hands you recipe tickets that use it first.</p>
+                        <span class="eyebrow">냉장고를 위한 아이폰 앱</span>
+                        <h1 class="hero-title">오늘 먹고,<br>버리지 않아요.</h1>
+                        <p class="subline">곧 App Store에 출시됩니다.</p>
+                        <p>Reffi는 장본 영수증을 소비기한이 카운트다운되는 냉장고로 바꿔요. 재료가 상하기 직전이면, 그 재료를 먼저 쓰는 레시피 티켓을 건네요.</p>
                         <div class="hero-actions">
-                            <button type="button" class="btn-primary" disabled>Coming soon</button>
+                            <button type="button" class="btn-primary" disabled>출시 예정</button>
                         </div>
                     </div>
                     
                     <div class="hero-visual">
                         <div class="hero-stage" id="hero-stage">
                             <div class="pile-wrapper">
-                                <img src="resources/9zmerpH2zUScmto_Orokgj.png" class="food-piece" data-w="156" alt="Tomato">
-                                <img src="resources/aDPBmEky3-u3BYiUjT__Q6.png" class="food-piece" data-w="150" alt="Mushroom">
-                                <img src="resources/8I3fBUc04FwcLg-5J8HOHp.png" class="food-piece" data-w="148" alt="Broccoli">
-                                <img src="resources/9IppLhIJkeF3rMv8NaY4cU.png" class="food-piece" data-w="122" alt="Avocado">
-                                <img src="resources/9rwB6e4hXh-fe1H21xS__y.png" class="food-piece" data-w="166" alt="Meat">
-                                <img src="resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="food-piece" data-w="150" alt="Apple">
-                                <img src="resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="food-piece" data-w="136" alt="Pepper">
-                                <img src="resources/95gAVfTJv-kcfvWnV_C4J7.png" class="food-piece" data-w="104" alt="Eggplant">
+                                <img src="/resources/9zmerpH2zUScmto_Orokgj.png" class="food-piece" data-w="156" alt="토마토">
+                                <img src="/resources/aDPBmEky3-u3BYiUjT__Q6.png" class="food-piece" data-w="150" alt="버섯">
+                                <img src="/resources/8I3fBUc04FwcLg-5J8HOHp.png" class="food-piece" data-w="148" alt="브로콜리">
+                                <img src="/resources/9IppLhIJkeF3rMv8NaY4cU.png" class="food-piece" data-w="122" alt="아보카도">
+                                <img src="/resources/9rwB6e4hXh-fe1H21xS__y.png" class="food-piece" data-w="166" alt="고기">
+                                <img src="/resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="food-piece" data-w="150" alt="사과">
+                                <img src="/resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="food-piece" data-w="136" alt="파프리카">
+                                <img src="/resources/95gAVfTJv-kcfvWnV_C4J7.png" class="food-piece" data-w="104" alt="가지">
                             </div>
                         </div>
                     </div>
@@ -1018,19 +1022,19 @@
         </section>
 
         <!-- Stats Strip -->
-        <section class="stats" aria-label="Reffi Statistics">
+        <section class="stats" aria-label="Reffi 숫자">
             <div class="container stats-grid">
                 <div class="stat-item">
                     <div class="stat-num">250+</div>
-                    <div class="stat-label">built-in recipes</div>
+                    <div class="stat-label">기본 레시피</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-num">12</div>
-                    <div class="stat-label">cuisines</div>
+                    <div class="stat-label">나라의 요리</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-num">279</div>
-                    <div class="stat-label">ingredients in the dictionary</div>
+                    <div class="stat-label">사전에 등록된 재료</div>
                 </div>
             </div>
         </section>
@@ -1038,51 +1042,51 @@
         <!-- Sound Familiar Section -->
         <section id="how-it-works" class="sound-familiar">
             <div class="container text-center">
-                <img src="resources/9rwB6e4hXh-fe1H21xS__y.png" class="bg-deco deco-inner left" style="top: 0; transform: rotate(-12deg);" alt="" aria-hidden="true">
-                <h2 class="story-heading">Sound familiar?</h2>
-                <p class="subline">Groceries you forgot are money in the trash.</p>
+                <img src="/resources/9rwB6e4hXh-fe1H21xS__y.png" class="bg-deco deco-inner left" style="top: 0; transform: rotate(-12deg);" alt="" aria-hidden="true">
+                <h2 class="story-heading">이런 적 있죠?</h2>
+                <p class="subline">잊어버린 식재료는 그대로 버려지는 돈이에요.</p>
                 
                 <div class="bubble-grid">
                     <div class="speech-bubble">
-                        <span class="eyebrow">Living alone</span>
-                        <p>I buy for the week and cook twice.</p>
+                        <span class="eyebrow">1인 가구</span>
+                        <p>일주일치 장을 보고 요리는 두 번 해요.</p>
                     </div>
                     <div class="speech-bubble">
-                        <span class="eyebrow">Busy couples</span>
-                        <p>Nobody knows what is in the back of the fridge.</p>
+                        <span class="eyebrow">바쁜 맞벌이</span>
+                        <p>냉장고 안쪽에 뭐가 있는지 아무도 몰라요.</p>
                     </div>
                     <div class="speech-bubble">
-                        <span class="eyebrow">Students</span>
-                        <p>Typing every item into an app never lasts a week.</p>
+                        <span class="eyebrow">학생</span>
+                        <p>앱에 하나하나 입력하는 건 일주일도 못 가요.</p>
                     </div>
                 </div>
                 
-                <p class="closing-line">Stop guessing. Reffi logs, ranks and reminds, in one place.</p>
+                <p class="closing-line">이제 짐작은 그만. Reffi가 기록하고, 순서를 매기고, 알려 드려요.</p>
             </div>
         </section>
 
         <!-- Features Section -->
         <section id="features" class="features">
-            <img src="resources/9zmerpH2zUScmto_Orokgj.png" class="bg-deco deco-outer right" style="top: 96px; transform: rotate(15deg);" alt="" aria-hidden="true">
+            <img src="/resources/9zmerpH2zUScmto_Orokgj.png" class="bg-deco deco-outer right" style="top: 96px; transform: rotate(15deg);" alt="" aria-hidden="true">
             <div class="container">
                 
                 <!-- Feature 1 -->
                 <div class="feature-row">
                     <div class="feature-text">
-                        <h2 class="story-heading">Log it like a receipt</h2>
+                        <h2 class="story-heading">영수증처럼 기록해요</h2>
                         <div class="tabs">
-                            <span class="tab">Receipt scan</span>
-                            <span class="tab">Photo</span>
-                            <span class="tab">By hand</span>
+                            <span class="tab">영수증 스캔</span>
+                            <span class="tab">사진</span>
+                            <span class="tab">직접 입력</span>
                         </div>
-                        <p>Snap the receipt. Groceries land in your fridge with use-by dates filled in. Receipt text is read on this device. Receipt images are not uploaded.</p>
+                        <p>영수증을 찍으면 재료가 소비기한과 함께 냉장고에 들어와요. 영수증 글자는 기기 안에서 읽고, 영수증 이미지는 업로드하지 않아요.</p>
                     </div>
                     <div class="feature-image">
                         <div class="receipt-wrapper">
                             <div class="receipt-inner zigzag-edges">
                                 <div class="iphone-frame">
                                     <div class="app-motion">
-                                        <img src="resources/aRFk1sXmNqBa1Y-Dqvxkfs.png" alt="Scan a receipt sheet">
+                                        <img src="/resources/aRFk1sXmNqBa1Y-Dqvxkfs.png" alt="영수증 스캔 시트">
                                     </div>
                                 </div>
                             </div>
@@ -1093,20 +1097,20 @@
                 <!-- Feature 2 -->
                 <div class="feature-row reversed">
                     <div class="feature-text">
-                        <h2 class="story-heading">A countdown you can see</h2>
+                        <h2 class="story-heading">한눈에 보이는 카운트다운</h2>
                         <div class="tabs">
-                            <span class="tab tab-fresh">Fresh</span>
-                            <span class="tab tab-soon">Soon</span>
-                            <span class="tab tab-urgent">Urgent</span>
+                            <span class="tab tab-fresh">신선</span>
+                            <span class="tab tab-soon">임박</span>
+                            <span class="tab tab-urgent">오늘까지</span>
                         </div>
-                        <p>Sage means fresh, amber means soon, terracotta means today. Every color comes with a day count.</p>
+                        <p>초록은 신선, 노랑은 임박, 빨강은 오늘까지. 모든 색에는 남은 날수가 함께 붙어요.</p>
                     </div>
                     <div class="feature-image">
                         <div class="receipt-wrapper">
                             <div class="receipt-inner zigzag-edges">
                                 <div class="iphone-frame">
                                     <div class="app-motion">
-                                        <img src="resources/bMFAjghSshieNMpbBYT_Cs.png" alt="Fridge In stock list">
+                                        <img src="/resources/bMFAjghSshieNMpbBYT_Cs.png" alt="냉장고 재고 목록">
                                     </div>
                                 </div>
                             </div>
@@ -1117,20 +1121,20 @@
                 <!-- Feature 3 -->
                 <div class="feature-row">
                     <div class="feature-text">
-                        <h2 class="story-heading">Tickets for what expires first</h2>
+                        <h2 class="story-heading">임박한 재료로 티켓을 뽑아요</h2>
                         <div class="tabs">
-                            <span class="tab">Ticket deck</span>
-                            <span class="tab">Cooking ticket</span>
-                            <span class="tab">How to cook</span>
+                            <span class="tab">티켓 덱</span>
+                            <span class="tab">조리 티켓</span>
+                            <span class="tab">조리법</span>
                         </div>
-                        <p>Tap Start cooking and a deck of kitchen tickets appears, ranked by what spoils first. Flick right to cook, left to pass.</p>
+                        <p>요리 시작을 누르면 임박한 순서로 정렬된 주방 티켓이 펼쳐져요. 오른쪽으로 넘기면 요리하고, 왼쪽으로 넘기면 건너뛰어요.</p>
                     </div>
                     <div class="feature-image">
                         <div class="receipt-wrapper">
                             <div class="receipt-inner zigzag-edges">
                                 <div class="iphone-frame">
                                     <div class="app-motion">
-                                        <img src="resources/bzDFQ9z393a5DkeG5n-4w4.png" alt="The ticket deck">
+                                        <img src="/resources/bzDFQ9z393a5DkeG5n-4w4.png" alt="티켓 덱">
                                     </div>
                                 </div>
                             </div>
@@ -1141,20 +1145,20 @@
                 <!-- Feature 4 -->
                 <div class="feature-row reversed">
                     <div class="feature-text">
-                        <h2 class="story-heading">Your weekly tally</h2>
+                        <h2 class="story-heading">이번 주 정산</h2>
                         <div class="tabs">
-                            <span class="tab">Daily chips</span>
-                            <span class="tab">Waste rate</span>
-                            <span class="tab">Streak</span>
+                            <span class="tab">하루 한 칩</span>
+                            <span class="tab">낭비율</span>
+                            <span class="tab">연속 기록</span>
                         </div>
-                        <p>A chip a day. Green is what you ate. See your eaten rate against last week and what you toss most.</p>
+                        <p>하루에 칩 하나. 초록은 먹은 것이에요. 지난주와 비교한 소비율과 가장 많이 버리는 재료를 확인해요.</p>
                     </div>
                     <div class="feature-image">
                         <div class="receipt-wrapper">
                             <div class="receipt-inner zigzag-edges">
                                 <div class="iphone-frame">
                                     <div class="app-motion">
-                                        <img src="resources/8vJJ098PN6t8sPYMCCr4Fa.png" alt="Kitchen ledger history screen">
+                                        <img src="/resources/8vJJ098PN6t8sPYMCCr4Fa.png" alt="주방 장부 기록 화면">
                                     </div>
                                 </div>
                             </div>
@@ -1165,20 +1169,20 @@
                 <!-- Feature 5 -->
                 <div class="feature-row">
                     <div class="feature-text">
-                        <h2 class="story-heading">One quiet alert a day</h2>
+                        <h2 class="story-heading">하루 한 번, 조용한 알림</h2>
                         <div class="tabs">
-                            <span class="tab">Morning alert</span>
-                            <span class="tab">Tomorrow</span>
-                            <span class="tab">Freezer</span>
+                            <span class="tab">아침 알림</span>
+                            <span class="tab">내일</span>
+                            <span class="tab">냉동실</span>
                         </div>
-                        <p>Once a day, only when something is expiring. Default 9 AM, yours to change.</p>
+                        <p>하루 한 번, 상할 재료가 있을 때만. 기본은 아침 9시, 원하는 시간으로 바꿀 수 있어요.</p>
                     </div>
                     <div class="feature-image">
                         <div class="receipt-wrapper">
                             <div class="receipt-inner zigzag-edges">
                                 <div class="iphone-frame">
                                     <div class="app-motion">
-                                        <img src="resources/90rZqIy65CSdJ5AsLFQ_76.png" alt="Home screen with the Morning alerts card">
+                                        <img src="/resources/90rZqIy65CSdJ5AsLFQ_76.png" alt="아침 알림 카드가 있는 홈 화면">
                                     </div>
                                 </div>
                             </div>
@@ -1192,36 +1196,36 @@
         <!-- Core Values Section -->
         <section id="values" class="values">
             <div class="container text-center">
-                <img src="resources/8I3fBUc04FwcLg-5J8HOHp.png" class="bg-deco deco-inner left" style="top: -40px; transform: rotate(5deg);" alt="" aria-hidden="true">
-                <h2 class="story-heading">Core values</h2>
+                <img src="/resources/8I3fBUc04FwcLg-5J8HOHp.png" class="bg-deco deco-inner left" style="top: -40px; transform: rotate(5deg);" alt="" aria-hidden="true">
+                <h2 class="story-heading">우리가 지키는 것</h2>
                 
                 <div class="values-grid">
                     <div class="receipt-wrapper">
                         <div class="receipt-inner zigzag-edges" style="text-align: left;">
-                            <h3>Waste nothing</h3>
+                            <h3>버리지 않기</h3>
                             <div class="dashed-divider"></div>
-                            <p>Food you already bought is the first ingredient.</p>
+                            <p>이미 산 식재료가 첫 번째 재료예요.</p>
                         </div>
                     </div>
                     <div class="receipt-wrapper">
                         <div class="receipt-inner zigzag-edges" style="text-align: left;">
-                            <h3>Act today</h3>
+                            <h3>오늘 하기</h3>
                             <div class="dashed-divider"></div>
-                            <p>One clear thing to do now beats a long list for later.</p>
+                            <p>나중에 할 긴 목록보다 지금 할 한 가지가 나아요.</p>
                         </div>
                     </div>
                     <div class="receipt-wrapper">
                         <div class="receipt-inner zigzag-edges" style="text-align: left;">
-                            <h3>Clarity and honesty</h3>
+                            <h3>분명하고 정직하게</h3>
                             <div class="dashed-divider"></div>
-                            <p>Color means freshness, and every color comes with a label.</p>
+                            <p>색은 신선도를 뜻하고, 모든 색에는 글자 라벨이 함께 붙어요.</p>
                         </div>
                     </div>
                     <div class="receipt-wrapper">
                         <div class="receipt-inner zigzag-edges" style="text-align: left;">
-                            <h3>Your fridge stays on your phone</h3>
+                            <h3>냉장고는 내 폰 안에</h3>
                             <div class="dashed-divider"></div>
-                            <p>Receipt images stay on your phone. Signing in and optional usage sharing involve separate server processing.</p>
+                            <p>영수증 이미지는 폰에만 남아요. 로그인과 선택적 사용 데이터 공유는 별도의 서버 처리를 거쳐요.</p>
                         </div>
                     </div>
                 </div>
@@ -1231,25 +1235,25 @@
         <!-- FAQ Section -->
         <section id="faq" class="faq">
             <div class="container">
-                <img src="resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="bg-deco deco-inner right" style="top: -60px; transform: rotate(-15deg);" alt="" aria-hidden="true">
-                <h2 class="text-center story-heading">FAQ</h2>
+                <img src="/resources/a7jTHzhu8zq9xlbjrpS4a1.png" class="bg-deco deco-inner right" style="top: -60px; transform: rotate(-15deg);" alt="" aria-hidden="true">
+                <h2 class="text-center story-heading">자주 묻는 질문</h2>
                 
                 <div class="faq-list">
                     <div class="faq-item">
-                        <h3 class="faq-q">Which phones?</h3>
-                        <p>iPhone with iOS 18 or later.</p>
+                        <h3 class="faq-q">어떤 기기에서 쓸 수 있나요?</h3>
+                        <p>iOS 18 이상 아이폰이에요.</p>
                     </div>
                     <div class="faq-item">
-                        <h3 class="faq-q">Is it free?</h3>
-                        <p>Yes. Reffi will be free on the App Store, and there is nothing to sign up for.</p>
+                        <h3 class="faq-q">무료인가요?</h3>
+                        <p>네. Reffi는 App Store에서 무료로 제공될 예정이고, 가입할 것도 없어요.</p>
                     </div>
                     <div class="faq-item">
-                        <h3 class="faq-q">Do I need an account?</h3>
-                        <p>No. Reffi works without an account, and your fridge stays on your phone.</p>
+                        <h3 class="faq-q">계정이 필요한가요?</h3>
+                        <p>아니요. 계정 없이 쓸 수 있고, 냉장고 정보는 폰에만 남아요.</p>
                     </div>
                     <div class="faq-item">
-                        <h3 class="faq-q">Where do the recipes come from?</h3>
-                        <p>A curated library of over 250 recipes from 12 cuisines plus your own, ranked by what spoils first. Reffi does not generate recipes with AI.</p>
+                        <h3 class="faq-q">레시피는 어디서 오나요?</h3>
+                        <p>12개 나라 요리 250여 개를 골라 담은 레시피와 직접 등록한 레시피를 임박한 재료 기준으로 정렬해요. AI로 레시피를 만들어 내지 않아요.</p>
                     </div>
                 </div>
             </div>
@@ -1257,15 +1261,15 @@
 
         <!-- Final Call to Action -->
         <section class="final-cta">
-            <img src="resources/95gAVfTJv-kcfvWnV_C4J7.png" class="bg-deco deco-outer left" style="top: 96px; transform: rotate(12deg);" alt="" aria-hidden="true">
+            <img src="/resources/95gAVfTJv-kcfvWnV_C4J7.png" class="bg-deco deco-outer left" style="top: 96px; transform: rotate(12deg);" alt="" aria-hidden="true">
             <div class="container">
                 <div class="receipt-wrapper">
                     <div class="receipt-inner zigzag-edges text-center">
-                        <h2 class="cta-title">Start with the fridge you already have.</h2>
-                        <p>Reffi is coming soon. Check back when it launches.</p>
+                        <h2 class="cta-title">지금 있는 냉장고로 시작하세요.</h2>
+                        <p>Reffi는 곧 출시됩니다. 출시되면 다시 찾아 주세요.</p>
                         
                         <div class="cta-actions">
-                            <button type="button" class="btn-primary seed-b" disabled>Coming soon</button>
+                            <button type="button" class="btn-primary seed-b" disabled>출시 예정</button>
                         </div>
                     </div>
                 </div>
@@ -1276,12 +1280,12 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <img src="resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="bg-deco deco-inner right" style="top: 0; transform: rotate(-5deg);" alt="" aria-hidden="true">
-            <img src="resources/reffi-logo.svg" class="logo-image" alt="Reffi logo">
-            <p class="subline" style="margin-bottom: 0;">Eat it today, waste nothing.</p>
+            <img src="/resources/ar_c5-vEmw1f1ra_0GbOAC.png" class="bg-deco deco-inner right" style="top: 0; transform: rotate(-5deg);" alt="" aria-hidden="true">
+            <img src="/resources/reffi-logo.svg" class="logo-image" alt="Reffi 로고">
+            <p class="subline" style="margin-bottom: 0;">오늘 먹고, 버리지 않아요.</p>
             
             <div class="footer-links">
-                <a href="/privacy.html">Privacy Policy</a>
+                <a href="/privacy.html#ko">개인정보 처리방침</a>
                 <a href="mailto:lee1993ljm@gmail.com">Support / 문의</a>
             </div>
             
