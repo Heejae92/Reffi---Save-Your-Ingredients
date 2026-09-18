@@ -44,10 +44,10 @@ STRINGS: list[tuple[str, str, int]] = [
     # hero
     (">IPHONE APP FOR YOUR FRIDGE<", ">냉장고를 위한 아이폰 앱<", 1),
     ("Eat it today,<br>waste nothing.", "오늘 먹고,<br>버리지 않아요.", 1),
-    (">Coming soon to the App Store for iPhone.<", ">곧 App Store에 출시됩니다.<", 1),
+    (">Free on the App Store for iPhone.<", ">App Store에서 무료로 만나요.<", 1),
     ("Reffi turns your grocery receipt into a fridge that counts down. When something is about to turn, it hands you recipe tickets that use it first.",
      "Reffi는 장본 영수증을 소비기한이 카운트다운되는 냉장고로 바꿔요. 재료가 상하기 직전이면, 그 재료를 먼저 쓰는 레시피 티켓을 건네요.", 1),
-    (">Coming soon</button>", ">출시 예정</button>", 2),
+    (">Download on the App Store</a>", ">App Store에서 다운로드</a>", 2),
     ('alt="Tomato"', 'alt="토마토"', 1), ('alt="Mushroom"', 'alt="버섯"', 1), ('alt="Broccoli"', 'alt="브로콜리"', 1),
     ('alt="Avocado"', 'alt="아보카도"', 1), ('alt="Meat"', 'alt="고기"', 1), ('alt="Apple"', 'alt="사과"', 1),
     ('alt="Pepper"', 'alt="파프리카"', 1), ('alt="Eggplant"', 'alt="가지"', 1),
@@ -107,8 +107,8 @@ STRINGS: list[tuple[str, str, int]] = [
     (">Which phones?<", ">어떤 기기에서 쓸 수 있나요?<", 1),
     (">iPhone with iOS 18 or later.<", ">iOS 18 이상 아이폰이에요.<", 1),
     (">Is it free?<", ">무료인가요?<", 1),
-    (">Yes. Reffi will be free on the App Store, and there is nothing to sign up for.<",
-     ">네. Reffi는 App Store에서 무료로 제공될 예정이고, 가입할 것도 없어요.<", 1),
+    (">Yes. Reffi is free on the App Store, and there is nothing to sign up for.<",
+     ">네. Reffi는 App Store에서 무료이고, 가입할 것도 없어요.<", 1),
     (">Do I need an account?<", ">계정이 필요한가요?<", 1),
     (">No. Reffi works without an account, and your fridge stays on your phone.<",
      ">아니요. 계정 없이 쓸 수 있고, 냉장고 정보는 폰에만 남아요.<", 1),
@@ -117,7 +117,7 @@ STRINGS: list[tuple[str, str, int]] = [
      "12개 나라 요리 250여 개를 골라 담은 레시피와 직접 등록한 레시피를 임박한 재료 기준으로 정렬해요. AI로 레시피를 만들어 내지 않아요.", 1),
     # final cta + footer
     (">Start with the fridge you already have.<", ">지금 있는 냉장고로 시작하세요.<", 1),
-    (">Reffi is coming soon. Check back when it launches.<", ">Reffi는 곧 출시됩니다. 출시되면 다시 찾아 주세요.<", 1),
+    (">Download Reffi and cook what is about to turn, first.<", ">Reffi를 내려받고 임박한 재료부터 요리하세요.<", 1),
     (">Eat it today, waste nothing.<", ">오늘 먹고, 버리지 않아요.<", 1),
     ('<a href="/privacy.html">Privacy Policy</a>', '<a href="/privacy.html#ko">개인정보 처리방침</a>', 1),
 ]
@@ -125,6 +125,8 @@ STRINGS: list[tuple[str, str, int]] = [
 # Structural rewrites (paths and SEO head), applied after the string table.
 REWRITES: list[tuple[str, str, int]] = [
     ('<html lang="en">', '<html lang="ko">', 1),
+    # Korean storefront for the two CTA buttons and the JSON-LD download/install URLs
+    ("https://apps.apple.com/us/app/reffi-save-your-ingredients/id6795009532", "https://apps.apple.com/kr/app/id6795009532", 4),
     ('src="resources/', 'src="/resources/', -1),            # -1 = at least one
     (f'<link rel="canonical" href="{BASE}/">', f'<link rel="canonical" href="{BASE}/ko/">', 1),
     (f'<meta property="og:url" content="{BASE}/">', f'<meta property="og:url" content="{BASE}/ko/">', 1),
