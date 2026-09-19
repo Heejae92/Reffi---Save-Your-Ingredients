@@ -12,6 +12,11 @@ packages:
   Supabase:
     url: https://github.com/supabase/supabase-swift
     from: 2.0.0
+  # Google Analytics(GA4) — FirebaseAnalyticsCore만 링크한다(광고 식별자 지원 제품 미포함 → ATT 불필요).
+  # GoogleService-Info.plist는 저장소에 없고(.gitignore) 빌드 머신이 Reffi/ 에 둔다(docs/ANALYTICS.md).
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 12.19.2
 
 schemes:
   Reffi:
@@ -44,6 +49,16 @@ targets:
         product: PhosphorSwift
       - package: Supabase
         product: Supabase
+      - package: Firebase
+        product: FirebaseAnalyticsCore
+    preBuildScripts:
+      # GA 설정 파일은 저장소 밖(.gitignore)이라 빠뜨리기 쉽다 — 없으면 앱은 GA 없이 조용히 돌므로 빌드에서 알린다.
+      - name: Check GoogleService-Info.plist
+        script: |
+          if [ ! -f "$SRCROOT/Reffi/GoogleService-Info.plist" ]; then
+            echo "warning: Reffi/GoogleService-Info.plist not found; Google Analytics will stay off in this build (docs/ANALYTICS.md)"
+          fi
+        basedOnDependencyAnalysis: false
     info:
       path: Reffi/Info.plist
       properties:
@@ -59,6 +74,8 @@ targets:
           - UIInterfaceOrientationPortrait
         UIApplicationSupportsIndirectInputEvents: true
         ITSAppUsesNonExemptEncryption: false
+        # 화면 이벤트는 파이프라인이 `screen_view`로 직접 보낸다(SwiftUI엔 자동 추적이 UIViewController 단위라 무의미).
+        FirebaseAutomaticScreenReportingEnabled: false
         NSCameraUsageDescription: "Reffi uses the camera to find grocery items on receipts for you to review and add."
         NSMotionUsageDescription: "Reffi uses device motion to move the ingredients on screen as you tilt your phone."
         CFBundleURLTypes:
@@ -85,6 +102,8 @@ targets:
         CODE_SIGNING_ALLOWED: "NO"
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_USER_SCRIPT_SANDBOXING: "YES"
+        # Firebase Analytics(SPM) 요구 사항 — Objective-C 카테고리 링크.
+        OTHER_LDFLAGS: ["$(inherited)", "-ObjC"]
 
   ReffiTests:
     type: bundle.unit-test

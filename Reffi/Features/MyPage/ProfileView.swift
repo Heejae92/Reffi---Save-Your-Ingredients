@@ -41,6 +41,9 @@ struct ProfileView: View {
     // 앱 내 언어 SSOT(38차) — `RootGateView`가 같은 키로 루트 `.environment(\.locale)`을 건다.
     @AppStorage(AppLanguage.key) private var languageRaw = AppLanguage.system.rawValue
     @State private var languagePickerOpen = false
+    // 사용 통계 SSOT — 미설정은 켜짐(옵트아웃, `Analytics.enabledKey` 문서). 토글이 곧 사실이다:
+    // 끄면 `Analytics.setEnabled(false)`가 로컬 큐를 비우고 GA 식별자를 재발급한다.
+    @AppStorage(Analytics.enabledKey) private var usageSharing = true
     /// 가구 인원 드롭다운(49차) — 언어 행과 같은 문법. 두 픽커는 **동시에 열리지 않으므로**
     /// `DropdownAnchorKey`(마지막 non-nil을 남긴다)를 공유해도 앵커가 섞이지 않는다.
     @State private var householdPickerOpen = false
@@ -449,6 +452,12 @@ struct ProfileView: View {
                 // 같은 카드 안 행(`SettingsRow`)과 **같은 세로 리듬**이다. s3으로 좁혀 두면 절취선 하나를
                 // 사이에 두고 위 행은 16, 아래 안내문은 12가 되어 카드가 아래쪽만 눌린 것처럼 읽힌다.
                 .padding(.vertical, ReffiSpace.s4)
+
+            ReceiptRule()
+            SettingsToggle(title: "Share usage data",
+                           caption: "Anonymous, Google Analytics",
+                           isOn: $usageSharing, seed: 3)
+            .onChange(of: usageSharing) { _, on in Analytics.shared.setEnabled(on) }
 
             ReceiptRule()
             if Self.showsSampleLoad(isGuest: auth.isGuest) {

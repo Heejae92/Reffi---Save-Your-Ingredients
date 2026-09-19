@@ -57,13 +57,29 @@ struct AnalyticsTests {
                   backgroundRunner: { work in Task { await work() } })
     }
 
-    @Test func freshInstallRequiresOptIn() {
+    /// 옵트아웃 모델(2026-09-19) — 키가 없으면 켜짐. 옛 옵트인 키(`legacyEnabledKey`)에 남은 false는 무시된다.
+    @Test func freshInstallCollectsUntilOptOut() {
         let defaults = freshDefaults()
         defaults.removeObject(forKey: Analytics.enabledKey)
+        defaults.set(false, forKey: Analytics.legacyEnabledKey)
         let analytics = make(defaults: defaults)
         analytics.track(.screenView(.home))
-        #expect(!analytics.isEnabled)
-        #expect(analytics.queue.isEmpty)
+        #expect(analytics.isEnabled)
+        #expect(analytics.queue.map(\.name) == ["session_start", "screen_view"])
+    }
+
+    /// 즉시 전송 모드(GA 배선) — 행마다 flush가 걸려 배치 임계(20)를 기다리지 않는다.
+    @Test func eagerFlushUploadsEachEvent() async {
+        let capture = Capture()
+        let a = Analytics(defaults: freshDefaults(), queueURL: nil,
+                          uploader: { rows in capture.batches.append(rows) },
+                          canUpload: { true }, now: { Date(timeIntervalSince1970: 1_800_000_000) },
+                          context: Self.context, backgroundRunner: { work in Task { await work() } },
+                          flushesEagerly: true)
+        a.track(.ingredientPin(on: true))
+        await a.flush()
+        #expect(a.queue.isEmpty)
+        #expect(capture.batches.flatMap { $0 }.map(\.name) == ["session_start", "ingredient_pin"])
     }
 
     @Test func identityResetDuringUploadPreservesNewEvents() async {

@@ -13,6 +13,10 @@ struct ReffiApp: App {
         _store = State(initialValue: FridgeStore())
         _profile = State(initialValue: ProfileStore())
         _auth = State(initialValue: AuthStore())
+        // Google Analytics — 설정 파일(GoogleService-Info.plist)이 번들에 있을 때만 켜지고, 사용자의
+        // "Share usage data" 상태를 SDK 플래그에 그대로 전달한다(`docs/ANALYTICS.md`).
+        GoogleAnalyticsSink.configureIfAvailable(collectionEnabled: Analytics.shared.isEnabled)
+        GoogleAnalyticsSink.setUserProperties(from: Analytics.shared.context)
         #if DEBUG
         ReffiFontCheck.dump()
         // 스크린샷·QA용 — 온보딩 처음부터 다시(-onboarding은 초기화 + 정상 게이트 진입.

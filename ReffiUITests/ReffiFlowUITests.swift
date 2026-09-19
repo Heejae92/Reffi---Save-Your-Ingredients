@@ -672,7 +672,7 @@ final class ReffiFlowUITests: XCTestCase {
         XCTAssertFalse(app.secureTextFields.firstMatch.exists)
         XCTAssertFalse(app.buttons["Sign up"].exists)
         XCTAssertFalse(app.buttons["Forgot password?"].exists)
-        XCTAssertFalse(app.switches["Share usage data"].exists)
+        XCTAssertTrue(app.switches["Share usage data"].exists, "GA 옵트아웃 토글(기본 켜짐)은 App 영수증에 있어야 한다")
         XCTAssertTrue(app.staticTexts["No sign-in needed"].exists)
     }
 
