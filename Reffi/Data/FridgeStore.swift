@@ -226,6 +226,11 @@ final class FridgeStore {
         // Artwork follows the current lexicon for existing inventory, history and shopping notes.
         // IDs, quantities, dates and user category choices remain the saved values.
         for i in ingredients.indices {
+            if let category = ingredients[i].categoryOverride {
+                ingredients[i].glyph = FoodGlyph.categoryRepresentative(category)
+                ingredients[i].category = ingredients[i].glyph.categoryLabel
+                continue
+            }
             if let id = ingredients[i].canonicalID, let entry = lex.entry(id: id),
                let glyph = FoodGlyph(rawValue: entry.glyph) { ingredients[i].glyph = glyph }
         }
@@ -530,6 +535,7 @@ final class FridgeStore {
         var updated = ingredient
         let renamed = ingredients[i].name != ingredient.name
         if renamed {
+            updated.categoryOverride = nil
             updated.glyph = FoodGlyph.match(ingredient.name)
             updated.category = updated.glyph.categoryLabel
             updated.canonicalID = IngredientLexicon.shared.canonicalID(for: ingredient.name)   // 이름 바뀌면 캐논 키 재해석

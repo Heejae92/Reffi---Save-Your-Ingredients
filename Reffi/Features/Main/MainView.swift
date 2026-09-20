@@ -34,7 +34,6 @@ struct MainView: View {
     /// 라우터를 새로 만들지 않는다: 이 앱의 화면 전환은 전부 클로저·바인딩으로 위로 올린다
     /// (선례: `onClose`·`onFire`·`onAddMissing`). 실제 탭 전환은 `RootTabView`가 한다.
     var onOpenToBuy: () -> Void = {}
-    var onOpenFridge: () -> Void = {}
 
     /// SKScene 보관 박스 — @State 초기값 식은 뷰 구조체가 재생성될 때마다 평가되므로(예: undo 토스트
     /// 등장·소멸마다 RootTabView body 재평가 → MainView 재구성) 씬을 게으르게 만들어 1회만 생성한다.
@@ -226,15 +225,13 @@ struct MainView: View {
                     Text("Added to your fridge.").reffiType(.caption).foregroundStyle(ReffiColor.ink2)
                         .accessibilityIdentifier("ingredient.saved")
                 }
-                PaperButton(title: store.ingredients.isEmpty
+                PaperButton(title: counter.items.isEmpty
                             ? (store.isPristine ? "Add first ingredient" : "Add ingredients")
-                            : "View fridge",
-                            subtitle: store.ingredients.isEmpty ? nil : "\(store.ingredients.count) items in your fridge") {
-                    if store.ingredients.isEmpty { showAdd = true } else { onOpenFridge() }
+                            : "Start cooking",
+                            subtitle: counter.items.isEmpty ? nil : "Find recipes with your ingredients") {
+                    if counter.items.isEmpty { showAdd = true } else { cook() }
                 }
-                if !counter.items.isEmpty {
-                    QuietButton(title: "Start cooking", icon: ReffiIcon.go, tint: ReffiColor.blueDark) { cook() }
-                }
+                .accessibilityIdentifier("home.primaryAction")
             }
                 .padding(.horizontal, margin)
                 .padding(.top, ReffiSpace.s3)

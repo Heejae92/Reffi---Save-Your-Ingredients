@@ -48,7 +48,7 @@ struct RootTabView: View {
             // 그대로 다시 그렸다. 그래서 셋 다 `isActive`를 받아 **비활성이면 본문을 세우지
             // 않는다** — @State·@AppStorage·시트는 뷰가 살아 있는 한 그대로다(메인의 물리 씬은
             // 여전히 여기서 일시정지된다).
-            pane(MainView(isActive: tab == .home, onOpenToBuy: { openFridge(.toBuy) }, onOpenFridge: { openFridge(.stock) }), visible: tab == .home)
+            pane(MainView(isActive: tab == .home, onOpenToBuy: { openFridge(.toBuy) }), visible: tab == .home)
             pane(FridgeView(isActive: tab == .fridge, pendingPane: $fridgePane), visible: tab == .fridge)
             pane(ProfileView(isActive: tab == .profile), visible: tab == .profile)
 

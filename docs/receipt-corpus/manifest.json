@@ -1,0 +1,1621 @@
+[
+  {
+    "id": "kr01",
+    "country": "KR",
+    "description": "Emart, small print and discount",
+    "source_page": "https://vandal10.tistory.com/7",
+    "path": "images/kr01.jpg",
+    "sha256": "0ec44454c72aaa8284da9fe8767646a547dac41939a546e7288db64504ab6195",
+    "width": 1752,
+    "height": 3936,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "가을애 감귤 1.8kg",
+        "acceptableCanonicalIDs": [
+          "mandarin"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "솔라이오 상그리아레",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "아침에주스 포도1.8L",
+        "acceptableCanonicalIDs": [
+          "juice",
+          "fresh-juice"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "CJ 햇반 3입(210g*3)",
+        "acceptableCanonicalIDs": [
+          "instant-rice",
+          "cooked-rice"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "퀘소 만체고 치즈",
+        "acceptableCanonicalIDs": [
+          "cheese"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "하몽이베리코베",
+        "acceptableCanonicalIDs": [
+          "ham"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "가을애 감귤 1.8kg",
+      "솔라이오 상그리아레",
+      "아침에주스 포도1.8L",
+      "CJ 햇반 3입(210g*3)",
+      "퀘소 만체고 치즈",
+      "하몽이베리코베"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "kr02",
+    "country": "KR",
+    "description": "Homeplus, beverage promotion and bag",
+    "source_page": "https://www.nbntv.co.kr/news/articleView.html?idxno=3006793",
+    "path": "images/kr02.jpg",
+    "sha256": "09a43b9bf1692b161fa80246aa3d564d93950e12e0c2b175b068869b6aa9e543",
+    "width": 600,
+    "height": 1333,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "하이트진로 테라피쳐",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "포카리스웨트240",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "재사용봉투_20L",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "코주부클래식육포BBQ",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "코주부클래식육포MIL",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "하이트진로 테라피쳐",
+      "포카리스웨트240",
+      "재사용봉투_20L",
+      "코주부클래식육포BBQ",
+      "코주부클래식육포MIL"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "kr03",
+    "country": "KR",
+    "description": "Hanaro, refund and repurchase side by side",
+    "source_page": "https://gomaver.tistory.com/4826",
+    "path": "images/kr03.jpg",
+    "sha256": "b82c97af79f2bf0be6e4e1056dd620d44d73de1eb983a56a2d624728fbafeea3",
+    "width": 1000,
+    "height": 1099,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "P신라면블랙사발 두부김치94G",
+        "acceptableCanonicalIDs": [
+          "ramen-noodle"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "P사리곰탕큰사발111g",
+        "acceptableCanonicalIDs": [
+          "ramen-noodle"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "P신라면컵65g",
+        "acceptableCanonicalIDs": [
+          "ramen-noodle"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "P육개장사발면86g",
+        "acceptableCanonicalIDs": [
+          "ramen-noodle"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "P옛날땅콩카라멜(대)600g",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "P맛타리",
+        "acceptableCanonicalIDs": [
+          "oyster-mushroom",
+          "mushroom"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "P4000국희땅콩샌드372G",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "P백오이",
+        "acceptableCanonicalIDs": [
+          "cucumber"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "P빙그레요구르트",
+        "acceptableCanonicalIDs": [
+          "yogurt"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "P신라면블랙사발 두부김치94G",
+      "P사리곰탕큰사발111g",
+      "P신라면컵65g",
+      "P육개장사발면86g",
+      "P옛날땅콩카라멜(대)600g",
+      "P맛타리",
+      "P4000국희땅콩샌드372G",
+      "P백오이",
+      "P빙그레요구르트"
+    ],
+    "scored": false,
+    "exclusionReason": "two separate return/purchase receipts on one photo; transaction-boundary stress case",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "kr04",
+    "country": "KR",
+    "description": "Hanaro, soy milk plus advertisement",
+    "source_page": "https://www.ccmessage.kr/news/articleView.html?idxno=23173",
+    "path": "images/kr04.jpg",
+    "sha256": "f707aec04cb2fe06636a075810fc94e0db133e02254b63e357bc86772e043849",
+    "width": 398,
+    "height": 600,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "고소한 검은콩&고칼슘 두유 200ml*24",
+        "acceptableCanonicalIDs": [
+          "soy-milk"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "고소한 검은콩&고칼슘 두유 200ml*24"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "kr05",
+    "country": "KR",
+    "description": "Hanaro, nonfood-only negative control",
+    "source_page": "https://www.hidomin.com/news/articleView.html?idxno=429970",
+    "path": "images/kr05.jpg",
+    "sha256": "9607ec409261b754296428c0a6bf7490582d61ee906d618e759870fa15248043",
+    "width": 598,
+    "height": 852,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "종량제(사무실)20낱개",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      }
+    ],
+    "productLines": [
+      "종량제(사무실)20낱개"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "kr06",
+    "country": "KR",
+    "description": "Korean groceries, package weights",
+    "source_page": "https://suger-salt.tistory.com/1777",
+    "path": "images/kr06.png",
+    "sha256": "37169cabf5e82dbdba853513e2b34c0fe977f8fc34454e8f5b98bbfbcfee4d0c",
+    "width": 1080,
+    "height": 977,
+    "format": "PNG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "자연촌국산콩나물800g",
+        "acceptableCanonicalIDs": [
+          "bean-sprout"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "풀무원 국산투컵두부",
+        "acceptableCanonicalIDs": [
+          "tofu"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "존쿡 잠봉 200g*3",
+        "acceptableCanonicalIDs": [
+          "ham"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "자연촌국산콩나물800g",
+      "풀무원 국산투컵두부",
+      "존쿡 잠봉 200g*3"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "kr07",
+    "country": "KR",
+    "description": "Emart, discounted groceries, low resolution",
+    "source_page": "https://www.insight.co.kr/news/454939",
+    "path": "images/kr07.webp",
+    "sha256": "111f293c3bed017ef61891921e9feba22fe5fa4eddf940cd6537c0764e09e5c8",
+    "width": 700,
+    "height": 440,
+    "format": "WEBP",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "바나나",
+        "acceptableCanonicalIDs": [
+          "banana"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "크리스피두부스틱",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "칵테일 토마토",
+        "acceptableCanonicalIDs": [
+          "cherry-tomato",
+          "tomato"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "동물복지 닭안심",
+        "acceptableCanonicalIDs": [
+          "chicken-tenderloin"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "무지방 그릭요거트 0%",
+        "acceptableCanonicalIDs": [
+          "yogurt"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "냉동 트리플베리",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "바나나",
+      "크리스피두부스틱",
+      "칵테일 토마토",
+      "동물복지 닭안심",
+      "무지방 그릭요거트 0%",
+      "냉동 트리플베리"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "kr08",
+    "country": "KR",
+    "description": "Dongdaemun Mart, snacks and flavored milk",
+    "source_page": "https://commons.wikimedia.org/wiki/File:SK_Korea_tour_%E9%A6%96%E7%88%BE_supermarket_official_receipt_computer_print_out_in_Korean_language_only_July-2013.JPG",
+    "path": "images/kr08.jpg",
+    "sha256": "1116755185064393e3ed374c9179d556eca7eb97795593d8c4bf9e45c2fe5f7e",
+    "width": 1936,
+    "height": 2592,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "광천)해저파래도",
+        "acceptableCanonicalIDs": [
+          "dried-seaweed"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "롯데)파스타스150",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "농심)우육탕큰사",
+        "acceptableCanonicalIDs": [
+          "ramen-noodle"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "빙)바나나우유혼",
+        "acceptableCanonicalIDs": [
+          "flavored-milk"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "롯데)누드빼빼로1",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "광천)해저파래도",
+      "롯데)파스타스150",
+      "농심)우육탕큰사",
+      "빙)바나나우유혼",
+      "롯데)누드빼빼로1"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Wikimedia Commons; see source page for attribution and exact license."
+  },
+  {
+    "id": "us01",
+    "country": "US",
+    "description": "Walmart, mixed goods, wrinkled",
+    "source_page": "https://7news.com.au/lifestyle/internet-sad-as-shoppers-heartbreaking-receipt-detail-exposed-c-8662457",
+    "path": "images/us01.png",
+    "sha256": "7ec1f54fd8fd83a7a76e57d6e7bf9bfcb8c9ca4f5c4ef81538f4d3121eb55475",
+    "width": 514,
+    "height": 698,
+    "format": "PNG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "2 MILK",
+        "acceptableCanonicalIDs": [
+          "milk"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "FREEZER BAGS",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "91 ALCOHOL",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "70 ALCOHOL",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "OF REPLENISH",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "HE SH SF HN",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "NTG UG CM CL",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "MAY MASCARA",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "REESE EGG",
+        "acceptableCanonicalIDs": [
+          "chocolate"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "KING SIZE",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "M MS HZLNT",
+        "acceptableCanonicalIDs": [
+          "chocolate"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "CANDY",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "MUFFINS",
+        "acceptableCanonicalIDs": [
+          "bread"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BREAD",
+        "acceptableCanonicalIDs": [
+          "bread"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "OS STL CRUT",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "OS BDYWASH",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "QTIPS SWABS",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "CLG OW TP",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "TOOTHPASTE",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "SE FRESH 24",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "VIVA SIG 6D",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "RX -20I 2IN1",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      }
+    ],
+    "productLines": [
+      "2 MILK",
+      "FREEZER BAGS",
+      "91 ALCOHOL",
+      "70 ALCOHOL",
+      "OF REPLENISH",
+      "HE SH SF HN",
+      "NTG UG CM CL",
+      "MAY MASCARA",
+      "REESE EGG",
+      "KING SIZE",
+      "M MS HZLNT",
+      "CANDY",
+      "MUFFINS",
+      "BREAD",
+      "OS STL CRUT",
+      "OS BDYWASH",
+      "QTIPS SWABS",
+      "CLG OW TP",
+      "TOOTHPASTE",
+      "SE FRESH 24",
+      "VIVA SIG 6D",
+      "RX -20I 2IN1"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us02",
+    "country": "US",
+    "description": "Walmart, cart background, handheld",
+    "source_page": "https://www.passionforsavings.com/online/walmart-cash-back-offers/",
+    "path": "images/us02.png",
+    "sha256": "ec2ea51b1b730db7e0df7729c2edd1312d3c44a5825a161be0d3cf7c9731526e",
+    "width": 770,
+    "height": 540,
+    "format": "PNG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "SERVE BW GEN",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "APP TRAY LNC",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "CONS LIL STEM",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "LILIUM BUNCH",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "LILIES",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "SALAD KIT",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "ROMAINE",
+        "acceptableCanonicalIDs": [
+          "lettuce"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "STRAWBERRIES",
+        "acceptableCanonicalIDs": [
+          "strawberry"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "ORANGE BELL",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "CUBED SQUASH",
+        "acceptableCanonicalIDs": [
+          "pumpkin"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "YELLOW BELL",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "RED BELL",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "GRANNY APPLE",
+        "acceptableCanonicalIDs": [
+          "apple"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BELL PEPPER",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "SERVE BW GEN",
+      "APP TRAY LNC",
+      "CONS LIL STEM",
+      "LILIUM BUNCH",
+      "LILIES",
+      "SALAD KIT",
+      "ROMAINE",
+      "STRAWBERRIES",
+      "ORANGE BELL",
+      "CUBED SQUASH",
+      "YELLOW BELL",
+      "RED BELL",
+      "GRANNY APPLE",
+      "BELL PEPPER"
+    ],
+    "scored": false,
+    "exclusionReason": "partly occluded/cropped product list; qualitative only",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us03",
+    "country": "US",
+    "description": "Walmart, produce, handheld",
+    "source_page": "https://thekrazycouponlady.com/tips/couponing/shopmium-app",
+    "path": "images/us03.jpg",
+    "sha256": "1f9574630516816196aec8bfba100a78a1fcf7b2c2bb6395cbec4340c1ea844b",
+    "width": 768,
+    "height": 512,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "BAG RYL 23",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "LF YOGURT",
+        "acceptableCanonicalIDs": [
+          "yogurt"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "MUSHROOM",
+        "acceptableCanonicalIDs": [
+          "mushroom"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "EGGS",
+        "acceptableCanonicalIDs": [
+          "egg"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "GARLIC HERB",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "BROCC CROWN",
+        "acceptableCanonicalIDs": [
+          "broccoli"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "GREEN ONIONS",
+        "acceptableCanonicalIDs": [
+          "green-onion"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BELL PEPPER",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "RED BELL",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BULK LEMONS",
+        "acceptableCanonicalIDs": [
+          "lemon"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "PINEAPPLE",
+        "acceptableCanonicalIDs": [
+          "pineapple"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "BAG RYL 23",
+      "LF YOGURT",
+      "MUSHROOM",
+      "EGGS",
+      "GARLIC HERB",
+      "BROCC CROWN",
+      "GREEN ONIONS",
+      "BELL PEPPER",
+      "RED BELL",
+      "BULK LEMONS",
+      "PINEAPPLE"
+    ],
+    "scored": false,
+    "exclusionReason": "several product names too small to reliably transcribe; qualitative only",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us04",
+    "country": "US",
+    "description": "Trader Joes, clear, deposits and bag fee",
+    "source_page": "https://dottxt-ai.github.io/outlines/latest/examples/receipt-digitization/",
+    "path": "images/us04.jpg",
+    "sha256": "aec8f8a043faabc854bf5eb21a14c9fe748b7bdfb1a410d6fbd4cedefa8ea8f6",
+    "width": 3068,
+    "height": 2816,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "BANANA EACH",
+        "acceptableCanonicalIDs": [
+          "banana"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BAREBELLS CHOCOLATE DOUG",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "BAREBELLS CREAMY CRISP",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "BAREBELLS CARAMEL CASHEW",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "SPINDRIFT ORANGE MANGO 8",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "Bottle Deposit",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "MILK ORGANIC GALLON WHOL",
+        "acceptableCanonicalIDs": [
+          "milk"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "CLASSIC GREEK SALAD",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "COBB SALAD",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "PEPPER BELL RED XL EACH",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BAG FEE",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      }
+    ],
+    "productLines": [
+      "BANANA EACH",
+      "BAREBELLS CHOCOLATE DOUG",
+      "BAREBELLS CREAMY CRISP",
+      "BAREBELLS CARAMEL CASHEW",
+      "SPINDRIFT ORANGE MANGO 8",
+      "Bottle Deposit",
+      "MILK ORGANIC GALLON WHOL",
+      "CLASSIC GREEK SALAD",
+      "COBB SALAD",
+      "PEPPER BELL RED XL EACH",
+      "BAG FEE"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us05",
+    "country": "US",
+    "description": "Trader Joes, produce and pantry",
+    "source_page": "https://www.thebillfold.com/2016/02/show-us-your-grocery-receipts-part-2-calgary-co-op-whole-foods-trader-joes-and-aldis/",
+    "path": "images/us05.jpg",
+    "sha256": "44b477b526f57fc9e62cba4b6065c112bba2f3bb65004da061413109019d535b",
+    "width": 400,
+    "height": 533,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "MUSHROOMS CREMINI BABY BELL",
+        "acceptableCanonicalIDs": [
+          "mushroom",
+          "button-mushroom"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "COFFEE JOE MEDIUM ROAST",
+        "acceptableCanonicalIDs": [
+          "coffee"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "TOMATOES HEIRLOOM MINI 1 LB",
+        "acceptableCanonicalIDs": [
+          "tomato",
+          "cherry-tomato"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "ALMONDS R/NS",
+        "acceptableCanonicalIDs": [
+          "almond"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "ROASTED UNSALTED CASHEWS",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "CARROTS OF MANY COLORS ORGAN",
+        "acceptableCanonicalIDs": [
+          "carrot"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "UNSALTED SUNFLOWER SEEDS",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "FLAT ANCHOVIES 2 OZ TIN",
+        "acceptableCanonicalIDs": [
+          "anchovy-fillet"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BUTTERNUT SQUASH EACH",
+        "acceptableCanonicalIDs": [
+          "pumpkin"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "AVOCADOS EACH HASS 40 CT.",
+        "acceptableCanonicalIDs": [
+          "avocado"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "APPLE EACH FUJI",
+        "acceptableCanonicalIDs": [
+          "apple"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "POTATO SWEET",
+        "acceptableCanonicalIDs": [
+          "sweet-potato"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "MUSHROOMS CREMINI BABY BELL",
+      "COFFEE JOE MEDIUM ROAST",
+      "TOMATOES HEIRLOOM MINI 1 LB",
+      "ALMONDS R/NS",
+      "ROASTED UNSALTED CASHEWS",
+      "CARROTS OF MANY COLORS ORGAN",
+      "UNSALTED SUNFLOWER SEEDS",
+      "FLAT ANCHOVIES 2 OZ TIN",
+      "BUTTERNUT SQUASH EACH",
+      "AVOCADOS EACH HASS 40 CT.",
+      "APPLE EACH FUJI",
+      "POTATO SWEET"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us06",
+    "country": "US",
+    "description": "Whole Foods, weighted items",
+    "source_page": "https://www.thebillfold.com/2016/02/show-us-your-grocery-receipts-part-2-calgary-co-op-whole-foods-trader-joes-and-aldis/",
+    "path": "images/us06.jpg",
+    "sha256": "2de4b3563d1f85a66b1b4d156030ee1e837f23746a23021193a11d063210d2b0",
+    "width": 400,
+    "height": 533,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "PODRG OG GREEN KAL",
+        "acceptableCanonicalIDs": [
+          "kale"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BAG REFUND",
+        "acceptableCanonicalIDs": [],
+        "isFood": false
+      },
+      {
+        "text": "MERIDUL PAPAYA",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "CV CROWNS BROCCOLI",
+        "acceptableCanonicalIDs": [
+          "broccoli"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "FRHRSD GN LENTL LG",
+        "acceptableCanonicalIDs": [
+          "lentil"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BULK OAT STEEL CUT",
+        "acceptableCanonicalIDs": [
+          "oat"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "PODRG OG GREEN KAL",
+      "BAG REFUND",
+      "MERIDUL PAPAYA",
+      "CV CROWNS BROCCOLI",
+      "FRHRSD GN LENTL LG",
+      "BULK OAT STEEL CUT"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us07",
+    "country": "US",
+    "description": "Trader Joes, crumpled paper and large background",
+    "source_page": "https://www.thebillfold.com/2016/02/show-us-your-grocery-receipts-part-2-calgary-co-op-whole-foods-trader-joes-and-aldis/",
+    "path": "images/us07.jpg",
+    "sha256": "d29657686ba9474d852ff0619abdd8d591fb47e5f59c89d240882bb0c807b469",
+    "width": 400,
+    "height": 533,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "R-SALAD SPINACH BABY 6 OZ",
+        "acceptableCanonicalIDs": [
+          "spinach"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "A-APPLE EACH PINK LADY",
+        "acceptableCanonicalIDs": [
+          "apple"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BANANAS",
+        "acceptableCanonicalIDs": [
+          "banana"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "SPAGHETTI SQUASH EACH",
+        "acceptableCanonicalIDs": [
+          "pumpkin"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "A-POTATO SWEET",
+        "acceptableCanonicalIDs": [
+          "sweet-potato"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "R-SALAD SPINACH BABY 6 OZ",
+      "A-APPLE EACH PINK LADY",
+      "BANANAS",
+      "SPAGHETTI SQUASH EACH",
+      "A-POTATO SWEET"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us08",
+    "country": "US",
+    "description": "Aldi, long receipt",
+    "source_page": "https://www.thebillfold.com/2016/02/show-us-your-grocery-receipts-part-2-calgary-co-op-whole-foods-trader-joes-and-aldis/",
+    "path": "images/us08.jpg",
+    "sha256": "cbf36cf43a5f8df61ae9efb62aa54e18c9705b05a652d06c6837bec87127579e",
+    "width": 400,
+    "height": 533,
+    "format": "JPEG",
+    "downloaded_at": "2026-09-20",
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "Banana WE",
+        "acceptableCanonicalIDs": [
+          "banana"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Gala Apples",
+        "acceptableCanonicalIDs": [
+          "apple"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Yellow Onions",
+        "acceptableCanonicalIDs": [
+          "onion"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Baby Carrots",
+        "acceptableCanonicalIDs": [
+          "carrot"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Rice Tom Bas/Chkl",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "Refried Beans",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "Whole Kernel Corn",
+        "acceptableCanonicalIDs": [
+          "corn",
+          "canned-corn"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Black Beans",
+        "acceptableCanonicalIDs": [
+          "black-bean"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Garban/Cannellini",
+        "acceptableCanonicalIDs": [
+          "chickpea",
+          "white-bean"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Turkey Bacon",
+        "acceptableCanonicalIDs": [
+          "bacon"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Mild Cheddar Shred",
+        "acceptableCanonicalIDs": [
+          "cheese"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Green Peppers",
+        "acceptableCanonicalIDs": [
+          "bell-pepper"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Mild/SpicFeta Salm",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "Burrito Tortillas",
+        "acceptableCanonicalIDs": [
+          "tortilla"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Mushrooms",
+        "acceptableCanonicalIDs": [
+          "mushroom"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Everything Bagel",
+        "acceptableCanonicalIDs": [
+          "bread"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Almondmilk",
+        "acceptableCanonicalIDs": [
+          "almond-milk"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Quick Oats",
+        "acceptableCanonicalIDs": [
+          "oat"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Large Eggs",
+        "acceptableCanonicalIDs": [
+          "egg"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "Pita Chips",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "Avocados",
+        "acceptableCanonicalIDs": [
+          "avocado"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "Banana WE",
+      "Gala Apples",
+      "Yellow Onions",
+      "Baby Carrots",
+      "Rice Tom Bas/Chkl",
+      "Refried Beans",
+      "Whole Kernel Corn",
+      "Black Beans",
+      "Garban/Cannellini",
+      "Turkey Bacon",
+      "Mild Cheddar Shred",
+      "Green Peppers",
+      "Mild/SpicFeta Salm",
+      "Burrito Tortillas",
+      "Mushrooms",
+      "Everything Bagel",
+      "Almondmilk",
+      "Quick Oats",
+      "Large Eggs",
+      "Pita Chips",
+      "Avocados"
+    ],
+    "scored": true,
+    "exclusionReason": "",
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+  },
+  {
+    "id": "us09",
+    "country": "US",
+    "description": "Kroger, tilted handheld receipt with background",
+    "source_page": "https://news.lenovo.com/shaping-krogers-self-checkout-of-tomorrow-ai-edge-computing/",
+    "path": "images/us09.jpg",
+    "sha256": "39d6b95548e2c3d3eca1d1b53817e96b245d6b4a7420394fc414d44163abd948",
+    "width": 768,
+    "height": 512,
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "MTN DEW",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "BIGK SELTZS BALA",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "BANANAS",
+        "acceptableCanonicalIDs": [
+          "banana"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "PRIV BEEF JERKY",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "STO MTN CHIPS",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "KROGER FRTH YOGURT",
+        "acceptableCanonicalIDs": [
+          "yogurt"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "SIMPLE TRTH YOGURT",
+        "acceptableCanonicalIDs": [
+          "yogurt"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "SIMPLE TRTH YOGURT",
+        "acceptableCanonicalIDs": [
+          "yogurt"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "KROG GRAB N GO MLK",
+        "acceptableCanonicalIDs": [
+          "milk"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "MTN DEW",
+      "BIGK SELTZS BALA",
+      "BANANAS",
+      "PRIV BEEF JERKY",
+      "STO MTN CHIPS",
+      "KROGER FRTH YOGURT",
+      "SIMPLE TRTH YOGURT",
+      "SIMPLE TRTH YOGURT",
+      "KROG GRAB N GO MLK"
+    ],
+    "scored": false,
+    "exclusionReason": "Partially legible photo; separate new-source stress validation, no aggregate recall claim.",
+    "rights": "Public image retained locally for evaluation only."
+  },
+  {
+    "id": "kr09",
+    "country": "KR",
+    "description": "Korean supermarket, two cropped receipts with handwritten circles",
+    "source_page": "https://www.biroso.kr/953",
+    "path": "images/kr09.png",
+    "sha256": "691f4efa36c591dba70c773363946bc0e11ff24b3996cf98838b739d3ee1cc59",
+    "width": 1058,
+    "height": 1411,
+    "status": "downloaded",
+    "items": [
+      {
+        "text": "오뚜기 짜장100g",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "삼호 순살가득담은어묵 오리지널",
+        "acceptableCanonicalIDs": [
+          "fish-cake"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "CJ행복한콩 두루두루두부800g",
+        "acceptableCanonicalIDs": [
+          "tofu"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "인큐애호박1개",
+        "acceptableCanonicalIDs": [
+          "zucchini"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "동원 국물의신 쇠고기한알4gx25",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "CJ 고메소바바치킨소이허니순살",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "김도둑김밥김10매",
+        "acceptableCanonicalIDs": [
+          "dried-seaweed"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "오뚜기 옛날미역100g",
+        "acceptableCanonicalIDs": [
+          "seaweed"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "팽이버섯2개",
+        "acceptableCanonicalIDs": [
+          "enoki"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "초당콩나물 수입300g",
+        "acceptableCanonicalIDs": [
+          "bean-sprout"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "돼지다짐육",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "생목삼겹살",
+        "acceptableCanonicalIDs": [
+          "pork-belly"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "참이슬후레쉬PET400ml",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "하이트켈리캔500ml",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "아워홈 큰요리두부800g",
+        "acceptableCanonicalIDs": [
+          "tofu"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "양배추1통",
+        "acceptableCanonicalIDs": [
+          "cabbage"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "무우1개",
+        "acceptableCanonicalIDs": [
+          "radish"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "남양 맛있는우유GT기획900ml*2입",
+        "acceptableCanonicalIDs": [
+          "milk"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "쥬시쿨복숭아930ml",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "고소하고탱글한순두부350g",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "포도봉봉340ml",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "촉촉한우유식빵330g",
+        "acceptableCanonicalIDs": [
+          "bread"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "백설 핫케익가루450g",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "한돈삼겹살보쌈용1021g",
+        "acceptableCanonicalIDs": [
+          "pork-belly"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "손질오징어550g",
+        "acceptableCanonicalIDs": [
+          "squid"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "한돈앞다리불고기538g",
+        "acceptableCanonicalIDs": [
+          "pork-shoulder",
+          "pork"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "양념닭갈비1214g",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "오뚜기 짜장100g",
+      "삼호 순살가득담은어묵 오리지널",
+      "CJ행복한콩 두루두루두부800g",
+      "인큐애호박1개",
+      "동원 국물의신 쇠고기한알4gx25",
+      "CJ 고메소바바치킨소이허니순살",
+      "김도둑김밥김10매",
+      "오뚜기 옛날미역100g",
+      "팽이버섯2개",
+      "초당콩나물 수입300g",
+      "돼지다짐육",
+      "생목삼겹살",
+      "참이슬후레쉬PET400ml",
+      "하이트켈리캔500ml",
+      "아워홈 큰요리두부800g",
+      "양배추1통",
+      "무우1개",
+      "남양 맛있는우유GT기획900ml*2입",
+      "쥬시쿨복숭아930ml",
+      "고소하고탱글한순두부350g",
+      "포도봉봉340ml",
+      "촉촉한우유식빵330g",
+      "백설 핫케익가루450g",
+      "한돈삼겹살보쌈용1021g",
+      "손질오징어550g",
+      "한돈앞다리불고기538g",
+      "양념닭갈비1214g"
+    ],
+    "scored": false,
+    "exclusionReason": "Partially legible photo; separate new-source stress validation, no aggregate recall claim.",
+    "rights": "Public image retained locally for evaluation only."
+  }
+]

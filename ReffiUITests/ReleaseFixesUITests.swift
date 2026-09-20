@@ -52,13 +52,83 @@ final class ReleaseFixesUITests: XCTestCase {
         save.tap()
         let cook = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", korean ? "요리 시작" : "Start cooking")).firstMatch
         XCTAssertTrue(cook.waitForExistence(timeout: 8))
-        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", korean ? "냉장고 보기" : "View fridge")).firstMatch.exists)
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", korean ? "냉장고 보기" : "View fridge")).firstMatch.exists)
         attach(app, "first-added-\(language)")
         app.terminate()
         app.launchArguments.removeAll { $0 == "-uiTestEmptyFridge" }
         app.launch()
         XCTAssertTrue(cook.waitForExistence(timeout: 15), "Registered stock must survive reopening")
         XCTAssertFalse(first.exists)
+    }
+
+    func testHomePrimaryOpensRecipes() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipAuth", "-skipOnboarding", "-analyticsOff", "-uiTestSampleFridge",
+                               "-app.language", "en", "-AppleLanguages", "(en)"]
+        app.launch()
+        let primary = app.buttons["home.primaryAction"]
+        XCTAssertTrue(primary.waitForExistence(timeout: 15))
+        XCTAssertTrue(primary.label.contains("Start cooking"))
+        attach(app, "home-cooking-primary")
+        primary.tap()
+        XCTAssertTrue(app.buttons["Cook this"].waitForExistence(timeout: 10))
+        attach(app, "home-recipes")
+    }
+
+    func testManualSuggestionsAndCategory() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipAuth", "-skipOnboarding", "-analyticsOff", "-uiTestEmptyFridge",
+                               "-previewAdd", "-app.language", "en", "-AppleLanguages", "(en)"]
+        app.launch()
+        let manual = app.buttons["Add by hand"]
+        XCTAssertTrue(manual.waitForExistence(timeout: 15))
+        manual.tap()
+        let name = app.textFields["Name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        name.tap()
+        name.typeText("tom")
+        let tomato = app.buttons["ingredient.suggestion.tomato"]
+        XCTAssertTrue(tomato.waitForExistence(timeout: 5))
+        tomato.tap()
+        XCTAssertEqual(name.value as? String, "Tomato")
+        let category = app.buttons["ingredient.category"]
+        XCTAssertTrue(category.exists)
+        category.tap()
+        app.buttons["Fruit"].tap()
+        attach(app, "manual-category-preview")
+        app.buttons["Save"].tap()
+        XCTAssertTrue(app.buttons["home.primaryAction"].waitForExistence(timeout: 8))
+        app.terminate()
+        app.launchArguments = ["-skipAuth", "-skipOnboarding", "-analyticsOff", "-fridgeTab",
+                               "-app.language", "en", "-AppleLanguages", "(en)"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Switch to simple view"].waitForExistence(timeout: 15))
+        attach(app, "manual-category-reopened")
+    }
+
+    func testReceiptUncertainQuantityRequiresConfirmation() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipAuth", "-skipOnboarding", "-analyticsOff", "-uiTestEmptyFridge",
+                               "-previewAdd", "-receiptReviewQA", "-app.language", "en", "-AppleLanguages", "(en)"]
+        app.launch()
+        let apple = app.buttons["receipt.select.apple"]
+        XCTAssertTrue(apple.waitForExistence(timeout: 15))
+        XCTAssertEqual(apple.value as? String, "Not checked")
+        XCTAssertEqual(app.buttons["receipt.select.milk"].value as? String, "Checked")
+        apple.tap()
+        let save = app.buttons["Save"]
+        XCTAssertTrue(save.waitForExistence(timeout: 5))
+        XCTAssertFalse(save.isEnabled, "An unread quantity must not save a default 1")
+        let quantity = app.textFields["ingredient.quantity"]
+        quantity.tap()
+        quantity.typeText("3")
+        XCTAssertTrue(save.isEnabled)
+        save.tap()
+        XCTAssertTrue(apple.waitForExistence(timeout: 5))
+        XCTAssertEqual(apple.value as? String, "Checked")
+        attach(app, "receipt-confirmed-quantity")
+        app.buttons["Add 2 items"].tap()
+        XCTAssertTrue(app.buttons["home.primaryAction"].waitForExistence(timeout: 8))
     }
 
     func testExactRemainingQuantityPersists() {
@@ -86,7 +156,7 @@ final class ReleaseFixesUITests: XCTestCase {
         XCTAssertTrue(confirm.isEnabled)
         attach(app, "exact-remaining-input")
         confirm.tap()
-        let fridge = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "View fridge")).firstMatch
+        let fridge = app.buttons["Fridge"]
         XCTAssertTrue(fridge.waitForExistence(timeout: 8))
         fridge.tap()
         let list = app.buttons["Switch to simple view"]

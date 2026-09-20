@@ -5952,6 +5952,182 @@
           }
         }
       }
+    },
+    "Find recipes with your ingredients": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find recipes with your ingredients"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내 재료로 만들 수 있는 요리 찾기"
+          }
+        }
+      }
+    },
+    "Could not read receipt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read receipt"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영수증을 읽지 못했어요"
+          }
+        }
+      }
+    },
+    "Only recognized food ingredients are shown. Try a clearer photo or add a missing ingredient by hand.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only recognized food ingredients are shown. Try a clearer photo or add a missing ingredient by hand."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "인식된 식재료만 표시해요. 더 선명한 사진으로 다시 시도하거나 빠진 재료를 직접 입력해 주세요."
+          }
+        }
+      }
+    },
+    "Choose a category or a suggested ingredient.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a category or a suggested ingredient."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "카테고리를 선택하거나 추천 재료를 골라 주세요."
+          }
+        }
+      }
+    },
+    "Some pages could not be read. Check for missing ingredients before adding.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some pages could not be read. Check for missing ingredients before adding."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일부 페이지를 읽지 못했어요. 추가하기 전에 빠진 재료가 없는지 확인해 주세요."
+          }
+        }
+      }
+    },
+    "Category": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "카테고리"
+          }
+        }
+      }
+    },
+    "This image includes a return. Scan the purchase receipt separately.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This image includes a return. Scan the purchase receipt separately."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "반품 내역이 포함되어 있어요. 구매 영수증만 따로 스캔해 주세요."
+          }
+        }
+      }
+    },
+    "Clear items are selected. Check the remaining items and quantities before adding.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear items are selected. Check the remaining items and quantities before adding."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "명확하게 읽은 항목을 선택했어요. 나머지 항목과 수량은 확인한 뒤 추가해 주세요."
+          }
+        }
+      }
+    },
+    "Check item and quantity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check item and quantity"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "항목과 수량 확인"
+          }
+        }
+      }
+    },
+    "Enter the quantity from your receipt or packaging.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the quantity from your receipt or packaging."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영수증이나 포장에 적힌 수량을 입력해 주세요."
+          }
+        }
+      }
+    },
+    "Scan one receipt at a time, with all four corners visible.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan one receipt at a time, with all four corners visible."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "영수증 네 모서리가 보이도록 한 장씩 스캔해 주세요."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

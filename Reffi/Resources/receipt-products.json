@@ -1,0 +1,95 @@
+{
+  "overrides": [
+    {
+      "pattern": "\\b(?:protein|energy|granola)\\s*bars?\\b|\\bbarebells\\b|\\bspindrift\\b|\\breese(?:s)?\\b|\\bspaghetti\\s+squash\\b|땅콩샌드|카라멜|사발면|사발|과자|스낵|비누|세제"
+    },
+    {
+      "pattern": "두유|베지밀|\\bsoy\\s*milk\\b",
+      "id": "soy-milk"
+    },
+    {
+      "pattern": "주스|쥬스|\\bjuice\\b",
+      "id": "juice"
+    },
+    {
+      "pattern": "바나나맛우유|바나나\\s*우유|딸기\\s*우유|초코\\s*우유|\\b(?:banana|strawberry|chocolate)\\s+milk\\b",
+      "id": "flavored-milk"
+    },
+    {
+      "pattern": "잠봉|하몽|\\bjambon\\b|\\bjamon\\b",
+      "id": "ham"
+    },
+    {
+      "pattern": "\\bpotato(?:es)?\\s+(?:each\\s+)?sweet\\b",
+      "id": "sweet-potato"
+    },
+    {
+      "pattern": "\\bpepper(?:s)?\\s+bell\\b",
+      "id": "bell-pepper"
+    },
+    {
+      "pattern": "\\bmushrooms?\\s+(?:cremini|white|portobello|baby\\s+bell)\\b",
+      "id": "mushroom"
+    },
+    {
+      "pattern": "\\balmonds?\\s+r/ns\\b",
+      "id": "almond"
+    },
+    {
+      "pattern": "\\bcarrots?\\s+of\\s+many\\s+colors\\b",
+      "id": "carrot"
+    },
+    {
+      "pattern": "\\bavocados?\\s+(?:each\\s+)?hass\\b",
+      "id": "avocado"
+    },
+    {
+      "pattern": "\\bapples?\\s+(?:each\\s+)?(?:fuji|pink\\s+lady|gala|granny\\s+smith)\\b",
+      "id": "apple"
+    },
+    {
+      "pattern": "\\b(?:bulk\\s+)?oats?\\s+steel\\s+cut\\b",
+      "id": "oat"
+    },
+    {
+      "pattern": "\\b(?:salad\\s+)?spinach\\s+baby\\b",
+      "id": "spinach"
+    }
+  ],
+  "removableTokens": [
+    "organic",
+    "fresh",
+    "each",
+    "ea",
+    "ct",
+    "g",
+    "kg",
+    "ml",
+    "l",
+    "oz",
+    "lb",
+    "lbs",
+    "gal",
+    "gallon",
+    "whole",
+    "xl",
+    "large",
+    "small",
+    "medium",
+    "baby",
+    "f",
+    "t",
+    "b",
+    "n",
+    "a",
+    "r",
+    "x",
+    "입",
+    "개",
+    "산",
+    "국산",
+    "친환경",
+    "유기농",
+    "fa"
+  ]
+}

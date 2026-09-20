@@ -1,3 +1,11 @@
+# TestFlight candidate 1.0.1 (31), 2026-09-20
+
+Home cooking CTA, manual ingredient suggestions/category artwork, and conservative receipt selection are included. The 18-image evaluation and its limits are recorded in [RECEIPT_RELIABILITY_REVIEW.md](RECEIPT_RELIABILITY_REVIEW.md). On the fixed 13-image scoring subset, 30/30 emitted ingredient types were correct, with 30/58 recall. Only one item qualified for automatic selection; broad unattended input is not validated.
+
+Validation: 644 Swift Testing tests plus 19 XCTest tests passed. Five relevant UI scenarios passed, with the receipt quantity-confirmation scenario rerun on the final source. Localization: 534 keys / 350 literals / 0 missing. Actual-device camera QA remains separate. App Store Connect currently shows public version 1.0 as READY_FOR_SALE, so this beta uses version 1.0.1. Archive, upload and processing evidence will be recorded after completion. No public App Store submission is requested.
+
+---
+
 # Current MVP status, 2026-09-13
 
 This section supersedes the historical release notes below.
@@ -24,7 +32,7 @@ Validation: 652 unit tests passed (633 Swift Testing + 19 XCTest). Seven distinc
 | Production SMTP missing | Email registration, login, password recovery and callbacks removed. New-user signup and Email provider disabled in the live Supabase dashboard. No SMTP is required by this release. |
 | Draft privacy notice | Rewritten in English/Korean for current data processing, with effective date and the supplied homepage. Offline screen and privacy manifest updated. Public website deployment and App Store Connect metadata remain open. |
 | Silent disk-save failure | Atomic write success is checked before closing add/edit forms. A visible error with retry retains the unsaved snapshot. Receipt review and the app root also display recovery. |
-| Inventory-first flow | Registered stock leads to View fridge, with registration feedback; Start cooking stays available as a secondary action. List/Cards control has a visible label. |
+| Inventory-first flow | Registered stock leads to Start cooking, with registration feedback; the fridge remains accessible from navigation. List/Cards control has a visible label. |
 | Inaccurate fixed leftovers | Each selected leftover accepts an exact positive amount up to available stock. Units and undo are preserved. |
 
 Existing work on manual first registration, 14 recipes with 100 bilingual ingredient amounts, safe matching, current-language YouTube search and artwork was preserved. See `RECIPE_CONTENT.md`. No new commit, archive, or TestFlight upload has been made for these fixes.

@@ -1,5 +1,7 @@
 import Testing
 import Foundation
+import UIKit
+import Vision
 @testable import Reffi
 
 /// 영수증 OCR 파싱 — 축약 상품명 매핑·소음 제거·수량 추출(순수 로직).
@@ -57,21 +59,96 @@ struct ReceiptParserTests {
         let milk = found.filter { $0.canonicalID == "milk" }
         #expect(milk.count == 3, "서로 다른 상품 세 줄은 셋 다 남는다")
         #expect(found.count == 3, "같은 표기의 반복(네 번째 줄)만 접힌다")
-        // 첫 줄만 사전 표제어 이름을 받고, 같은 캐논의 후속 상품은 원문(정규화)을 유지해 행이 구분된다.
-        #expect(milk.dropFirst().allSatisfy { $0.name != milk[0].name })
+        // Keep all package sizes; displayed names contain food names only, never POS metadata.
+        #expect(milk.map(\.quantity.value) == [1, 500, 1])
     }
 
-    /// **미매칭 라인 보존(44차)** — 사전에 없는 실구매 품목은 버리지 않고 캐논 없는 후보로 남긴다
-    /// (뷰가 기본 선택을 끄고 배지를 단다). 상품명 꼴이 아닌 파편·중복은 여전히 버린다.
-    @Test func keepsUnmatchedProductLinesAsUncheckedCandidates() {
-        let found = ReceiptParser.candidates(from: receipt)
-        let cola = found.first { $0.canonicalID == nil }
-        #expect(cola != nil, "코카콜라는 사전 밖이지만 산 물건이다 — 후보에 남아야 한다")
-        #expect(cola?.name == "코카콜라 1.5L")   // 가격 꼬리(2,800)는 정규화로 떨어진다
-        // 파편·숫자 라인은 여전히 후보가 아니다.
-        #expect(ReceiptParser.candidates(from: ["ㅁ1ㅐ", "x2", "19,400"]).isEmpty)
-        // 같은 미매칭 표기는 한 줄만 남는다.
-        #expect(ReceiptParser.candidates(from: ["코카콜라 1.5L", "코카콜라 1.5L"]).count == 1)
+    @Test func excludesUnverifiedTextAndNonFoodProducts() {
+        let found = ReceiptParser.candidates(from: receipt + [
+            "OPEN DAILY", "Customer service", "LEMON SOAP 4.99", "COCONUT SHAMPOO",
+            "우유 비누", "사과향 세제", "APPLE STORE", "PAPER TOWEL", "VISA 1234"
+        ])
+        #expect(found.count == 3)
+        #expect(found.allSatisfy { $0.canonicalID != nil })
+        #expect(ReceiptParser.candidates(from: ["코카콜라 1.5L", "ㅁ1ㅐ", "x2"]).isEmpty)
+    }
+
+    @Test func foodWordsAreNotNoiseSubstrings() {
+        #expect(!ReceiptParser.isNonFoodLine("CASHEW 4.99"))
+        #expect(ReceiptParser.normalizedProductLine("MILK 3.99 F") == "MILK")
+        #expect(ReceiptParser.extractQuantity(from: "MILK 1L") == Quantity(value: 1, unit: .liter))
+        #expect(ReceiptParser.extractQuantity(from: "2 lemons") == Quantity(value: 1, unit: .piece))
+    }
+
+    @Test func categoryArtworkCoversEveryCategory() {
+        for category in FoodGlyph.categoryOrder {
+            let glyph = FoodGlyph.categoryRepresentative(category)
+            #expect(glyph != .generic)
+            #expect(glyph.categoryLabel == category)
+        }
+    }
+
+    @Test func manualCategorySurvivesEncoding() throws {
+        let item = Ingredient(name: "Garden greens", category: "Veg", expiresAt: Date(),
+                              glyph: .leaf, categoryOverride: "Veg")
+        let decoded = try JSONDecoder().decode(Ingredient.self, from: JSONEncoder().encode(item))
+        #expect(decoded.categoryOverride == "Veg")
+        #expect(decoded.glyph == .leaf)
+        #expect(decoded.canonicalID == nil)
+    }
+
+    @Test @MainActor func explicitCategorySurvivesStoreArtworkRefresh() {
+        let item = Ingredient(name: "Tomato", category: "Fruit", expiresAt: Date(),
+                              glyph: .apple, categoryOverride: "Fruit")
+        let store = FridgeStore(ingredients: [item], recipes: [])
+        #expect(store.ingredients[0].glyph == .apple)
+        #expect(store.ingredients[0].category == "Fruit")
+        #expect(store.ingredients[0].canonicalID == "tomato")
+    }
+
+    @Test func rejoinsOCRColumnsWithoutMergingAdjacentProducts() {
+        let fragments: [ReceiptParser.TextFragment] = [
+            .init(text: "3.99", bounds: CGRect(x: 0.8, y: 0.8, width: 0.1, height: 0.02)),
+            .init(text: "MILK", bounds: CGRect(x: 0.1, y: 0.8, width: 0.3, height: 0.02)),
+            .init(text: "1L", bounds: CGRect(x: 0.6, y: 0.801, width: 0.1, height: 0.02)),
+            .init(text: "LEMON", bounds: CGRect(x: 0.1, y: 0.75, width: 0.3, height: 0.02)),
+            .init(text: "SOAP", bounds: CGRect(x: 0.5, y: 0.751, width: 0.2, height: 0.02)),
+            .init(text: "TOMATO", bounds: CGRect(x: 0.1, y: 0.70, width: 0.3, height: 0.02))
+        ]
+        let lines = ReceiptParser.readingLines(from: fragments)
+        #expect(lines == ["MILK 1L 3.99", "LEMON SOAP", "TOMATO"])
+        let found = ReceiptParser.candidates(from: lines)
+        #expect(found.map(\.canonicalID) == ["milk", "tomato"])
+        #expect(found.first?.quantity == Quantity(value: 1, unit: .liter))
+    }
+
+    @Test @MainActor func readsFoodOnlyFromRenderedReceipt() throws {
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 1000, height: 700)).image { context in
+            UIColor.white.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 1000, height: 700))
+            let lines = ["GROCERY MARKET", "MILK 1L       3.99", "TOMATO       2.49",
+                         "LEMON SOAP       4.99", "TOTAL       11.47", "VISA PAYMENT"]
+            for (index, line) in lines.enumerated() {
+                (line as NSString).draw(at: CGPoint(x: 50, y: 40 + index * 90), withAttributes: [
+                    .font: UIFont.monospacedSystemFont(ofSize: 36, weight: .regular),
+                    .foregroundColor: UIColor.black
+                ])
+            }
+        }
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .accurate
+        request.recognitionLanguages = ["ko-KR", "en-US"]
+        request.usesLanguageCorrection = true
+        request.customWords = IngredientLexicon.shared.entries.flatMap { $0.names.en + $0.names.ko }
+        request.minimumTextHeight = 0.005
+        try VNImageRequestHandler(cgImage: #require(image.cgImage)).perform([request])
+        let fragments = (request.results ?? []).compactMap { observation -> ReceiptParser.TextFragment? in
+            guard let text = observation.topCandidates(1).first, text.confidence >= 0.3 else { return nil }
+            return .init(text: text.string, bounds: observation.boundingBox)
+        }
+        let found = ReceiptParser.candidates(from: ReceiptParser.readingLines(from: fragments))
+        #expect(found.map(\.canonicalID) == ["milk", "tomato"])
+        #expect(found.first?.quantity == Quantity(value: 1, unit: .liter))
     }
 
     /// **영수증 정규화(44차)** — 접두 코드(냉)·행사·1+1·괄호 코드)와 가격 꼬리를 뗀 뒤 한 번 더
@@ -127,6 +204,64 @@ struct ReceiptParserTests {
         var o = onion
         o.canonicalID = "onion"
         #expect(!o.sealedCheckDue())
+    }
+
+    @Test func compositeProductsNeverBecomeTheirComponentIngredients() {
+        let found = ReceiptParser.candidates(from: ["검은콩 고칼슘 두유 200ml×24", "아침에주스 포도1. 8L",
+            "PEPPER BELL RED 2 EA", "POTATO SWEET 1LB", "SPAGHETTI SQUASH EACH 2.69",
+            "REESE EGG 1.99", "BAREBELLS CHOCOLATE DOUGH 2.29", "SPINDRIFT ORANGE MANGO 7.49"])
+        #expect(found.map(\.canonicalID) == ["soy-milk", "juice", "bell-pepper", "sweet-potato"])
+        #expect(found[0].quantity == Quantity(value: 4800, unit: .milliliter))
+        #expect(found[1].quantity == Quantity(value: 1.8, unit: .liter))
+        #expect(found.allSatisfy { $0.requiresConfirmation })
+        #expect(ReceiptParser.candidates(from: ["APPLE CANDLE", "CHICKEN DOG FOOD", "EGG SHAMPOO", "MILK STOUT"]).isEmpty)
+    }
+
+    @Test func returnsAndQuantityFragmentsCannotCreateStock() {
+        #expect(ReceiptParser.candidates(from: ["두부450g", "반품총액: -19,700"]).isEmpty)
+        #expect(ReceiptParser.candidates(from: ["Milk 1L", "REFUND TOTAL $3.99"]).isEmpty)
+        #expect(ReceiptParser.candidates(from: ["TEA 0 0.49/EA", "7EA @ 0.49/EA"]).isEmpty)
+        #expect(ReceiptParser.candidates(from: ["Returns within 30 days", "Milk 1L"]).count == 1)
+    }
+
+    @Test func automaticSelectionRequiresNameQuantityAndOCRCertainty() {
+        let candidates = ReceiptParser.candidates(from: ["MILK 1L 3.99", "EGGS 12CT 4.99", "APPLE 2.99", "브랜드두부 300g"])
+        #expect(candidates.count == 4)
+        #expect(candidates.prefix(2).allSatisfy { !$0.requiresConfirmation })
+        #expect(candidates.suffix(2).allSatisfy { $0.requiresConfirmation })
+        #expect(candidates[2].quantityNeedsConfirmation)
+        let lowQuality = ReceiptParser.candidates(from: [ReceiptParser.TextFragment(text: "MILK 1L", bounds: CGRect(x: 0, y: 0, width: 1, height: 0.1), confidence: 0.5)])
+        #expect(lowQuality.first?.requiresConfirmation == true)
+        let uncertainCount = ReceiptParser.candidates(from: [
+            ReceiptParser.TextFragment(text: "BANANA 1.61", bounds: CGRect(x: 0, y: 0.8, width: 1, height: 0.04)),
+            ReceiptParser.TextFragment(text: "7 @ $0.23", bounds: CGRect(x: 0, y: 0.6, width: 1, height: 0.04), confidence: 0.3)])
+        #expect(uncertainCount.first?.quantityNeedsConfirmation == true)
+        #expect(ReceiptParser.candidates(from: ["MILK 1L 2 7.98"]).first?.requiresConfirmation == true)
+    }
+
+    @Test func verifiesPurchaseCountsAndConvertsUSUnits() {
+        let bananas = ReceiptParser.candidates(from: ["BANANAS 1.61", "7 @ $0.23"])
+        #expect(bananas.first?.quantity == Quantity(value: 7, unit: .piece))
+        #expect(bananas.first?.requiresConfirmation == false)
+        let wrongTotal = ReceiptParser.candidates(from: ["BANANAS 1.61", "8 @ $0.23"])
+        #expect(wrongTotal.first?.quantityNeedsConfirmation == true)
+        let milk = ReceiptParser.candidates(from: ["우유1L", "8801234567890 2500 2 5000"])
+        #expect(milk.first?.quantity == Quantity(value: 2, unit: .liter))
+        #expect(abs(ReceiptParser.extractQuantity(from: "OATS 2LB").value - 907.18474) < 0.001)
+        #expect(ReceiptParser.extractQuantity(from: "햇반 210g*3").value == 630)
+        #expect(ReceiptParser.quantityEvidence("MIX 200g 300g") == nil)
+        #expect(ReceiptParser.quantityEvidence("$2.99/lb") == nil)
+        #expect(ReceiptParser.quantityEvidence("두유200ml※24") == nil)
+        #expect(ReceiptParser.candidates(from: ["PEACH 930ml"]).isEmpty)
+        #expect(ReceiptParser.candidates(from: ["Milk 1L", "SUBTOTAL 3.99", "Tea 500ml"]).count == 1)
+        let columns = ["Milk 1L", "Apple 2EA", "Tofu 300g", "Banana 4EA"].enumerated().map { i, text in
+            ReceiptParser.TextFragment(text: text, bounds: CGRect(x: i % 2 == 0 ? 0 : 0.6, y: i < 2 ? 0.8 : 0.6, width: 0.3, height: 0.04))
+        }
+        #expect(ReceiptParser.containsMultipleReceipts(columns))
+        #expect(ReceiptParser.candidates(from: columns).isEmpty)
+        let repeated = ReceiptParser.candidates(from: ["Milk 1L", "Milk 1L"])
+        #expect(repeated.count == 1)
+        #expect(repeated.first?.quantityNeedsConfirmation == true)
     }
 
     // MARK: 상호(구매처) 추출

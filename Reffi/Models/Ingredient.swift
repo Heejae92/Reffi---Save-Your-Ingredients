@@ -144,6 +144,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
     var name: String              // "연두부"
     var category: String          // 글리프에서 파생된 카테고리 라벨
     var canonicalID: String?      // 정본 사전 캐논 ID — 표기 무관 매칭 키. nil = 미해석·사전 밖(스토어가 해석·승격)
+    var categoryOverride: String? = nil
     var expiryIsEstimated: Bool
     var expiresAt: Date           // 소비기한(자정 기준 일 단위) — 냉동해도 불변(원본)
     var quantity: Quantity        // 수량 — 수치 + 단위(부분 소비·환산 가능)
@@ -165,11 +166,12 @@ struct Ingredient: Identifiable, Codable, Equatable {
          quantity: Quantity = Quantity(value: 1, unit: .piece),
          glyph: FoodGlyph? = nil, place: String = "",
          storage: StorageLocation = .fridge, purchasedAt: Date? = nil, frozenAt: Date? = nil,
-         canonicalID: String? = nil, expiryIsEstimated: Bool = false) {
+         canonicalID: String? = nil, expiryIsEstimated: Bool = false, categoryOverride: String? = nil) {
         self.id = id
         self.name = name
         self.category = category
         self.canonicalID = canonicalID
+        self.categoryOverride = categoryOverride
         self.expiryIsEstimated = expiryIsEstimated
         self.expiresAt = expiresAt
         self.quantity = quantity
@@ -193,7 +195,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case id, name, category, canonicalID, expiresAt, quantity, glyph, place, storage, purchasedAt, frozenAt
-        case expiryIsEstimated
+        case expiryIsEstimated, categoryOverride
         case openedAt, sealedCheckAt   // 44차 개봉 라이프사이클 — 구파일엔 없음(옵셔널 디코드)
         case amount   // v1 레거시(자유 문자열) — 읽기 전용
     }
@@ -203,6 +205,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
         id = try c.decode(UUID.self, forKey: .id)
         name = try c.decode(String.self, forKey: .name)
         category = try c.decode(String.self, forKey: .category)
+        categoryOverride = try c.decodeIfPresent(String.self, forKey: .categoryOverride)
         canonicalID = try c.decodeIfPresent(String.self, forKey: .canonicalID)   // 레거시 파일엔 없음 → nil(로드 시 승격)
         expiresAt = try c.decode(Date.self, forKey: .expiresAt)
         expiryIsEstimated = try c.decodeIfPresent(Bool.self, forKey: .expiryIsEstimated) ?? true
@@ -227,6 +230,7 @@ struct Ingredient: Identifiable, Codable, Equatable {
         try c.encode(id, forKey: .id)
         try c.encode(name, forKey: .name)
         try c.encode(category, forKey: .category)
+        try c.encodeIfPresent(categoryOverride, forKey: .categoryOverride)
         try c.encode(canonicalID, forKey: .canonicalID)   // 항상 기록(nil이면 null) — 해석 결과를 영속화
         try c.encode(expiresAt, forKey: .expiresAt)
         try c.encode(expiryIsEstimated, forKey: .expiryIsEstimated)
@@ -409,6 +413,22 @@ extension FoodGlyph {
     /// 재료 지식이 아니라 노출 순서(UX)라 JSON이 아니라 코드 상수다.
     static let categoryOrder = ["Veg", "Fruit", "Dairy", "Meat", "Seafood",
                                 "Protein", "Bakery", "Grain", "Pantry", "Other"]
+
+    /// Category selection changes artwork only, never recipe identity or shelf life.
+    static func categoryRepresentative(_ category: String) -> FoodGlyph {
+        switch category {
+        case "Veg": .leaf
+        case "Fruit": .apple
+        case "Dairy": .milk
+        case "Meat": .meat
+        case "Seafood": .fish
+        case "Protein": .tofu
+        case "Bakery": .bread
+        case "Grain": .rice
+        case "Pantry": .jar
+        default: .dumpling
+        }
+    }
 
     /// 거친 카테고리 라벨 — 직접 입력의 자동 카테고리, 냉장고 필터·검색 픽커 그룹핑 공용.
     var categoryLabel: String {

@@ -67,6 +67,8 @@ xcrun simctl io booted screenshot reffi-home.png
 - `-fridgeTab` `-profileTab` 탭 직행 · `-profileBottom` 프로필 하단(Data·Account)까지 스크롤
 - `-loadSample` 샘플 시드(첫 실행 = 데이터 전무일 때만) · `-uiTestSampleFridge` 샘플 냉장고 **강제** 리셋 + 냉장고 보기 기본값 복원(UI 테스트 전용)
 
+`-receiptReviewQA`는 `-previewAdd`와 함께 사용한다. 명확한 우유 1L와 수량 확인이 필요한 사과를 영수증 검토 화면에 넣어, 미확인 수량의 저장 차단을 검증한다. DEBUG 빌드에서만 동작한다.
+
 **메인 (물리 씬 · 티켓)**
 - `-previewCarousel` 추천 캐러셀 바로 열기 · `-previewAdd` 재료 추가 시트 바로 열기
 - `-cookCarousel` 티켓 덱 자동 오픈(플릭 방향 의미론 UI 테스트가 쓴다). ⚠️ `store.available`(예약 제외 재고)이 비어 있으면 `loadSampleData()`를 부른다 — **추가가 아니라 전체 대체**다: 조리 세션이 모든 재료를 예약 중이거나 냉장고만 비고 이력·장보기 메모가 남은 상태에서 단독으로 주면 그 데이터가 되돌릴 수 없이 지워진다. UI 테스트는 `-uiTestSampleFridge`와 같이 주므로 그 경로에선 무동작

@@ -36,6 +36,9 @@ struct ReceiptScanView: View {
     @State private var showCamera = false
     /// 카메라가 오류로 닫힌 직후 — 취소와 달리 화면이 한 줄로 말한다(42차·F24).
     @State private var scanFailed = false
+    @State private var recognitionFailed = false
+    @State private var returnReceiptDetected = false
+    @State private var multipleReceiptsDetected = false
     @State private var photoItems: [PhotosPickerItem] = []
     @State private var candidates: [EditableCandidate] = []
     @State private var selected: Set<UUID> = []
@@ -44,7 +47,7 @@ struct ReceiptScanView: View {
 
     private var cameraAvailable: Bool { VNDocumentCameraViewController.isSupported }
     private var hasInvalidSelection: Bool {
-        candidates.contains { selected.contains($0.id) && !$0.quantity.isValid }
+        candidates.contains { selected.contains($0.id) && (!$0.quantity.isValid || $0.requiresConfirmation) }
     }
 
     var body: some View {
@@ -61,6 +64,16 @@ struct ReceiptScanView: View {
             .presentationDragIndicator(.visible)
             .presentationBackground(ReffiColor.canvas)
             .reffiFeedback(.success, trigger: addedHaptic)
+            .onAppear {
+                #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-receiptReviewQA"), phase == .pick {
+                    let found = ReceiptParser.candidates(from: ["MILK 1L 3.99", "APPLE 2.99"])
+                    candidates = found.map { EditableCandidate($0, place: "") }
+                    selected = Set(candidates.filter { !$0.requiresConfirmation }.map(\.id))
+                    phase = .review
+                }
+                #endif
+            }
             .fullScreenCover(isPresented: $showCamera) {
                 DocumentCameraView { images in
                     showCamera = false
@@ -82,7 +95,11 @@ struct ReceiptScanView: View {
                     if updated.isManual {
                         return addManual(updated)
                     } else if let idx = candidates.firstIndex(where: { $0.id == updated.id }) {
-                        candidates[idx] = updated
+                        var confirmed = updated
+                        confirmed.requiresConfirmation = false
+                        confirmed.quantityNeedsConfirmation = false
+                        candidates[idx] = confirmed
+                        selected.insert(updated.id)
                     }
                     return true
                 }
@@ -238,17 +255,27 @@ struct ReceiptScanView: View {
         if candidates.isEmpty {
             VStack(spacing: ReffiSheet.blockGap) {
                 VStack(spacing: ReffiSpace.s3) {
-                    Text("No items found").reffiType(.subhead).foregroundStyle(ReffiColor.ink)
-                    Text("Try a clearer photo of the whole receipt.")
+                    Text(recognitionFailed ? "Could not read receipt" : "No items found").reffiType(.subhead).foregroundStyle(ReffiColor.ink)
+                    Text(multipleReceiptsDetected ? "Scan one receipt at a time, with all four corners visible." : returnReceiptDetected
+                         ? "This image includes a return. Scan the purchase receipt separately."
+                         : "Only recognized food ingredients are shown. Try a clearer photo or add a missing ingredient by hand.")
                         .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
                 }
                 PaperButton(title: "Try again", kind: .secondary) { phase = .pick }
+                Button("Add by hand") { editingCandidate = EditableCandidate(manualDraft: true) }
+                    .frame(minHeight: ReffiChrome.tapMin)
             }
             .sheetInset()   // 표지형 빈 상태(§9.4 ②) — 축은 중앙, 인셋은 시트 한 선(§14.8)
             .padding(.vertical, ReffiSheet.blockGap)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             List {
+                Text("Clear items are selected. Check the remaining items and quantities before adding.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                if recognitionFailed {
+                    Text("Some pages could not be read. Check for missing ingredients before adding.")
+                        .reffiType(.caption).foregroundStyle(ReffiColor.urgentDark)
+                }
                 Section {
                     ForEach(candidates) { c in
                         candidateRow(c)
@@ -309,6 +336,7 @@ struct ReceiptScanView: View {
             }
             .buttonStyle(.paperPress)
             .accessibilityLabel(Text(verbatim: c.name))
+            .accessibilityIdentifier("receipt.select.\(c.canonicalID ?? "unknown")")
             .accessibilityValue(isOn ? Text("Checked") : Text("Not checked"))
 
             // 이름 블록도 체크와 **같은 토글**이라 같은 컨트롤이어야 한다 — 탭 제스처만 얹으면
@@ -319,7 +347,7 @@ struct ReceiptScanView: View {
                 // 이름 왼쪽 44pt trailing 레일로 옮기면 `reffiNum`이 tabular라 숫자가 자릿수에
                 // 관계없이 정확히 정렬된다(§3.4) — 그게 곧 종이 영수증의 수량 열이다.
                 HStack(alignment: .firstTextBaseline, spacing: ReffiSpace.s2) {
-                Text(verbatim: c.quantity.text)
+                Text(verbatim: c.quantityNeedsConfirmation ? "?" : c.quantity.text)
                     .font(.reffiNum(.meta))
                     .foregroundStyle(ReffiColor.ink2)
                     .frame(width: 44, alignment: .trailing)
@@ -328,11 +356,11 @@ struct ReceiptScanView: View {
                         Text(verbatim: c.name).reffiType(.body).foregroundStyle(ReffiColor.ink)
                         // 미매칭(44차)은 전용 배지 하나만 — 추정 배지까지 겹치면 칩 둘이 다툰다
                         // (미매칭이면 기한이 추정인 건 자명하다).
-                        if c.canonicalID == nil { unknownBadge }
-                        else if c.showsEstimateBadge { estimateBadge }
+                        if c.showsEstimateBadge { estimateBadge }
                     }
-                    Text(verbatim: c.rawLine).reffiType(.caption).foregroundStyle(ReffiColor.muted)
-                        .lineLimit(1)
+                    if c.requiresConfirmation {
+                        Text("Check item and quantity").reffiType(.caption).foregroundStyle(ReffiColor.soonDark)
+                    }
                 }
                 }
                 .contentShape(Rectangle())
@@ -375,20 +403,11 @@ struct ReceiptScanView: View {
             .fixedSize()
     }
 
-    /// 사전 미매칭 배지(44차) — 이 줄이 왜 기본 꺼짐인지 행 스스로 말한다. 등록하면 자유 표기
-    /// 재고가 된다(캐논 없음). 추정 배지와 같은 문법(soon 팔레트 종이 칩) — 새 컴포넌트 아님.
-    private var unknownBadge: some View {
-        Text("Not in dictionary")
-            .reffiType(.pillLabel)
-            .foregroundStyle(ReffiColor.soonDark)
-            .padding(.horizontal, ReffiSpace.s2)
-            .padding(.vertical, ReffiSpace.s0)
-            .background(ReffiColor.soonLight, in: PaperCutRect(seed: 4))
-            .lineLimit(1)
-            .fixedSize()
-    }
-
     private func toggleSelection(_ id: UUID) {
+        if let candidate = candidates.first(where: { $0.id == id }), candidate.requiresConfirmation {
+            editingCandidate = candidate
+            return
+        }
         if selected.contains(id) { selected.remove(id) } else { selected.insert(id) }
     }
 
@@ -411,27 +430,36 @@ struct ReceiptScanView: View {
     private func recognize(_ images: [UIImage], source: AnalyticsEvent.ScanSource) {
         phase = .processing
         Task.detached(priority: .userInitiated) {
-            var lines: [String] = []
+            var found: [ReceiptParser.Candidate] = []
+            var failed = images.isEmpty
+            var hasReturn = false
+            var hasMultiple = false
             for image in images {
-                guard let cg = image.cgImage else { continue }
-                let request = VNRecognizeTextRequest()
-                request.recognitionLevel = .accurate
-                request.recognitionLanguages = ["ko-KR", "en-US"]
-                request.usesLanguageCorrection = true
-                let handler = VNImageRequestHandler(cgImage: cg,
-                                                    orientation: .init(image.imageOrientation))
-                try? handler.perform([request])
-                let observed = (request.results ?? [])
-                    .compactMap { $0.topCandidates(1).first?.string }
-                lines.append(contentsOf: observed)
+                do {
+                    let page = try ReceiptRecognition.recognize(image)
+                    found.append(contentsOf: page.candidates)
+                    hasReturn = hasReturn || page.containsReturn
+                    hasMultiple = hasMultiple || page.containsMultipleReceipts
+                } catch { failed = true }
             }
-            let found = ReceiptParser.candidates(from: lines)
-            let placeGuess = ReceiptParser.storeName(from: lines) ?? ""
+            let counts = Dictionary(grouping: found, by: \.rawLine).mapValues(\.count)
+            let finalCandidates = found.map { candidate in
+                var result = candidate
+                if counts[candidate.rawLine, default: 0] > 1 {
+                    result.requiresConfirmation = true
+                    result.quantityNeedsConfirmation = true
+                }
+                return result
+            }
+            let hadFailure = failed
+            let detectedReturn = hasReturn
+            let detectedMultiple = hasMultiple
             await MainActor.run {
-                candidates = found.map { EditableCandidate($0, place: placeGuess) }
-                // 기본 선택은 **사전 매칭 후보만**(빼는 쪽이 마찰이 적다) — 미매칭 라인(44차)은
-                // OCR 파편일 수 있어 기본 꺼짐으로 두고, 사용자가 배지("사전에 없음")를 보고 켠다.
-                selected = Set(candidates.filter { $0.canonicalID != nil }.map(\.id))
+                recognitionFailed = hadFailure
+                returnReceiptDetected = detectedReturn
+                multipleReceiptsDetected = detectedMultiple
+                candidates = finalCandidates.map { EditableCandidate($0, place: "") }
+                selected = Set(candidates.filter { !$0.requiresConfirmation }.map(\.id))
                 phase = .review
                 // 스캔 품질(64차) — 후보 수 대비 사전 매칭 수. 이후 `ingredient_add{source: receipt}`의
                 // count가 실제 등록 수라, 둘의 비가 "OCR·파서가 쓸 만한가"의 지표다.
@@ -446,7 +474,7 @@ struct ReceiptScanView: View {
     private func add() {
         guard !selected.isEmpty, !hasInvalidSelection else { return }
         let items = candidates.filter { selected.contains($0.id) }.map { c -> Ingredient in
-            let glyph = FoodGlyph.match(c.name)   // 편집으로 이름이 바뀌었으면 여기서 새로 해석
+            let glyph = c.glyph   // 편집으로 이름이 바뀌었으면 여기서 새로 해석
             return Ingredient(id: c.id, name: c.name,
                               category: glyph.categoryLabel,
                               expiresAt: c.expiresAt,
@@ -454,7 +482,8 @@ struct ReceiptScanView: View {
                               glyph: glyph,
                               place: c.place,
                               storage: c.storage,
-                              canonicalID: c.canonicalID, expiryIsEstimated: !c.expiryTouched)
+                              canonicalID: c.canonicalID, expiryIsEstimated: !c.expiryTouched,
+                              categoryOverride: c.categoryOverride)
         }
         guard store.add(contentsOf: items, source: .receipt) else { return }
         addedHaptic += 1
@@ -466,7 +495,7 @@ struct ReceiptScanView: View {
     private func addManual(_ draft: EditableCandidate) -> Bool {
         let name = draft.name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty, draft.quantity.isValid else { return false }
-        let glyph = FoodGlyph.match(name)
+        let glyph = draft.glyph
         guard store.add(Ingredient(id: draft.id, name: name,
                              category: glyph.categoryLabel,
                              expiresAt: draft.expiresAt,
@@ -474,7 +503,8 @@ struct ReceiptScanView: View {
                              glyph: glyph,
                              place: draft.place,
                              storage: draft.storage,
-                             canonicalID: draft.canonicalID, expiryIsEstimated: !draft.expiryTouched)) else { return false }
+                             canonicalID: draft.canonicalID, expiryIsEstimated: !draft.expiryTouched,
+                             categoryOverride: draft.categoryOverride)) else { return false }
         addedHaptic += 1
         dismiss()
         return true
@@ -495,6 +525,15 @@ private struct EditableCandidate: Identifiable {
     var expiryTouched = false   // 편집 시트에서 소비기한을 직접 만졌으면 재계산·배지를 멈춘다.
     /// 스캔이 아니라 손으로 적기 시작한 초안인가 — 저장이 목록 갱신이 아니라 **바로 등록**으로 간다.
     var isManual = false
+    var categoryOverride: String?
+    var requiresConfirmation = false
+    var quantityNeedsConfirmation = false
+
+    var glyph: FoodGlyph {
+        if let categoryOverride { return FoodGlyph.categoryRepresentative(categoryOverride) }
+        return canonicalID.flatMap { IngredientLexicon.shared.entry(id: $0) }
+            .flatMap { FoodGlyph(rawValue: $0.glyph) } ?? FoodGlyph.match(name)
+    }
 
     init(_ c: ReceiptParser.Candidate, place: String) {
         id = c.id
@@ -502,6 +541,8 @@ private struct EditableCandidate: Identifiable {
         name = c.name
         canonicalID = c.canonicalID
         quantity = c.quantity
+        requiresConfirmation = c.requiresConfirmation
+        quantityNeedsConfirmation = c.quantityNeedsConfirmation
         self.place = place
         expiresAt = IngredientLexicon.shared.defaultExpiry(for: c.name, storage: .fridge)
             ?? Ingredient.day(offset: 3)
@@ -532,7 +573,7 @@ private struct EditableCandidate: Identifiable {
 /// 모노 라벨 없이 라벨 좌/컨트롤 우 행). 새 컴포넌트가 아니라 `AddIngredientSheet`와 같은 문법.
 private struct CandidateEditSheet: View {
     /// 이 시트에서 열릴 수 있는 종이 드롭다운 — 한 번에 하나만 연다(`DropdownAnchorKey` 전제).
-    private enum OpenDropdown { case unit, storage }
+    private enum OpenDropdown { case unit, storage, category }
 
     @State var candidate: EditableCandidate
     /// 같은 폼이 두 일을 한다 — 스캔 후보 고치기("Edit item")와 직접 입력("Add by hand").
@@ -541,10 +582,11 @@ private struct CandidateEditSheet: View {
     var onSave: (EditableCandidate) -> Bool
     @Environment(FridgeStore.self) private var store
     @State private var quantityInput: String
+    @FocusState private var nameFocused: Bool
 
     init(candidate: EditableCandidate, title: LocalizedStringKey, onSave: @escaping (EditableCandidate) -> Bool) {
         _candidate = State(initialValue: candidate)
-        _quantityInput = State(initialValue: candidate.quantity.inputText)
+        _quantityInput = State(initialValue: candidate.quantityNeedsConfirmation ? "" : candidate.quantity.inputText)
         self.title = title
         self.onSave = onSave
     }
@@ -586,12 +628,22 @@ private struct CandidateEditSheet: View {
                               label: { $0.label }, seed: 3,
                               onDismiss: { closeDropdown() },
                               onSelect: { candidate.storage = $0 })
+        .paperDropdownOverlay(isPresented: openDropdown == .category,
+                              options: FoodGlyph.categoryOrder,
+                              selected: candidate.glyph.categoryLabel,
+                              label: { AppLanguage.localizedNow(String.LocalizationValue($0)) }, seed: 7,
+                              onDismiss: { closeDropdown() },
+                              onSelect: {
+                                  candidate.categoryOverride = $0
+                                  isDirty = true
+                              })
         // 다섯 칸 + Save가 `.medium`(≈392pt 가용)에 568pt라 'Use by'·'Where'가 접힌 채 열렸다(61차 감사) —
         // 쌍둥이 폼(`IngredientEditView`)과 같은 `.large`. 편집 폼의 §14.5 "`.medium` 진입"은 폼이
         // 절반 화면에 **들어갈 때**의 규칙이다.
         .presentationDetents([.large])
         .interactiveDismissDisabled(isDirty)
         .onChange(of: candidate.name) { _, newName in
+            candidate.categoryOverride = nil
             candidate.canonicalID = IngredientLexicon.shared.canonicalID(for: newName)
             recomputeExpiryIfNeeded()
             isDirty = true
@@ -644,12 +696,59 @@ private struct CandidateEditSheet: View {
         }
     }
 
+    private var suggestions: [IngredientLexicon.Entry] {
+        let lexicon = IngredientLexicon.shared
+        if let id = candidate.canonicalID,
+           lexicon.normalizedNames(of: id).contains(IngredientLexicon.norm(candidate.name)) {
+            return []
+        }
+        return lexicon.search(query: candidate.name, limit: 3)
+    }
+
     private var fieldsCard: some View {
         VStack(alignment: .leading, spacing: ReffiSpace.s3) {
             TextField("Name", text: $candidate.name,
                       prompt: Text("Name").foregroundStyle(ReffiColor.ink2))
+                .focused($nameFocused)
                 .reffiType(.body).foregroundStyle(ReffiColor.ink)
                 .frame(minHeight: ReffiChrome.tapMin)
+
+            if nameFocused && !suggestions.isEmpty {
+                VStack(alignment: .leading, spacing: ReffiSpace.s1) {
+                    ForEach(suggestions, id: \.id) { entry in
+                        if entry.displayName != candidate.name {
+                            Button {
+                                candidate.name = entry.displayName
+                                nameFocused = false
+                            } label: {
+                                HStack {
+                                    FoodMotif(glyph: FoodGlyph(rawValue: entry.glyph) ?? .generic)
+                                        .frame(width: 32, height: 32).accessibilityHidden(true)
+                                    Text(entry.displayName).reffiType(.body)
+                                    Spacer()
+                                }
+                                .frame(minHeight: ReffiChrome.tapMin)
+                            }
+                            .buttonStyle(.paperPress)
+                            .accessibilityIdentifier("ingredient.suggestion.\(entry.id)")
+                        }
+                    }
+                }
+            }
+
+            HStack {
+                FoodMotif(glyph: candidate.glyph)
+                    .frame(width: 44, height: 44).accessibilityHidden(true)
+                Text("Category").reffiType(.body)
+                Spacer()
+                PaperDropdownTrigger(label: AppLanguage.localizedNow(String.LocalizationValue(candidate.glyph.categoryLabel)),
+                                     isOpen: openDropdown == .category, seed: 7) { toggle(.category) }
+                    .accessibilityIdentifier("ingredient.category")
+            }
+            if candidate.glyph == .generic {
+                Text("Choose a category or a suggested ingredient.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+            }
 
             ReffiRule(.ticket)
 
@@ -673,6 +772,10 @@ private struct CandidateEditSheet: View {
             }
             .frame(minHeight: ReffiChrome.tapMin)
 
+            if candidate.quantityNeedsConfirmation {
+                Text("Enter the quantity from your receipt or packaging.")
+                    .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+            }
             if !candidate.quantity.isValid {
                 Text("Enter a quantity greater than 0.")
                     .reffiType(.caption).foregroundStyle(ReffiColor.urgentDark)
@@ -733,7 +836,8 @@ private struct CandidateEditSheet: View {
         }
         // 이름 없는 재료는 냉장고에서 이름 없는 칸이 된다 — 빈 초안으로 시작하는 직접 입력에서
         // 특히 도달 가능한 상태라, 저장 자체를 막는다(디밍은 PaperButton이 §7.2로 처리).
-        .disabled(candidate.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || Quantity.inputValue(quantityInput) == nil)
+        .disabled(candidate.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                  || candidate.glyph == .generic || Quantity.inputValue(quantityInput) == nil)
         .safeAreaInset(edge: .top, spacing: ReffiSpace.s2) { if store.hasSaveError { SaveErrorNotice() } }
     }
 
