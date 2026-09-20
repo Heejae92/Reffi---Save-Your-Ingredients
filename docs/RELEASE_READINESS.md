@@ -1,3 +1,13 @@
+# TestFlight 1.0.1 (32), 2026-09-20
+
+Receipt OCR now detects language and corrects reading direction, verifies purchase counts against prices, preserves package units, and corroborates clear Korean product rows before selecting them. Review separates ready items from uncertain items and allows missing ingredients to be added to the same batch. Research, measured limits and the brief code review are in [RECEIPT_ENGINE_BUILD32.md](RECEIPT_ENGINE_BUILD32.md).
+
+Validation: 667 unit tests, two input UI scenarios, and the app pipeline on 20 public US/Korean receipt images passed. On the unchanged 13-image comparison cohort, ingredient-type recall rose from 30/58 to 40/58, with 42/42 emitted candidate identities correct and 13 automatic selections compared with one in build 31. Across all 20 images, all 14 auto-selected quantities matched manually checked identity, quantity and unit annotations. This is a development regression corpus, not independent proof of universal accuracy. Uncertain quantities require review; one small stress image still emits a wrong manual-review ingredient candidate. Actual iPhone camera/lighting QA remains separate.
+
+Source commit `9867b4b` was pushed to main before archiving. Signed archive and upload succeeded. App Store Connect build `ad719bb9-cd4c-4c1e-88c7-4dc2dba4a253` is `VALID` and `IN_BETA_TESTING`, with the internal `Reffi` group explicitly attached. Korean and English test notes were saved and read back. Evidence: [1.0.1-32.json](../release/testflight/1.0.1-32.json). No public App Store submission was made.
+
+---
+
 # TestFlight 1.0.1 (31), 2026-09-20
 
 Home cooking CTA, manual ingredient suggestions/category artwork, and conservative receipt selection are included. The 18-image evaluation and its limits are recorded in [RECEIPT_RELIABILITY_REVIEW.md](RECEIPT_RELIABILITY_REVIEW.md). On the fixed 13-image scoring subset, 30/30 emitted ingredient types were correct, with 30/58 recall. Only one item qualified for automatic selection; broad unattended input is not validated.

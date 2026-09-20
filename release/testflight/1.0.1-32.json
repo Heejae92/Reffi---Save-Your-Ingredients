@@ -1,0 +1,30 @@
+{
+  "version": "1.0.1",
+  "build": "32",
+  "bundleId": "com.reffi.app",
+  "sourceCommit": "9867b4b1a0ec39738ad58ac3c8f3fce7e201c558",
+  "archiveCreated": "2026-09-20 06:14:41",
+  "archiveSignatureVerified": true,
+  "receiptRulesSHA256": "1413ef085abded9a448ec67a7298dcaa3049616f1caabe0d52dcdfd025a6e78e",
+  "unitTests": 667,
+  "uiScenarios": 2,
+  "corpusImages": 20,
+  "comparisonCohortImages": 13,
+  "comparisonRecoveredTypes": 40,
+  "comparisonExpectedTypes": 58,
+  "automaticQuantityMatches": 14,
+  "automaticCandidatesAllImages": 14,
+  "uploadSucceeded": true,
+  "processingState": "VALID",
+  "appStoreConnectBuildId": "ad719bb9-cd4c-4c1e-88c7-4dc2dba4a253",
+  "internalBuildState": "IN_BETA_TESTING",
+  "betaGroup": "Reffi",
+  "betaGroupId": "7510fd4c-04d7-411a-a46b-dd1dcc12e965",
+  "betaGroupIsInternal": true,
+  "betaGroupHasAccessToAllBuilds": true,
+  "testNotesLocales": [
+    "ko",
+    "en-US"
+  ],
+  "verifiedAt": "2026-09-20T06:20:18.399822+00:00"
+}
