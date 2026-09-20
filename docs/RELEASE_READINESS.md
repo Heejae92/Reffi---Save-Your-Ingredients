@@ -1,8 +1,8 @@
-# TestFlight candidate 1.0.1 (31), 2026-09-20
+# TestFlight 1.0.1 (31), 2026-09-20
 
 Home cooking CTA, manual ingredient suggestions/category artwork, and conservative receipt selection are included. The 18-image evaluation and its limits are recorded in [RECEIPT_RELIABILITY_REVIEW.md](RECEIPT_RELIABILITY_REVIEW.md). On the fixed 13-image scoring subset, 30/30 emitted ingredient types were correct, with 30/58 recall. Only one item qualified for automatic selection; broad unattended input is not validated.
 
-Validation: 644 Swift Testing tests plus 19 XCTest tests passed. Five relevant UI scenarios passed, with the receipt quantity-confirmation scenario rerun on the final source. Localization: 534 keys / 350 literals / 0 missing. Actual-device camera QA remains separate. App Store Connect currently shows public version 1.0 as READY_FOR_SALE, so this beta uses version 1.0.1. Archive, upload and processing evidence will be recorded after completion. No public App Store submission is requested.
+Validation: 644 Swift Testing tests plus 19 XCTest tests passed. Five relevant UI scenarios passed, with the receipt quantity-confirmation scenario rerun on the final source. Localization: 534 keys / 350 literals / 0 missing. Actual-device camera QA remains separate. App Store Connect currently shows public version 1.0 as READY_FOR_SALE, so this beta uses version 1.0.1. Signed archive and upload succeeded. App Store Connect verified build `22a338ad-8f27-44da-bd0a-438370536473` as `VALID` and `IN_BETA_TESTING`, attached to internal group `Reffi` (all-build access). Korean and English test notes were saved and read back. Release evidence: `release/testflight/1.0.1-31.json`. Implementation commit: `5c1a1f6`; merged release source: `152a532`. No public App Store submission was made.
 
 ---
 
