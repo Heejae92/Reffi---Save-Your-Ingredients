@@ -1592,7 +1592,7 @@ final class IngredientDropScene: SKScene, SKPhysicsContactDelegate {
     /// 짙은 쪽으로 쏠려 옅은 끝을 비운다. `dump()`도 이 칸을 찍도록 함께 고쳤다(재측정 = 재현).
     private static let bodyMetrics: [FoodGlyph: (w: CGFloat, h: CGFloat, dy: CGFloat)] = [
         .leaf: (0.7405, 0.5727, 0.0341),  .root: (0.3436, 0.6955, 0.0068), .squash: (0.4377, 0.6177, -0.0136),
-        .onion: (0.5073, 0.6382, 0.0159), .tomato: (0.5686, 0.6341, -0.0136), .pepper: (0.4991, 0.6341, -0.0227),
+        .onion: (0.5073, 0.6382, 0.0159), .tomato: (0.5686, 0.6055, 0.0023), .pepper: (0.4991, 0.6341, -0.0227),
         .mushroom: (0.5809, 0.5482, 0.0341), .broccoli: (0.5768, 0.6055, 0.0159), .potato: (0.5564, 0.4664, 0.0477),
         .garlic: (0.4582, 0.6382, 0.0068), .cucumber: (0.5686, 0.5686, 0.0045), .pea: (0.4459, 0.6545, 0.0068),
         .cabbage: (0.5768, 0.5686, 0.0136), .chili: (0.3355, 0.6709, 0.0068), .pumpkin: (0.5809, 0.5605, 0.0045),
