@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://reffi-site.vercel.app/</loc><lastmod>2026-09-16</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://reffi-site.vercel.app/privacy.html</loc><lastmod>2026-09-16</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://reffi-site.vercel.app/</loc><lastmod>2026-09-17</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://reffi-site.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://reffi-site.vercel.app/ko/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reffi-site.vercel.app/"/>
+  </url>
+  <url>
+    <loc>https://reffi-site.vercel.app/ko/</loc><lastmod>2026-09-17</lastmod><changefreq>monthly</changefreq><priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://reffi-site.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://reffi-site.vercel.app/ko/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reffi-site.vercel.app/"/>
+  </url>
+  <url><loc>https://reffi-site.vercel.app/privacy.html</loc><lastmod>2026-09-17</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>
