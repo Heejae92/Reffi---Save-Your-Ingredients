@@ -2,15 +2,17 @@
   "summary": {
     "ALL": {
       "targets": 58,
-      "recovered": 30,
-      "correctCandidates": 30,
-      "emitted": 30,
-      "oracleRecovered": 41,
-      "automatic": 1,
-      "correctAutomatic": 1,
+      "recovered": 40,
+      "correctCandidates": 42,
+      "emitted": 42,
+      "oracleRecovered": 43,
+      "automatic": 13,
+      "correctAutomatic": 13,
+      "automaticQuantitiesChecked": 13,
+      "correctAutomaticQuantities": 13,
       "images": 13,
       "precision": 1.0,
-      "recall": 0.5172413793103449
+      "recall": 0.6896551724137931
     },
     "KR": {
       "targets": 16,
@@ -18,23 +20,27 @@
       "correctCandidates": 13,
       "emitted": 13,
       "oracleRecovered": 14,
-      "automatic": 0,
-      "correctAutomatic": 0,
+      "automatic": 5,
+      "correctAutomatic": 5,
+      "automaticQuantitiesChecked": 5,
+      "correctAutomaticQuantities": 5,
       "images": 7,
       "precision": 1.0,
       "recall": 0.8125
     },
     "US": {
       "targets": 42,
-      "recovered": 17,
-      "correctCandidates": 17,
-      "emitted": 17,
-      "oracleRecovered": 27,
-      "automatic": 1,
-      "correctAutomatic": 1,
+      "recovered": 27,
+      "correctCandidates": 29,
+      "emitted": 29,
+      "oracleRecovered": 29,
+      "automatic": 8,
+      "correctAutomatic": 8,
+      "automaticQuantitiesChecked": 8,
+      "correctAutomaticQuantities": 8,
       "images": 6,
       "precision": 1.0,
-      "recall": 0.40476190476190477
+      "recall": 0.6428571428571429
     }
   },
   "images": [
@@ -47,8 +53,10 @@
       "correctCandidates": 4,
       "emitted": 4,
       "oracleRecovered": 5,
-      "automatic": 0,
-      "correctAutomatic": 0
+      "automatic": 2,
+      "correctAutomatic": 2,
+      "automaticQuantitiesChecked": 2,
+      "correctAutomaticQuantities": 2
     },
     {
       "id": "kr02",
@@ -60,7 +68,9 @@
       "emitted": 0,
       "oracleRecovered": 0,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "kr03",
@@ -72,7 +82,9 @@
       "emitted": 0,
       "oracleRecovered": 2,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "kr04",
@@ -84,7 +96,9 @@
       "emitted": 1,
       "oracleRecovered": 1,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "kr05",
@@ -96,7 +110,9 @@
       "emitted": 0,
       "oracleRecovered": 0,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "kr06",
@@ -107,8 +123,10 @@
       "correctCandidates": 3,
       "emitted": 3,
       "oracleRecovered": 3,
-      "automatic": 0,
-      "correctAutomatic": 0
+      "automatic": 3,
+      "correctAutomatic": 3,
+      "automaticQuantitiesChecked": 3,
+      "correctAutomaticQuantities": 3
     },
     {
       "id": "kr07",
@@ -120,7 +138,9 @@
       "emitted": 4,
       "oracleRecovered": 4,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "kr08",
@@ -132,7 +152,9 @@
       "emitted": 1,
       "oracleRecovered": 1,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "us01",
@@ -144,19 +166,23 @@
       "emitted": 2,
       "oracleRecovered": 2,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "us02",
       "country": "US",
       "scored": false,
       "targets": 5,
-      "recovered": 1,
-      "correctCandidates": 1,
-      "emitted": 1,
-      "oracleRecovered": 4,
+      "recovered": 2,
+      "correctCandidates": 2,
+      "emitted": 3,
+      "oracleRecovered": 3,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "us03",
@@ -166,33 +192,39 @@
       "recovered": 0,
       "correctCandidates": 0,
       "emitted": 0,
-      "oracleRecovered": 7,
+      "oracleRecovered": 5,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "us04",
       "country": "US",
       "scored": true,
       "targets": 3,
-      "recovered": 2,
-      "correctCandidates": 2,
-      "emitted": 2,
-      "oracleRecovered": 2,
-      "automatic": 1,
-      "correctAutomatic": 1
+      "recovered": 3,
+      "correctCandidates": 3,
+      "emitted": 3,
+      "oracleRecovered": 3,
+      "automatic": 2,
+      "correctAutomatic": 2,
+      "automaticQuantitiesChecked": 2,
+      "correctAutomaticQuantities": 2
     },
     {
       "id": "us05",
       "country": "US",
       "scored": true,
       "targets": 10,
-      "recovered": 5,
-      "correctCandidates": 5,
-      "emitted": 5,
-      "oracleRecovered": 6,
-      "automatic": 0,
-      "correctAutomatic": 0
+      "recovered": 8,
+      "correctCandidates": 8,
+      "emitted": 8,
+      "oracleRecovered": 8,
+      "automatic": 4,
+      "correctAutomatic": 4,
+      "automaticQuantitiesChecked": 4,
+      "correctAutomaticQuantities": 4
     },
     {
       "id": "us06",
@@ -202,33 +234,39 @@
       "recovered": 1,
       "correctCandidates": 1,
       "emitted": 1,
-      "oracleRecovered": 2,
+      "oracleRecovered": 1,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "us07",
       "country": "US",
       "scored": true,
       "targets": 5,
-      "recovered": 3,
-      "correctCandidates": 3,
-      "emitted": 3,
+      "recovered": 4,
+      "correctCandidates": 4,
+      "emitted": 4,
       "oracleRecovered": 4,
-      "automatic": 0,
-      "correctAutomatic": 0
+      "automatic": 2,
+      "correctAutomatic": 2,
+      "automaticQuantitiesChecked": 2,
+      "correctAutomaticQuantities": 2
     },
     {
       "id": "us08",
       "country": "US",
       "scored": true,
       "targets": 17,
-      "recovered": 4,
-      "correctCandidates": 4,
-      "emitted": 4,
+      "recovered": 9,
+      "correctCandidates": 11,
+      "emitted": 11,
       "oracleRecovered": 11,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "us09",
@@ -238,21 +276,53 @@
       "recovered": 1,
       "correctCandidates": 1,
       "emitted": 1,
-      "oracleRecovered": 2,
+      "oracleRecovered": 1,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
     },
     {
       "id": "kr09",
       "country": "KR",
       "scored": false,
       "targets": 14,
-      "recovered": 5,
-      "correctCandidates": 7,
-      "emitted": 9,
+      "recovered": 0,
+      "correctCandidates": 0,
+      "emitted": 0,
       "oracleRecovered": 8,
       "automatic": 0,
-      "correctAutomatic": 0
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
+    },
+    {
+      "id": "kr10",
+      "country": "KR",
+      "scored": false,
+      "targets": 2,
+      "recovered": 2,
+      "correctCandidates": 2,
+      "emitted": 2,
+      "oracleRecovered": 2,
+      "automatic": 0,
+      "correctAutomatic": 0,
+      "automaticQuantitiesChecked": 0,
+      "correctAutomaticQuantities": 0
+    },
+    {
+      "id": "us10",
+      "country": "US",
+      "scored": false,
+      "targets": 4,
+      "recovered": 4,
+      "correctCandidates": 8,
+      "emitted": 8,
+      "oracleRecovered": 4,
+      "automatic": 1,
+      "correctAutomatic": 1,
+      "automaticQuantitiesChecked": 1,
+      "correctAutomaticQuantities": 1
     }
   ]
 }

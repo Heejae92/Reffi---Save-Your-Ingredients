@@ -213,7 +213,8 @@ struct ReceiptParserTests {
         #expect(found.map(\.canonicalID) == ["soy-milk", "juice", "bell-pepper", "sweet-potato"])
         #expect(found[0].quantity == Quantity(value: 4800, unit: .milliliter))
         #expect(found[1].quantity == Quantity(value: 1.8, unit: .liter))
-        #expect(found.allSatisfy { $0.requiresConfirmation })
+        #expect(found[0].requiresConfirmation)
+        #expect(found.dropFirst().allSatisfy { !$0.requiresConfirmation })
         #expect(ReceiptParser.candidates(from: ["APPLE CANDLE", "CHICKEN DOG FOOD", "EGG SHAMPOO", "MILK STOUT"]).isEmpty)
     }
 
@@ -262,6 +263,56 @@ struct ReceiptParserTests {
         let repeated = ReceiptParser.candidates(from: ["Milk 1L", "Milk 1L"])
         #expect(repeated.count == 1)
         #expect(repeated.first?.quantityNeedsConfirmation == true)
+    }
+
+    @Test func purchaseTablesMultiplyPackagesAndKeepPackUnits() {
+        let found = ReceiptParser.candidates(from: ["상품명 단가 수량 금액",
+            "우유 1L 2500 2 5000", "풀무원 국산투컵두부 5480 1 5480",
+            "달걀 12CT 3000 2 6000", "존쿡 잠봉 200g*3 13980 2 27960"])
+        #expect(found.map(\.quantity) == [.init(value: 2, unit: .liter), .init(value: 1, unit: .pack),
+                                        .init(value: 24, unit: .piece), .init(value: 1200, unit: .gram)])
+        #expect(found.allSatisfy { !$0.requiresConfirmation })
+        let mismatch = ReceiptParser.candidates(from: ["상품명 단가 수량 금액", "우유 1L 2500 2 7000"])
+        #expect(mismatch.first?.quantityNeedsConfirmation == true)
+        #expect(ReceiptParser.candidates(from: ["우유 1L 2500 2 5000"]).first?.quantityNeedsConfirmation == true)
+        let repeated = ReceiptParser.candidates(from: ["상품명 단가 수량 금액", "우유 1L 2500 2 5000", "우유 1L 2500 2 5000"])
+        #expect(repeated.count == 1 && repeated[0].quantityNeedsConfirmation)
+        let eggs = ReceiptParser.candidates(from: ["상품명 단가 수량 금액", "무항생제란15구 4400 2 8800"])
+        #expect(eggs.first?.quantity == .init(value: 30, unit: .piece))
+        #expect(eggs.first?.requiresConfirmation == false)
+        #expect(ReceiptParser.candidates(from: ["상품명 단가 수량 금액", "무항생제란15구 4400 4400"]).first?.quantityNeedsConfirmation == true)
+    }
+
+    @Test func packageSizeAndProductMeaningRemainDistinct() {
+        #expect(ReceiptParser.quantityEvidence("MILK HALF GALLON 3.99") == .init(value: 1.892705892, unit: .liter))
+        #expect(ReceiptParser.quantityEvidence("MILK 2 GALLON 8.99") == .init(value: 7.570823568, unit: .liter))
+        #expect(ReceiptParser.candidates(from: ["MILK 64OZ 3.99"]).first?.quantityNeedsConfirmation == true)
+        #expect(ReceiptParser.candidates(from: ["MILK 1L 3.99", "3 @ $3.99"]).first?.quantityNeedsConfirmation == true)
+        #expect(ReceiptParser.candidates(from: ["FLAT ANCHOVIES 2 OZ TIN 1.49"]).first?.canonicalID == "anchovy-fillet")
+        #expect(ReceiptParser.candidates(from: ["UNKNOWN SALSA", "TURKEY BACON", "APPLE PIE SOAP", "PEPPER BELL CANDLE"]).isEmpty)
+    }
+
+    @Test func corroborationNeedsIdentityArithmeticAndMatchingText() {
+        func rows(_ product: String) -> [ReceiptParser.TextFragment] {
+            [.init(text: "상품명 단가 수량 금액", bounds: CGRect(x: 0, y: 0.9, width: 1, height: 0.05)),
+             .init(text: product, bounds: CGRect(x: 0, y: 0.7, width: 1, height: 0.05), confidence: 0.5)]
+        }
+        let primary = rows("풀무원 국산투컵두부 5480 1 5480")
+        let found = ReceiptParser.candidates(from: primary)
+        #expect(found.first?.requiresConfirmation == true)
+        #expect(ReceiptParser.corroborate(found, primary: primary, confirmation: primary).first?.requiresConfirmation == false)
+        #expect(ReceiptParser.corroborate(found, primary: primary, confirmation: rows("풀무원 국산투컵두부 5480 2 10960")).first?.requiresConfirmation == true)
+        let unbranded = rows("알수없는두부 5480 1 5480")
+        #expect(ReceiptParser.corroborate(ReceiptParser.candidates(from: unbranded), primary: unbranded, confirmation: unbranded).first?.requiresConfirmation == true)
+    }
+
+    @Test func staggeredReceiptBarcodeColumnsAreRejected() {
+        let rows = (0..<8).map { index in
+            ReceiptParser.TextFragment(text: "8801234567890", bounds: CGRect(x: index < 4 ? 0.1 : 0.6,
+                y: 0.9 - Double(index) * 0.07, width: 0.2, height: 0.03))
+        }
+        #expect(ReceiptParser.containsMultipleReceipts(rows))
+        #expect(!ReceiptParser.containsMultipleReceipts(Array(rows.prefix(4))))
     }
 
     // MARK: 상호(구매처) 추출

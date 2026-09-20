@@ -1,7 +1,7 @@
 {
   "overrides": [
     {
-      "pattern": "\\b(?:protein|energy|granola)\\s*bars?\\b|\\bbarebells\\b|\\bspindrift\\b|\\breese(?:s)?\\b|\\bspaghetti\\s+squash\\b|땅콩샌드|카라멜|사발면|사발|과자|스낵|비누|세제"
+      "pattern": "\\b(?:protein|energy|granola)\\s*bars?\\b|\\bbarebells\\b|\\bspindrift\\b|\\breese(?:s)?\\b|\\bspaghetti\\s+squash\\b|땅콩샌드|카라멜|사발면|사발|과자|스낵|비누|세제|\\bturkey\\s+bacon\\b"
     },
     {
       "pattern": "두유|베지밀|\\bsoy\\s*milk\\b",
@@ -91,5 +91,107 @@
     "친환경",
     "유기농",
     "fa"
+  ],
+  "verifiedNames": [
+    {
+      "pattern": "^(?:milk(?: whol| vitamin d)?)$",
+      "id": "milk"
+    },
+    {
+      "pattern": "^(?:(?:pepper bell|bell pepper)(?: red| green| yellow| orange)?)$",
+      "id": "bell-pepper"
+    },
+    {
+      "pattern": "^(?:mushrooms? (?:cremini|white|portobello)(?: bell)?)$",
+      "id": "mushroom"
+    },
+    {
+      "pattern": "^(?:almonds? r ns)$",
+      "id": "almond"
+    },
+    {
+      "pattern": "^(?:carrots? of many colors(?: organ)?)$",
+      "id": "carrot"
+    },
+    {
+      "pattern": "^(?:avocados? hass)$",
+      "id": "avocado"
+    },
+    {
+      "pattern": "^(?:apples? (?:fuji|pink lady|gala|granny smith))$",
+      "id": "apple"
+    },
+    {
+      "pattern": "^(?:potato(?:es)? sweet)$",
+      "id": "sweet-potato"
+    },
+    {
+      "pattern": "^(?:(?:bulk )?oats? steel cut)$",
+      "id": "oat"
+    },
+    {
+      "pattern": "^(?:(?:salad )?spinach)$",
+      "id": "spinach"
+    },
+    {
+      "pattern": "^(?:tomatoes? heirloom mini)$",
+      "id": "tomato"
+    },
+    {
+      "pattern": "^(?:flat anchovies tin)$",
+      "id": "anchovy-fillet"
+    },
+    {
+      "pattern": "^(?:(?:자연촌|풀무원)?\\s*(?:국산|무농약|실속)*콩나물)$",
+      "id": "bean-sprout"
+    },
+    {
+      "pattern": "^(?:(?:풀무원 )?(?:국산)?투컵두부)$",
+      "id": "tofu"
+    },
+    {
+      "pattern": "^(?:(?:존쿡 )?잠봉)$",
+      "id": "ham"
+    },
+    {
+      "pattern": "^(?:(?:cj )?햇반)$",
+      "id": "instant-rice"
+    },
+    {
+      "pattern": "^(?:아침에주스 포도)$",
+      "id": "juice"
+    },
+    {
+      "pattern": "^(?:동물복지 닭안심)$",
+      "id": "chicken-tenderloin"
+    },
+    {
+      "pattern": "^(?:무지방 그릭요거트)$",
+      "id": "yogurt"
+    },
+    {
+      "pattern": "^(?:(?:whole )?kernel corn)$",
+      "id": "corn"
+    },
+    {
+      "pattern": "^(?:quick oats?)$",
+      "id": "oat"
+    },
+    {
+      "pattern": "^(?:burrito tortillas?)$",
+      "id": "tortilla"
+    },
+    {
+      "pattern": "^(?:(?:gala|fuji|pink lady|granny smith) apples?)$",
+      "id": "apple"
+    },
+    {
+      "pattern": "^(?:(?:red|yellow|green|orange) (?:bell )?peppers?)$",
+      "id": "bell-pepper"
+    },
+    {
+      "pattern": "^(?:(?:무항생제|유정|특|대|왕)(?:계)?란)$",
+      "id": "egg"
+    }
   ]
 }

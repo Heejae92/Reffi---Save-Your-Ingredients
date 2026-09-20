@@ -40,6 +40,20 @@ struct ReceiptCorpusTests {
                 result["containsReturn"] = page.containsReturn
                 result["containsMultipleReceipts"] = page.containsMultipleReceipts
                 result["candidates"] = candidateJSON(page.candidates)
+                if let expected = input["verifiedQuantities"] as? [[String: Any]] {
+                    // Each auto-selected row must have a human-checked identity AND
+                    // amount. Consume matches so duplicate additions cannot pass.
+                    var remaining = expected
+                    for candidate in page.candidates where !candidate.requiresConfirmation {
+                        let match = remaining.firstIndex {
+                            $0["canonicalID"] as? String == candidate.canonicalID &&
+                            $0["unit"] as? String == candidate.quantity.unit.rawValue &&
+                            abs(($0["quantity"] as? Double ?? -1) - candidate.quantity.value) < 0.0001
+                        }
+                        #expect(match != nil, "Unverified automatic quantity in \(id): \(candidate.canonicalID ?? "?") \(candidate.quantity)")
+                        if let match { remaining.remove(at: match) }
+                    }
+                }
                 // Diagnostic only: isolate the effect of the row-rejoining step.
                 result["ungroupedCandidates"] = candidateJSON(ReceiptParser.candidates(from: fragments.map(\.text)))
                 if let groundTruth = input["productLines"] as? [String] {

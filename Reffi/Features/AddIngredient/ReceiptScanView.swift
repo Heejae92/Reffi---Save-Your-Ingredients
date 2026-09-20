@@ -93,6 +93,15 @@ struct ReceiptScanView: View {
                 CandidateEditSheet(candidate: candidate,
                                    title: candidate.isManual ? "Add by hand" : "Edit item") { updated in
                     if updated.isManual {
+                        if phase == .review {
+                            var confirmed = updated
+                            confirmed.isManual = false
+                            confirmed.requiresConfirmation = false
+                            confirmed.quantityNeedsConfirmation = false
+                            candidates.append(confirmed)
+                            selected.insert(confirmed.id)
+                            return true
+                        }
                         return addManual(updated)
                     } else if let idx = candidates.firstIndex(where: { $0.id == updated.id }) {
                         var confirmed = updated
@@ -272,21 +281,36 @@ struct ReceiptScanView: View {
             List {
                 Text("Clear items are selected. Check the remaining items and quantities before adding.")
                     .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                    .listRowBackground(Color.clear)
                 if recognitionFailed {
                     Text("Some pages could not be read. Check for missing ingredients before adding.")
                         .reffiType(.caption).foregroundStyle(ReffiColor.urgentDark)
                 }
-                Section {
-                    ForEach(candidates) { c in
-                        candidateRow(c)
-                            .listRowBackground(Color.clear)
-                            // 행 구분선은 §6.1 소관이라 종이 단면(`paperEdge`)이 아니다 — 알파가 같아도 역할이 다르다.
-                            .listRowSeparatorTint(ReffiColor.paperEdge)
-                            // 시스템 plain 행 인셋(≈20)이 아니라 시트 인셋(§14.8) — 체크 상자가 제목과 같은 선에 선다.
-                            .listRowInsets(EdgeInsets(top: ReffiSpace.s2, leading: ReffiSheet.inset,
-                                                      bottom: ReffiSpace.s2, trailing: ReffiSheet.inset))
+                ForEach([false, true], id: \.self) { needsReview in
+                    let items = candidates.filter { $0.requiresConfirmation == needsReview }
+                    if !items.isEmpty {
+                        Section {
+                            ForEach(items) { c in
+                                candidateRow(c)
+                                    .listRowBackground(Color.clear)
+                                    // 행 구분선은 §6.1 소관이라 종이 단면(`paperEdge`)이 아니다 — 알파가 같아도 역할이 다르다.
+                                    .listRowSeparatorTint(ReffiColor.paperEdge)
+                                    // 시스템 plain 행 인셋(≈20)이 아니라 시트 인셋(§14.8) — 체크 상자가 제목과 같은 선에 선다.
+                                    .listRowInsets(EdgeInsets(top: ReffiSpace.s2, leading: ReffiSheet.inset,
+                                                              bottom: ReffiSpace.s2, trailing: ReffiSheet.inset))
+                            }
+                        } header: {
+                            Text(needsReview ? "Check these items" : "Ready to add")
+                                .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
+                        }
                     }
-                } footer: {
+                }
+                Button("Add missing ingredient") {
+                    editingCandidate = EditableCandidate(manualDraft: true)
+                }
+                .frame(minHeight: ReffiChrome.tapMin)
+                .listRowBackground(Color.clear)
+                Section {} footer: {
                     Text("Use-by dates are estimates.\nCheck the packaging and adjust them in Fridge.")
                         .reffiType(.caption).foregroundStyle(ReffiColor.ink2)
                         .listRowInsets(EdgeInsets(top: ReffiSpace.s3, leading: ReffiSheet.inset,
@@ -464,7 +488,7 @@ struct ReceiptScanView: View {
                 // 스캔 품질(64차) — 후보 수 대비 사전 매칭 수. 이후 `ingredient_add{source: receipt}`의
                 // count가 실제 등록 수라, 둘의 비가 "OCR·파서가 쓸 만한가"의 지표다.
                 Analytics.shared.track(.receiptScan(source: source, pages: images.count,
-                                                    candidates: candidates.count, matched: selected.count))
+                                                    candidates: candidates.count, matched: candidates.filter { $0.canonicalID != nil }.count))
             }
         }
     }
@@ -583,6 +607,7 @@ private struct CandidateEditSheet: View {
     @Environment(FridgeStore.self) private var store
     @State private var quantityInput: String
     @FocusState private var nameFocused: Bool
+    @FocusState private var quantityFocused: Bool
 
     init(candidate: EditableCandidate, title: LocalizedStringKey, onSave: @escaping (EditableCandidate) -> Bool) {
         _candidate = State(initialValue: candidate)
@@ -641,6 +666,7 @@ private struct CandidateEditSheet: View {
         // 쌍둥이 폼(`IngredientEditView`)과 같은 `.large`. 편집 폼의 §14.5 "`.medium` 진입"은 폼이
         // 절반 화면에 **들어갈 때**의 규칙이다.
         .presentationDetents([.large])
+        .onAppear { if !candidate.isManual && candidate.quantityNeedsConfirmation { quantityFocused = true } }
         .interactiveDismissDisabled(isDirty)
         .onChange(of: candidate.name) { _, newName in
             candidate.categoryOverride = nil
@@ -756,6 +782,7 @@ private struct CandidateEditSheet: View {
                 Text("Quantity").reffiType(.body).foregroundStyle(ReffiColor.ink)
                 Spacer()
                 TextField("1", text: $quantityInput)
+                    .focused($quantityFocused)
                     .accessibilityIdentifier("ingredient.quantity")
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)

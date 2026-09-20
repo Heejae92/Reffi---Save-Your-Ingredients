@@ -126,8 +126,19 @@ final class ReleaseFixesUITests: XCTestCase {
         save.tap()
         XCTAssertTrue(apple.waitForExistence(timeout: 5))
         XCTAssertEqual(apple.value as? String, "Checked")
+        XCTAssertTrue(app.staticTexts["Ready to add"].exists)
         attach(app, "receipt-confirmed-quantity")
-        app.buttons["Add 2 items"].tap()
+        app.buttons["Add missing ingredient"].tap()
+        let name = app.textFields["Name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        name.tap()
+        name.typeText("Carrot")
+        app.buttons["Save"].tap()
+        XCTAssertTrue(app.buttons["receipt.select.carrot"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["receipt.select.milk"].value as? String, "Checked")
+        XCTAssertEqual(app.buttons["receipt.select.apple"].value as? String, "Checked")
+        attach(app, "receipt-missing-item-added-to-batch")
+        app.buttons["Add 3 items"].tap()
         XCTAssertTrue(app.buttons["home.primaryAction"].waitForExistence(timeout: 8))
     }
 

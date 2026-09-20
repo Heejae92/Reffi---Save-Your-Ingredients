@@ -6128,6 +6128,54 @@
           }
         }
       }
+    },
+    "Ready to add": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready to add"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "바로 추가할 재료"
+          }
+        }
+      }
+    },
+    "Check these items": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check these items"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인이 필요한 재료"
+          }
+        }
+      }
+    },
+    "Add missing ingredient": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add missing ingredient"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "빠진 재료 추가"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

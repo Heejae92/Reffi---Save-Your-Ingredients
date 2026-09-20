@@ -35,7 +35,7 @@ enum ReceiptParser {
         let tokens = Set(IngredientLexicon.matchTokens(lower))
         let nonFood = ["soap", "detergent", "shampoo", "conditioner", "lotion", "cleaner",
                        "towel", "towels", "tissue", "tissues", "napkin", "bag", "bags", "scent", "candle", "toothpaste",
-                       "pet", "dog", "cat", "diaper", "diapers", "supplement", "vitamin", "toner", "perfume", "sanitizer", "bleach", "wrap", "foil", "pay", "rewards",
+                       "pet", "dog", "cat", "diaper", "diapers", "supplement", "vitamins", "toner", "perfume", "sanitizer", "bleach", "wrap", "foil", "pay", "rewards",
                        "store", "market", "supermarket", "www", "http", "payment", "visa", "mastercard", "debit", "credit", "cashier", "discount",
                        "세제", "비누", "샴푸", "린스", "치약", "휴지", "물티슈", "세정", "방향제", "주방타월"]
         return (noiseKeywords + nonFood).contains { word in
@@ -98,9 +98,55 @@ enum ReceiptParser {
         }
     }
 
+    /// Language passes are corroboration, not independent confidence probabilities.
+    /// Relax Vision's coarse Korean confidence only for an exact food identity and
+    /// a purchase count verified against the printed unit price and line total.
+    static func corroborate(_ candidates: [Candidate], primary: [TextFragment], confirmation: [TextFragment]) -> [Candidate] {
+        guard !containsMultipleReceipts(confirmation), !containsReturnTransaction(readingLines(from: confirmation)) else { return [] }
+        let rows = readingRows(from: primary)
+        let otherRows = readingRows(from: confirmation)
+        let parsed = self.candidates(from: rows.map(\.text))
+        let other = self.candidates(from: otherRows.map(\.text))
+        return candidates.map { candidate in
+            var result = candidate
+            guard !candidate.quantityNeedsConfirmation, let index = rows.firstIndex(where: { $0.text == candidate.rawLine }), rows[index].confidence >= 0.5,
+                  parsed.contains(where: { $0.rawLine == candidate.rawLine && !$0.requiresConfirmation }),
+                  inlinePurchase(candidate.rawLine) != nil || (index + 1 < rows.count && purchaseCount(product: candidate.rawLine, following: rows[index + 1].text) != nil),
+                  other.contains(where: { $0.canonicalID == candidate.canonicalID && !$0.requiresConfirmation && $0.quantity == candidate.quantity && normalizedProductLine($0.rawLine) == normalizedProductLine(candidate.rawLine) }) else { return result }
+            result.requiresConfirmation = false
+            return result
+        }
+    }
+
+    /// This relationship is used only beneath a recognized price/count/total header.
+    /// A package count remains a package, not an invented number of individual foods.
+    static func inlinePurchase(_ line: String) -> (name: String, count: Quantity)? {
+        let pattern = #"^(.+?)\s+(\d[\d,]*)\s+(\d{1,3})\s+(\d[\d,]*)\s*[*#]?$"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)),
+              let name = Range(match.range(at: 1), in: line) else { return nil }
+        let numbers = (2...4).compactMap { index -> Double? in
+            guard let range = Range(match.range(at: index), in: line) else { return nil }
+            return Double(line[range].replacingOccurrences(of: ",", with: ""))
+        }
+        guard numbers.count == 3, numbers[0] > 0, numbers[1] > 0,
+              abs(numbers[0] * numbers[1] - numbers[2]) < 0.01 else { return nil }
+        return (String(line[name]), Quantity(value: numbers[1], unit: .pack))
+    }
+
     /// Repeated independent food names far apart on the same baseline indicate
     /// side-by-side receipts. Joining those columns would corrupt transaction quantities.
     static func containsMultipleReceipts(_ fragments: [TextFragment]) -> Bool {
+        // Two independent barcode columns are stronger evidence than aligned food names
+        // when photographed receipts are skewed or start at different heights.
+        let barcodes = fragments.filter {
+            $0.text.range(of: #"^\s*\d{8,14}(?:\s|[*#]|$)"#, options: .regularExpression) != nil
+        }.sorted { $0.bounds.minX < $1.bounds.minX }
+        if barcodes.count >= 6 {
+            for split in 3...(barcodes.count - 3) {
+                if barcodes[split].bounds.minX - barcodes[split - 1].bounds.minX > 0.25 { return true }
+            }
+        }
         let products = fragments.filter { !isNonFoodLine($0.text) && productMatch(normalizedProductLine($0.text)) != nil }
         var conflictingRows = Set<Int>()
         for (i, left) in products.enumerated() {
@@ -120,23 +166,29 @@ enum ReceiptParser {
         // A refund or mixed purchase/refund image must never create positive stock.
         // Policy prose ("returns within 30 days") is not a transaction marker.
         guard !containsReturnTransaction(lines) else { return [] }
-        var seenNames = Set<String>()
+        let hasCountTable = lines.contains {
+            let compact = $0.replacingOccurrences(of: " ", with: "").lowercased()
+            return compact.contains("단가수량금액") || compact.contains("unitpriceqtyamount")
+        }
+        var seenNames: [String: Int] = [:]
         var out: [Candidate] = []
         for (index, raw) in lines.enumerated() {
             if isTransactionEnd(raw) { break }
             let line = raw.trimmingCharacters(in: .whitespacesAndNewlines)
             guard line.count >= 2, !isNonFoodLine(line), !isQuantityRow(line),
                   line.range(of: #"(?:^|\s)-\s*\d"#, options: .regularExpression) == nil else { continue }
-            let cleaned = normalizedProductLine(line)
+            let table = hasCountTable ? inlinePurchase(line) : nil
+            let product = table?.name ?? line
+            let cleaned = normalizedProductLine(product)
             guard let match = productMatch(cleaned, lexicon: lexicon) else { continue }
-            guard seenNames.insert(cleaned.lowercased()).inserted else {
-                if let existing = out.firstIndex(where: { normalizedProductLine($0.rawLine).lowercased() == cleaned.lowercased() }) {
-                    out[existing].requiresConfirmation = true
-                    out[existing].quantityNeedsConfirmation = true
-                }
+            let key = cleaned.lowercased()
+            if let existing = seenNames[key] {
+                out[existing].requiresConfirmation = true
+                out[existing].quantityNeedsConfirmation = true
                 continue
             }
-            var amount = quantityEvidence(line)
+            var amount = quantityEvidence(product)
+            var verifiedCount = table?.count
             // Count-size grading on produce (e.g. Hass avocado 40 CT) is not a purchase count.
             if line.range(of: #"(?i)\bct\b"#, options: .regularExpression) != nil,
                let glyphName = lexicon.entry(id: match.id)?.glyph,
@@ -145,19 +197,23 @@ enum ReceiptParser {
             // Quantity lines belong to the immediately preceding product only. Do not
             // cross another product, total or barcode to guess a quantity.
             if index + 1 < lines.count {
-                let next = purchaseCount(product: line, following: lines[index + 1])
-                if let next {
-                    if let current = amount, current.unit != .piece, next.unit == .piece {
-                        amount = Quantity(value: current.value * next.value, unit: current.unit)
-                    } else if amount == nil { amount = next }
-                    else { amount = nil } // two count measures need packaging confirmation
-                }
+                verifiedCount = verifiedCount ?? purchaseCount(product: line, following: lines[index + 1])
+            }
+            if let count = verifiedCount {
+                if let package = amount {
+                    amount = Quantity(value: package.value * count.value, unit: package.unit)
+                } else { amount = count }
             }
             if let amount, [.liter, .milliliter].contains(amount.unit),
                let glyphName = lexicon.entry(id: match.id)?.glyph,
                let category = FoodGlyph(rawValue: glyphName)?.categoryLabel,
                ["Fruit", "Veg", "Meat", "Seafood"].contains(category) { continue }
-            let knownQuantity = amount?.isValid == true && !hasUnresolvedCount(line)
+            let beverage = ["milk", "almond-milk", "soy-milk", "oat-milk", "juice", "fresh-juice", "flavored-milk"].contains(match.id)
+            // An unqualified OZ on a beverage is ambiguous (fluid ounces vs mass).
+            let ambiguousOunces = beverage && product.range(of: #"(?i)oz\b"#, options: .regularExpression) != nil && amount?.unit == .gram
+            let unresolvedContinuation = index + 1 < lines.count && verifiedCount == nil && isQuantityRow(lines[index + 1])
+            let knownQuantity = (!hasCountTable || verifiedCount != nil) && !unresolvedContinuation && amount?.isValid == true && !ambiguousOunces && (verifiedCount != nil || !hasUnresolvedCount(line))
+            seenNames[key] = out.count
             out.append(Candidate(rawLine: line, canonicalID: match.id,
                                  name: lexicon.entry(id: match.id)?.displayName ?? cleaned,
                                  quantity: amount ?? Quantity(value: 1, unit: .piece),
@@ -193,9 +249,13 @@ enum ReceiptParser {
         }
         if let n = captures(#"^\s*\*?\d{6,14}\s+([\d,]+)\s+(\d{1,3})\s+([\d,]+)\s*[*#]?\s*$"#, following),
            n[1] > 0, abs(n[0] * n[1] - n[2]) < 0.01 {
-            return Quantity(value: n[1], unit: .piece)
+            return Quantity(value: n[1], unit: .pack)
         }
-        if let n = captures(#"^\s*(\d{1,3})\s*(?:ea)?\s*[@08]\s*\$?([\d]+\.[\d]{2})(?:\s*/\s*ea)?\s*$"#, following),
+        // Only repair OCR-confusable count glyphs where all monetary arithmetic agrees.
+        let countLine = following.replacingOccurrences(of: #"(?i)^\s*SEA\b"#, with: "5EA", options: .regularExpression)
+            .replacingOccurrences(of: #"(?i)^\s*TEA\b"#, with: "7EA", options: .regularExpression)
+            .replacingOccurrences(of: #"^\s*ЗЕА\b"#, with: "3EA", options: .regularExpression)
+        if let n = captures(#"^\s*(\d{1,3})\s*(?:e[a4])?\s*[@08]\s*\$?([\d]+\.[\d]{2})(?:\s*/\s*ea)?\s*$"#, countLine),
            let total = captures(#"\$?(\d+\.\d{2})\s*[A-Z]?\s*$"#, product)?.first,
            n[0] > 0, abs(n[0] * n[1] - total) < 0.01 {
             return Quantity(value: n[0], unit: .piece)
@@ -205,7 +265,7 @@ enum ReceiptParser {
 
     /// A trailing count column without a verified table relationship is ambiguous.
     private static func hasUnresolvedCount(_ line: String) -> Bool {
-        line.range(of: #"(?i)(?:kg|g|ml|l|oz|lb|개|ea|팩|병|봉)\s+\d+\s+[$₩]?[\d,.]+\s*[A-Z]?$"#, options: .regularExpression) != nil
+        line.range(of: #"(?i)(?:(?:kg|g|ml|l|oz|lb|개|ea|팩|병|봉)\s+\d+\s+[$₩]?[\d,.]+|\d[\d,]*\s+\d{1,3}\s+\d[\d,]*)\s*[A-Z*#]?$"#, options: .regularExpression) != nil
     }
 
     /// Unit-price rows can resemble food after OCR (7EA → TEA). Never match them as names.
@@ -216,12 +276,13 @@ enum ReceiptParser {
     private struct ProductRules: Decodable {
         struct Override: Decodable { let pattern: String; let id: String? }
         let overrides: [Override]
+        let verifiedNames: [Override]
         let removableTokens: [String]
     }
     private static let productRules: ProductRules = {
         guard let url = Bundle.main.url(forResource: "receipt-products", withExtension: "json"),
               let data = try? Data(contentsOf: url), let rules = try? JSONDecoder().decode(ProductRules.self, from: data)
-        else { return ProductRules(overrides: [], removableTokens: []) }
+        else { return ProductRules(overrides: [], verifiedNames: [], removableTokens: []) }
         return rules
     }()
 
@@ -229,15 +290,21 @@ enum ReceiptParser {
     /// A recognized component of an unknown product is not a verified ingredient.
     static func productMatch(_ raw: String, lexicon: IngredientLexicon = .shared) -> (id: String, exact: Bool)? {
         let expanded = expandedAbbreviations(raw).lowercased()
+            .replacingOccurrences(of: #"^[-a-z]-"#, with: "", options: .regularExpression)
+        var semanticID: String?
         for rule in productRules.overrides where expanded.range(of: rule.pattern, options: .regularExpression) != nil {
             guard let id = rule.id, lexicon.entry(id: id) != nil else { return nil }
-            return (id, false) // semantic override needs explicit review of the branded product
+            if semanticID == nil { semanticID = id }
         }
         let stripped = expanded
-            .replacingOccurrences(of: #"(?i)\b\d+(?:\.\s*\d+)?\s*(?:kg|g|ml|l|oz|lbs?|ct|ea|개|입|팩|병|봉)\b"#, with: " ", options: .regularExpression)
+            .replacingOccurrences(of: #"(?i)\d+(?:\.\s*\d+)?\s*(?:kg|g|ml|l|oz|lbs?|ct|ea|개|입|구|팩|병|봉)(?![a-z])(?:\s*[*x×]\s*\d+)?"#, with: " ", options: .regularExpression)
         let tokens = IngredientLexicon.matchTokens(stripped).filter { !productRules.removableTokens.contains($0) }
         guard !tokens.isEmpty else { return nil }
         let name = tokens.joined(separator: " ")
+        for rule in productRules.verifiedNames where name.range(of: rule.pattern, options: .regularExpression) != nil {
+            if let id = rule.id, lexicon.entry(id: id) != nil { return (id, true) }
+        }
+        if let semanticID { return (semanticID, false) }
         if let id = lexicon.exactCanonicalID(for: name) { return (id, true) }
         // English plural forms, including reordered multi-word POS descriptions.
         let singular = tokens.map { token -> String in
@@ -255,7 +322,6 @@ enum ReceiptParser {
         // multiple independently matched food components require review and are not guessed.
         if name.unicodeScalars.contains(where: { (0xAC00...0xD7A3).contains($0.value) }),
            let id = lexicon.headNounCanonicalID(for: name) { return (id, false) }
-        if let id = lexicon.headNounCanonicalID(for: name) { return (id, false) }
         return nil
     }
 
@@ -311,8 +377,12 @@ enum ReceiptParser {
     /// Evidence is optional: no explicit amount must not silently become a confirmed 1 ea.
     static func quantityEvidence(_ raw: String) -> Quantity? {
         guard raw.range(of: #"[※✕]\s*\d"#, options: .regularExpression) == nil else { return nil }
-        let line = raw.lowercased().replacingOccurrences(of: #"(\d)\.\s+(\d)"#, with: "$1.$2", options: .regularExpression)
-        let pattern = #"(?<![\d.,-])([0-9]+(?:\.[0-9]+)?)\s*(fl\s*oz|lbs?|oz|gallons?|gal|kg|ml|g|l|개|ea|ct|팩|병|봉)(?![a-z])(?:\s*[*x×]\s*(\d+))?"#
+        var line = raw.lowercased().replacingOccurrences(of: #"(\d)\.\s+(\d)"#, with: "$1.$2", options: .regularExpression)
+        if let range = line.range(of: #"\b(?:half\s+)?gallon\b"#, options: .regularExpression),
+           line[..<range.lowerBound].trimmingCharacters(in: .whitespaces).last?.isNumber != true {
+            line.replaceSubrange(range, with: line[range].hasPrefix("half") ? "0.5 gallon" : "1 gallon")
+        }
+        let pattern = #"(?<![\d.,-])([0-9]+(?:\.[0-9]+)?)\s*(fl\s*oz|lbs?|oz|gallons?|gal|kg|ml|g|l|개|구|ea|ct|팩|병|봉)(?![a-z])(?:\s*[*x×]\s*(\d+))?"#
         let regex = try! NSRegularExpression(pattern: pattern)
         let full = NSRange(line.startIndex..., in: line)
         let matches = regex.matches(in: line, range: full)

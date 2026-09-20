@@ -65,7 +65,19 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": [
+      {
+        "canonicalID": "juice",
+        "quantity": 1.8,
+        "unit": "L"
+      },
+      {
+        "canonicalID": "instant-rice",
+        "quantity": 630,
+        "unit": "g"
+      }
+    ]
   },
   {
     "id": "kr02",
@@ -115,7 +127,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "kr03",
@@ -204,7 +217,8 @@
     ],
     "scored": false,
     "exclusionReason": "two separate return/purchase receipts on one photo; transaction-boundary stress case",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "kr04",
@@ -232,7 +246,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "kr05",
@@ -258,7 +273,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "kr06",
@@ -302,7 +318,24 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": [
+      {
+        "canonicalID": "bean-sprout",
+        "quantity": 800,
+        "unit": "g"
+      },
+      {
+        "canonicalID": "tofu",
+        "quantity": 1,
+        "unit": "pack"
+      },
+      {
+        "canonicalID": "ham",
+        "quantity": 600,
+        "unit": "g"
+      }
+    ]
   },
   {
     "id": "kr07",
@@ -367,7 +400,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "kr08",
@@ -423,7 +457,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Wikimedia Commons; see source page for attribution and exact license."
+    "rights": "Wikimedia Commons; see source page for attribution and exact license.",
+    "verifiedQuantities": []
   },
   {
     "id": "us01",
@@ -585,7 +620,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "us02",
@@ -705,7 +741,8 @@
     ],
     "scored": false,
     "exclusionReason": "partly occluded/cropped product list; qualitative only",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "us03",
@@ -809,7 +846,8 @@
     ],
     "scored": false,
     "exclusionReason": "several product names too small to reliably transcribe; qualitative only",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "us04",
@@ -901,7 +939,19 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": [
+      {
+        "canonicalID": "banana",
+        "quantity": 7,
+        "unit": "ea"
+      },
+      {
+        "canonicalID": "milk",
+        "quantity": 3.785411784,
+        "unit": "L"
+      }
+    ]
   },
   {
     "id": "us05",
@@ -1015,7 +1065,29 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": [
+      {
+        "canonicalID": "tomato",
+        "quantity": 453.59237,
+        "unit": "g"
+      },
+      {
+        "canonicalID": "avocado",
+        "quantity": 3,
+        "unit": "ea"
+      },
+      {
+        "canonicalID": "apple",
+        "quantity": 5,
+        "unit": "ea"
+      },
+      {
+        "canonicalID": "sweet-potato",
+        "quantity": 2,
+        "unit": "ea"
+      }
+    ]
   },
   {
     "id": "us06",
@@ -1079,7 +1151,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "us07",
@@ -1139,7 +1212,19 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": [
+      {
+        "canonicalID": "spinach",
+        "quantity": 170.09713875,
+        "unit": "g"
+      },
+      {
+        "canonicalID": "apple",
+        "quantity": 10,
+        "unit": "ea"
+      }
+    ]
   },
   {
     "id": "us08",
@@ -1321,7 +1406,8 @@
     ],
     "scored": true,
     "exclusionReason": "",
-    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit."
+    "rights": "Publicly accessible image; retained locally for evaluation only. Not licensed for redistribution by this audit.",
+    "verifiedQuantities": []
   },
   {
     "id": "us09",
@@ -1403,7 +1489,8 @@
     ],
     "scored": false,
     "exclusionReason": "Partially legible photo; separate new-source stress validation, no aggregate recall claim.",
-    "rights": "Public image retained locally for evaluation only."
+    "rights": "Public image retained locally for evaluation only.",
+    "verifiedQuantities": []
   },
   {
     "id": "kr09",
@@ -1616,6 +1703,121 @@
     ],
     "scored": false,
     "exclusionReason": "Partially legible photo; separate new-source stress validation, no aggregate recall claim.",
-    "rights": "Public image retained locally for evaluation only."
+    "rights": "Public image retained locally for evaluation only.",
+    "verifiedQuantities": []
+  },
+  {
+    "id": "kr10",
+    "country": "KR",
+    "source_page": "https://w00nobi.tistory.com/33",
+    "path": "images/kr10.jpg",
+    "sha256": "ca55977ad72dc4c1d59867b6201251c43369fbf315d5acc0967dd30ac467dc2b",
+    "width": 900,
+    "height": 1174,
+    "status": "downloaded",
+    "scored": false,
+    "items": [
+      {
+        "text": "SL_10_동원_더킹크",
+        "acceptableCanonicalIDs": [],
+        "isFood": true
+      },
+      {
+        "text": "새벽양상추(국산)",
+        "acceptableCanonicalIDs": [
+          "lettuce"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "무항생제란15구",
+        "acceptableCanonicalIDs": [
+          "egg"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "SL_10_동원_더킹크",
+      "새벽양상추(국산)",
+      "무항생제란15구"
+    ],
+    "description": "Homeplus, handheld tilted receipt, three product rows",
+    "rights": "Public blog image, local evaluation only; not redistributed.",
+    "verifiedQuantities": [],
+    "exclusionReason": "Additional development case, outside the original comparison cohort."
+  },
+  {
+    "id": "us10",
+    "country": "US",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Trader_Joe%E2%80%99s_Food_Receipt_12_Sep_2021.jpeg",
+    "path": "images/us10.jpg",
+    "sha256": "e07cc16d484b191e45a671cea61b7c4e4c80aea0317c5b8188ddf83df53a3491",
+    "width": 4032,
+    "height": 3024,
+    "status": "downloaded",
+    "scored": false,
+    "items": [
+      {
+        "text": "ORGANIC POMEGRANATE JUICE",
+        "acceptableCanonicalIDs": [
+          "juice"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "FZN ORGANIC SPINACH",
+        "acceptableCanonicalIDs": [
+          "spinach"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "FZN ORGANIC PEAS",
+        "acceptableCanonicalIDs": [
+          "pea"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "SALAD SPINACH BABY 6 OZ",
+        "acceptableCanonicalIDs": [
+          "spinach"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "CARROT ORGANIC QT JUICE",
+        "acceptableCanonicalIDs": [
+          "juice"
+        ],
+        "isFood": true
+      },
+      {
+        "text": "BRUSSELS SPROUTS 1LB",
+        "acceptableCanonicalIDs": [
+          "brussels-sprout"
+        ],
+        "isFood": true
+      }
+    ],
+    "productLines": [
+      "ORGANIC POMEGRANATE JUICE",
+      "FZN ORGANIC SPINACH",
+      "FZN ORGANIC PEAS",
+      "SALAD SPINACH BABY 6 OZ",
+      "CARROT ORGANIC QT JUICE",
+      "BRUSSELS SPROUTS 1LB"
+    ],
+    "description": "Trader Joes, 90-degree sideways, deeply creased long receipt",
+    "exclusionReason": "Stress case with folds, sideways capture and repeated rows. Partial annotation only; automatic outputs individually reviewed.",
+    "rights": "Cryptogoth, CC BY-SA 4.0, Wikimedia Commons. Original local file, not redistributed.",
+    "verifiedQuantities": [
+      {
+        "canonicalID": "spinach",
+        "quantity": 170.09713875,
+        "unit": "g"
+      }
+    ]
   }
 ]
