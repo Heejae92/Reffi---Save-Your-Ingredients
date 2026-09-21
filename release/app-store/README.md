@@ -1,3 +1,15 @@
+# Submitted App Store 1.1 (33), September 20, 2026
+
+Version 1.1 (33) was submitted for App Review at 7:52 PM Pacific time. App Store Connect confirmed both the review submission and app version as `WAITING_FOR_REVIEW`. Manual release after approval remains selected, so approval will not automatically publish the update.
+
+Build source: commit `dc71a4b` on `main`, with marketing version 1.1 and build number 33. Release validation completed with 667 unit tests passing, `537 keys / 351 literals / 0 missing`, and a successful signed archive. Archive metadata verified `com.reffi.app`, `1.1 (33)`, iOS 18+, team `L3RY7X2WBC`, and the bundled receipt product data matched the source SHA-256.
+
+Archive: `/tmp/Reffi-1.1-build33.xcarchive`. Logs: `/tmp/reffi-1.1-build33-archive.log` and `/tmp/reffi-1.1-build33-upload.log`. The upload ended with `Upload succeeded` and `EXPORT SUCCEEDED`. Apple processing completed with build `b35796d9-d6da-4e1e-ab16-545e442f101f` in `VALID` state.
+
+The 1.1 version inherited both Korean and English descriptions, keywords, support and marketing URLs, three 6.9-inch screenshots per locale, review contact, and review notes. The localized What's New text is recorded in `1.1-WHATS_NEW.md`. App Store version ID: `a906039c-c1ac-41a4-8eac-1ccc0d6ced00`. Review submission ID: `af54412a-437d-40a8-9c24-d37df7d692a3`.
+
+---
+
 # Submitted for App Review, September 14, 2026
 
 Version 1.0 (30) was submitted for App Review at 6:27 PM (App Store Connect local time). Status: Waiting for Review. Manual release after approval is unchanged.
