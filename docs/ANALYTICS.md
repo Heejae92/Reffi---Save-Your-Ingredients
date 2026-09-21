@@ -22,6 +22,79 @@ Owner setup (once):
 
 The Supabase `analytics_events` table and views below are no longer written to; they remain only for deletion of records from earlier versions. The rest of this document describes the event dictionary and the pipeline, which still apply.
 
+### GA4 콘솔 설정 목록 (2026-09-20, 코드 아님 — 속성 555114715에서 한 번 실행)
+
+코드가 보내는 이벤트·속성은 아래 §3 사전 그대로다. GA4는 **등록한 시점부터**만 매개변수를 보고서에 쓰므로, 첫 정식 빌드가 나가기 전에 한 번에 해 둔다. 진입: https://analytics.google.com/analytics/web/#/a408810223p555114715/admin
+
+**1. 보고 ID** — 관리 › 데이터 표시 › 보고 ID → **기기 기반**. (User-ID·Google 신호를 쓰지 않으므로 혼합 방식은 의미가 없고 기준선이 흔들린다.)
+
+**2. 데이터 보관** — 관리 › 데이터 수집 및 수정 › 데이터 보관 → 이벤트 데이터 **14개월**, "새 활동 시 사용자 데이터 재설정" 켬. 방침 문구(14개월)와 같아야 한다.
+
+**3. 데이터 수집** — 같은 묶음 › 데이터 수집 → Google 신호 데이터 수집 **꺼짐 유지**, 광고 개인 최적화 허용 **끔**(속성 전체). 끄면 DebugView의 `non_personalized_ads = 0` 표시가 사라진다.
+
+**4. 개발자 트래픽 제외** — 같은 묶음 › 데이터 필터 → "개발자 트래픽" 필터를 **활성**으로. `-FIRDebugEnabled`로 띄운 세션(DebugView용)이 보고서에서 빠진다. 참고로 DEBUG 빌드는 `-analyticsDebug`가 없으면 아예 보내지 않는다.
+
+**5. 주요 이벤트(전환)** — 관리 › 데이터 표시 › 이벤트 › 주요 이벤트 탭 › 새 주요 이벤트 → 이름을 그대로 입력(아직 수신 전이어도 등록된다).
+
+| 주요 이벤트 | 뜻 |
+|---|---|
+| `onboarding_complete` | 온보딩 통과(건너뛰기 포함, `skipped`로 가른다) |
+| `ingredient_add` | 재고 등록(첫 가치 순간) |
+| `ticket_fire` | 레시피 발주(핵심 루프 진입) |
+| `cook_finish` | 조리 완료(핵심 루프 완주) |
+| `receipt_scan` | 영수증 스캔 사용(차별 기능) |
+
+**6. 맞춤 정의** — 관리 › 데이터 표시 › 맞춤 정의. 이름은 매개변수 이름과 같게 두고 범위는 표기대로. 한도는 이벤트 범위 측정기준 50·측정항목 50이라 1차만 먼저 넣는다.
+
+1차 · 이벤트 범위 **측정기준**(문자열/불리언 매개변수. 불리언은 앱이 1/0으로 보낸다)
+
+| 매개변수 | 쓰는 이벤트 | 값 |
+|---|---|---|
+| `source` | ingredient_add, receipt_scan, video_open, tobuy_add | manual/receipt/restock, camera/photos, cook/empty_deck, memo/missing |
+| `outcome` | ingredient_decide | ate/tossed |
+| `surface` | ingredient_decide | badge/zone/fridge/other |
+| `recipe` | ticket_pass, ticket_fire, cook_finish, cook_cancel | 시드 슬러그 또는 custom |
+| `household` | onboarding_complete | one/two/family/large |
+| `skipped` | onboarding_complete | 1/0 |
+| `glyph` | ingredient_decide | 재료 글리프(닫힌 enum) |
+| `kind` | undo | fired/finished/ate/tossed/removed/memo_removed |
+| `via` | tobuy_remove | skip/swipe |
+| `action` | recipe_custom | create/edit/delete |
+| `to` | language_change | system/en/ko |
+| `on` | ingredient_pin, alerts_toggled | 1/0 |
+| `granted` | notification_permission | 1/0 |
+| `frozen` | ingredient_decide | 1/0 |
+
+1차 · 이벤트 범위 **측정항목**(숫자 매개변수, 단위 "표준")
+
+| 매개변수 | 쓰는 이벤트 |
+|---|---|
+| `count` | ingredient_add, tobuy_add |
+| `known` | ingredient_add |
+| `days_left` | ingredient_decide, ingredient_freeze |
+| `used`, `missing`, `substituted`, `urgent` | ticket_fire (`used`는 cook_finish도) |
+| `leftovers`, `steps_done`, `steps_total`, `minutes` | cook_finish (`minutes`는 cook_cancel도) |
+| `tickets`, `pinned`, `at_risk` | deck_open |
+| `passes` | ticket_pass |
+| `pages`, `candidates`, `matched` | receipt_scan |
+| `seconds` | app_background |
+| `cuisines` | onboarding_complete |
+
+사용자 범위 **측정기준**(사용자 속성)
+
+| 사용자 속성 | 값 |
+|---|---|
+| `app_language` | 앱 언어(system이면 기기 언어 코드) |
+| `channel` | release / debug |
+
+2차(필요해지면): `renamed`(ingredient_edit), `cold`(session_start는 GA 자동 수집이라 미전송, 생략), `alerts`(onboarding_complete), `hour`(alerts_toggled), `opened`·`still_sealed`(sealed_check), `anonymous`·`provider`(auth_*, 현재 미사용).
+
+**7. 탐색 분석(보고서)** — 탐색 › 유입경로 탐색 분석으로 아래 순서를 저장해 둔다(개방형 유입경로, 기간 30일).
+`first_open → onboarding_complete → ingredient_add → deck_open → ticket_fire → cook_finish`
+보조: 영수증 `receipt_scan → ingredient_add{source=receipt}`, 유지 `ingredient_decide{outcome=ate}` 대 `tossed` 비율(§4의 낭비율과 같은 정의).
+
+**8. 확인** — 설정 뒤 실기기 릴리스 빌드에서 이벤트가 24시간 안에 실시간·보고서에 보이는지, DebugView 세션이 보고서에서 빠졌는지(4번) 확인한다.
+
 ## Pipeline reference
 
 ## 0. 한눈에
