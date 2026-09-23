@@ -300,6 +300,35 @@ private struct CombinedLabel: ViewModifier {
     }
 }
 
+// MARK: - 앱 안 미리보기 (§14.9 위젯 제안)
+
+/// 소형 위젯을 앱 안에서 **같은 뷰**(`GlanceSmall`)로 그린다 — 위젯 제안 다이얼로그의 그림이다.
+/// 모양의 정본을 둘로 나누지 않으려고 이 파일을 앱 타깃에도 컴파일한다(project.yml). 시스템이 그리는
+/// 컨테이너(콘텐츠 여백 · 모서리 · 종이 면)만 여기서 따라 그린다 — 치수는 `PreviewMetrics`.
+struct GlanceWidgetPreview: View {
+    let snapshot: GlanceSnapshot
+    let date: Date
+
+    var body: some View {
+        GlanceSmall(model: GlanceRows(snapshot, asOf: date), isPlaceholder: false)
+            .environment(\.locale, snapshot.locale)
+            .dynamicTypeSize(...DynamicTypeSize.xLarge)   // 위젯과 같은 상한(`GlanceWidgetView`)
+            .padding(PreviewMetrics.contentMargin)
+            .frame(width: PreviewMetrics.side, height: PreviewMetrics.side)
+            .background { PaperWidgetSurface() }
+            .clipShape(RoundedRectangle(cornerRadius: PreviewMetrics.corner, style: .continuous))
+            .accessibilityElement(children: .combine)
+    }
+
+    /// 6.1인치급 iPhone(393pt 폭)의 소형 위젯 — 한 변 158 · 모서리 ≈22 · 시스템 콘텐츠 여백 16.
+    /// 기기마다 조금씩 다르지만(141~170) 미리보기는 크기를 약속하지 않고 모양을 보여 준다.
+    private enum PreviewMetrics {
+        static let side: CGFloat = 158
+        static let corner: CGFloat = 22
+        static let contentMargin: CGFloat = 16
+    }
+}
+
 // MARK: - 잠금화면 (시스템이 단색 비브런트로 칠한다 — 그림·색 대신 글자와 형태로)
 
 private struct GlanceCircular: View {

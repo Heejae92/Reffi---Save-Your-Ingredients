@@ -619,8 +619,14 @@ struct MainView: View {
     // MARK: - 알림 유도 배너 (프리퍼미션)
 
     /// 임박 재료가 있고 알림이 꺼져 있고 아직 제안 안 했을 때 한 번만.
+    ///
+    /// **첫 등록 세션에서는 물러선다(§14.9).** 새 사용자에게는 첫 등록 직후 루트의 알림 제안
+    /// 다이얼로그(`RetentionPromptHost`)가 같은 질문을 더 좋은 자리에서 한다 — 여기까지 서면 같은
+    /// 순간에 같은 질문이 두 번 뜬다. 그 다이얼로그가 끝나면 `alertPromptSeen`을 적어 다음 실행에서도
+    /// 이 배너가 다시 묻지 않는다. 배너는 이제 그 기능 이전부터 쓰던 사람에게만 서는 자리다.
     private func showAlertPrompt(_ counter: CounterDigest) -> Bool {
-        !alertsEnabled && !alertPromptSeen && (counter.urgent + counter.soon) > 0
+        !alertsEnabled && !alertPromptSeen && store.firstRegisteredAt == nil
+            && (counter.urgent + counter.soon) > 0
     }
 
     /// 미니 영수증 스트립(Cooking now와 같은 자리·같은 언어) — 켜기 / 나중에.

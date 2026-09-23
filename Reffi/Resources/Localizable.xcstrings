@@ -6305,6 +6305,149 @@
           }
         }
       }
+    },
+    "Want a heads-up before food turns?": {
+      "comment": "Title of the notification permission suggestion shown after the first ingredient is added",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상하기 전에 알려드릴까요?"
+          }
+        }
+      }
+    },
+    "Remind me": {
+      "comment": "Primary button of the notification suggestion; opens the system permission prompt",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알림 받기"
+          }
+        }
+      }
+    },
+    "Not now": {
+      "comment": "Secondary button that dismisses a suggestion without asking again",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나중에"
+          }
+        }
+      }
+    },
+    "Keep what to use first on your Home Screen?": {
+      "comment": "Title of the Home Screen widget suggestion",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 쓸 재료를 홈 화면에 꺼내 둘까요?"
+          }
+        }
+      }
+    },
+    "It updates with your fridge, so you can check at a glance without opening the app.": {
+      "comment": "Body of the Home Screen widget suggestion",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "냉장고가 바뀌면 위젯도 따라 바뀌어요.\n앱을 열지 않아도 한눈에 보여요."
+          }
+        }
+      }
+    },
+    "See how": {
+      "comment": "Button that opens the steps for adding the widget",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "방법 보기"
+          }
+        }
+      }
+    },
+    "Add it in 3 steps": {
+      "comment": "Title above the steps for adding the Home Screen widget",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "세 단계면 끝나요"
+          }
+        }
+      }
+    },
+    "Got it": {
+      "comment": "Closes the widget steps",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "알겠어요"
+          }
+        }
+      }
+    },
+    "Preview of your first alert": {
+      "comment": "VoiceOver label of the alert preview inside the notification suggestion",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "첫 알림 미리보기"
+          }
+        }
+      }
+    },
+    "One alert at %@, only on days something is near its use-by date.\nYou can change or turn it off anytime in Profile.": {
+      "comment": "Notification suggestion body; %@ is the morning alert time such as 9:00 AM",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "챙길 재료가 있는 날에만 %@에 한 번 보내요.\n프로필에서 언제든 바꾸거나 끌 수 있어요."
+          }
+        }
+      }
+    },
+    "Touch and hold the Home Screen background until the apps jiggle.": {
+      "comment": "Widget step 1 (Apple support wording)",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱이 흔들릴 때까지 홈 화면 배경을 길게 터치하세요."
+          }
+        }
+      }
+    },
+    "Tap **Edit** at the top, then **Add Widget**.": {
+      "comment": "Widget step 2; bold words are the iOS button names",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "화면 상단의 **편집**을 탭한 다음 **위젯 추가**를 탭하세요."
+          }
+        }
+      }
+    },
+    "Search for **Reffi**, pick a size, then tap **Add Widget**.": {
+      "comment": "Widget step 3; bold words are the iOS button names",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "**Reffi**를 검색해 크기를 고른 다음 **위젯 추가**를 탭하세요."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

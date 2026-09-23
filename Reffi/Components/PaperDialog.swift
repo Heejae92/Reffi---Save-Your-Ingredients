@@ -15,7 +15,7 @@ import SwiftUI
 /// 문법은 판정 커버(`DecisionCover`)와 같은 계열이다: `scrim` 딤 + `PaperRect` 종이 카드 + 종이컷 버튼.
 /// **`ReceiptShape`(톱니 영수증)를 쓰지 않는 건 의도**다 — 티켓 덱 위에 뜨는 팝업이 톱니를 두르면
 /// "티켓이 한 장 더 나온 것"으로 읽힌다. 다이얼로그는 티켓이 아니라 **묻는 종이**다.
-struct PaperDialog: View {
+struct PaperDialog<Figure: View, Detail: View>: View {
     let title: LocalizedStringKey
     var message: LocalizedStringKey?
     /// 종이 삐뚤빼뚤함의 시드 — 같은 화면에 두 다이얼로그가 이어 뜰 때 서로 다른 종이로 보이게 한다.
@@ -26,8 +26,25 @@ struct PaperDialog: View {
     var secondary: PaperDialogAction?
     /// 딤(바깥) 탭 — nil이면 **무시**한다. 호출부가 의식적으로 정하도록 기본값을 두지 않았다.
     var onBackdropTap: (() -> Void)?
+    /// **그림 슬롯**(2026-09, §14.9) — 제목 위에 서는 그림 한 장. 리텐션 프롬프트가 "받게 될 것"을
+    /// 말 대신 보여 주는 자리다(알림 미리보기 · 위젯 미리보기). 없으면(`EmptyView`) 종전과 한 픽셀도
+    /// 다르지 않다.
+    ///
+    /// **그림은 보조다.** 뜻은 제목·메시지가 다 말해야 하고, 그림은 접근성 글자 크기에서 걷힌다 —
+    /// 이 카드에는 스크롤이 없어서(아래 `card`) 그림까지 이고 있으면 667pt급 화면에서 버튼이 밀려난다.
+    /// 정렬은 그림이 스스로 정한다(§9.4 "예외 블록은 자기가 중앙을 선언한다") — 슬롯은 좌측 축 그대로다.
+    @ViewBuilder var figure: Figure
+    /// **본문 슬롯**(2026-09-23, §14.9) — 메시지 아래 · 버튼 위에 서는 구조 있는 본문(위젯 추가 세 단계).
+    /// 그림과 달리 **뜻을 싣는 자리라 접근성 글자 크기에서도 걷히지 않는다** — 높이 예산(상한 + 자체
+    /// 스크롤)은 본문이 스스로 진다(`PaperChecklistDialog.list`와 같은 태도). 없으면 종전과 같다.
+    @ViewBuilder var detail: Detail
+    /// **글 가운데 정렬**(2026-09-23 오너 지시, §9.4 ② · §14.9) — 그림이나 단계 목록이 축을 세우는
+    /// 표지형 다이얼로그(리텐션 제안)만 켠다. 제목·메시지가 가운데에 서고, 본문 슬롯의 목록 행은
+    /// 행 안에서 번호 열에 맞춘다(목록은 가운데로 흔들리면 번호와 문장이 어긋난다). 기본은 좌측이다.
+    var centered = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
     /// 등장 팝(§7.5) — 판정 커버와 같은 방식으로 카드만 튀어 오른다.
     @State private var shown = false
     /// VoiceOver 포커스를 제목으로 옮긴다 — 모달이 떴는데 포커스가 뒤 화면에 남으면 존재를 모른다.
@@ -53,6 +70,9 @@ struct PaperDialog: View {
         // `PaperDropdown`이 실측으로 확립한 3중 처방(contain + isModal + 배경 hidden) 그대로다(42차).
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
+        // UI 테스트가 다이얼로그 안에서만 버튼을 찾게 한다 — 뒤 화면에 같은 낱말의 버튼이 있을 수 있다
+        // (예: 홈 알림 배너의 "Later"와 리텐션 제안의 "Not now"가 한국어에서 둘 다 "나중에"다).
+        .accessibilityIdentifier("paperDialog")
         .accessibilityAction(.escape) { (onBackdropTap ?? primary.handler)() }
         .onAppear {
             if reduceMotion { shown = true } else { withAnimation(ReffiMotion.pop) { shown = true } }
@@ -63,17 +83,23 @@ struct PaperDialog: View {
 
     private var card: some View {
         VStack(alignment: .leading, spacing: ReffiSpace.s5) {
-            VStack(alignment: .leading, spacing: ReffiSpace.s2) {
+            if Figure.self != EmptyView.self && !typeSize.isAccessibilitySize {
+                figure
+            }
+            VStack(alignment: centered ? .center : .leading, spacing: ReffiSpace.s2) {
                 Text(title)
                     .reffiType(.heading).foregroundStyle(ReffiColor.ink)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .modifier(DialogTextAlignment(centered: centered))
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityFocused($titleFocused)
                 if let message {
                     Text(message)
                         .reffiType(.body).foregroundStyle(ReffiColor.ink2)   // §2.6 소형 텍스트는 불투명 토큰
-                        .fixedSize(horizontal: false, vertical: true)
+                        .modifier(DialogTextAlignment(centered: centered))
                 }
+            }
+            if Detail.self != EmptyView.self {
+                detail
             }
             buttons
         }
@@ -111,6 +137,22 @@ struct PaperDialog: View {
     }
 }
 
+/// 다이얼로그 글의 정렬 — 좌측(기본)은 종전 그대로 두고, 가운데일 때만 문단 안쪽 정렬과 상자 폭을
+/// 함께 바꾼다(§9.4 "정렬을 바꿀 땐 레이아웃도 같이" — `multilineTextAlignment`만 고치면 상자가 남는다).
+private struct DialogTextAlignment: ViewModifier {
+    let centered: Bool
+    func body(content: Content) -> some View {
+        if centered {
+            content
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .center)
+        } else {
+            content.fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
 /// 종이 다이얼로그의 버튼 하나 — 문구와 그때 할 일.
 /// `role`(2026-08, 35차) — 시스템 `Button(role:)`과 같은 개념을 그대로 옮겼다. `.destructive`면
 /// `PaperDialog.buttons`가 이 액션을 `urgentDark` 솔리드로 그린다. 기본 `nil`이라 기존 호출부는 그대로다.
@@ -143,24 +185,62 @@ extension View {
                      backdropDismisses: Bool = false,
                      primary: PaperDialogAction,
                      secondary: PaperDialogAction? = nil) -> some View {
+        paperDialog(isPresented: isPresented, title: title, message: message, seed: seed,
+                    backdropDismisses: backdropDismisses, primary: primary, secondary: secondary,
+                    figure: { EmptyView() }, detail: { EmptyView() })
+    }
+
+    /// 그림 슬롯이 있는 종이 다이얼로그(§14.7·§14.9) — 제목 위에 `figure`가 선다. 그림은 보조라서
+    /// 접근성 글자 크기에서는 걷힌다(`PaperDialog.figure`).
+    func paperDialog<Figure: View>(isPresented: Binding<Bool>,
+                                   title: LocalizedStringKey,
+                                   message: LocalizedStringKey? = nil,
+                                   seed: Int = 0,
+                                   centered: Bool = false,
+                                   backdropDismisses: Bool = false,
+                                   primary: PaperDialogAction,
+                                   secondary: PaperDialogAction? = nil,
+                                   @ViewBuilder figure: () -> Figure) -> some View {
+        paperDialog(isPresented: isPresented, title: title, message: message, seed: seed,
+                    centered: centered, backdropDismisses: backdropDismisses,
+                    primary: primary, secondary: secondary, figure: figure, detail: { EmptyView() })
+    }
+
+    /// 전체 형태 — 그림(제목 위, 보조) + 본문(메시지 아래, 뜻을 싣는 구조 있는 내용) + 가운데 정렬.
+    func paperDialog<Figure: View, Detail: View>(isPresented: Binding<Bool>,
+                                                 title: LocalizedStringKey,
+                                                 message: LocalizedStringKey? = nil,
+                                                 seed: Int = 0,
+                                                 centered: Bool = false,
+                                                 backdropDismisses: Bool = false,
+                                                 primary: PaperDialogAction,
+                                                 secondary: PaperDialogAction? = nil,
+                                                 @ViewBuilder figure: () -> Figure,
+                                                 @ViewBuilder detail: () -> Detail) -> some View {
         modifier(PaperDialogModifier(isPresented: isPresented,
                                      title: title,
                                      message: message,
                                      seed: seed,
+                                     centered: centered,
                                      backdropDismisses: backdropDismisses,
                                      primary: primary,
-                                     secondary: secondary))
+                                     secondary: secondary,
+                                     figure: figure(),
+                                     detail: detail()))
     }
 }
 
-private struct PaperDialogModifier: ViewModifier {
+private struct PaperDialogModifier<Figure: View, Detail: View>: ViewModifier {
     @Binding var isPresented: Bool
     let title: LocalizedStringKey
     let message: LocalizedStringKey?
     let seed: Int
+    let centered: Bool
     let backdropDismisses: Bool
     let primary: PaperDialogAction
     let secondary: PaperDialogAction?
+    let figure: Figure
+    let detail: Detail
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -181,15 +261,18 @@ private struct PaperDialogModifier: ViewModifier {
                                 secondary: secondary.map(wrapped),
                                 // 바깥 탭은 **취소와 같은 것**이어야 한다 — 다른 결과를 내면
                                 // 실수로 닫은 사용자가 의도하지 않은 행동을 하게 된다.
-                                onBackdropTap: backdropDismisses ? { close(then: (secondary ?? primary).handler) } : nil)
-                        // 진입·이탈은 다른 사건이다(§7.1) — 진입은 dur2 ease-out, 이탈은 exit(dur1)로
-                        // 더 빠르게. 트랜지션이 자기 커브를 든다(`RootTabView` 잉크 토스트 선례).
-                        .transition(.asymmetric(
-                            insertion: .opacity.animation(
-                                ReffiMotion.gated(ReffiMotion.easeOut(duration: ReffiMotion.dur2),
-                                                  reduce: reduceMotion)),
-                            removal: .opacity.animation(
-                                ReffiMotion.gated(ReffiMotion.exit, reduce: reduceMotion))))
+                                onBackdropTap: backdropDismisses ? { close(then: (secondary ?? primary).handler) } : nil,
+                                figure: { figure },
+                                detail: { detail },
+                                centered: centered)
+                    // 진입·이탈은 다른 사건이다(§7.1) — 진입은 dur2 ease-out, 이탈은 exit(dur1)로
+                    // 더 빠르게. 트랜지션이 자기 커브를 든다(`RootTabView` 잉크 토스트 선례).
+                    .transition(.asymmetric(
+                        insertion: .opacity.animation(
+                            ReffiMotion.gated(ReffiMotion.easeOut(duration: ReffiMotion.dur2),
+                                              reduce: reduceMotion)),
+                        removal: .opacity.animation(
+                            ReffiMotion.gated(ReffiMotion.exit, reduce: reduceMotion))))
                 }
             }
             // 트랜잭션 개시용 — 커브·길이는 위 트랜지션이 각자 든다. 콜사이트에서 그냥 `.easeOut`이라

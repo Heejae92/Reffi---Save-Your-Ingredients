@@ -56,6 +56,8 @@ targets:
       - path: Shared
         excludes:
           - "**/* [0-9].*"
+      # 위젯 제안 다이얼로그가 소형 위젯을 **같은 뷰**로 미리 보여 준다(§14.9) — 모양의 정본은 위젯 파일 하나다.
+      - path: ReffiWidgets/FridgeGlanceWidget.swift
     dependencies:
       - package: PhosphorSwift
         product: PhosphorSwift
