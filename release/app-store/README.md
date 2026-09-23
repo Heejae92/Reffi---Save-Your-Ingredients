@@ -1,3 +1,19 @@
+# Submitted App Store 1.2 (34), September 23, 2026
+
+Version 1.2 (34) was submitted for App Review at about 3:46 AM Pacific time. App Store Connect shows the version as `Waiting for Review`. Manual release after approval remains selected. Version 1.1 was already `Ready for Distribution` when 1.2 was created.
+
+Build source: merge commit `4c996f8` on `main` (PR #35: widgets, Live Activity, Apple Watch app, next-morning use-by check), marketing version 1.2 and build 34. Validation before the archive: 665 unit tests and 35 UI tests passing, `549 keys / 365 literals / 0 missing`. The signed archive contains only `Products/Applications`, with `Reffi.app`, `PlugIns/ReffiWidgets.appex` and `Watch/ReffiWatch.app`, all at 1.2 (34) and signed by team `L3RY7X2WBC`. The app and widget carry the `group.com.reffi.app` App Group entitlement.
+
+Signing setup done once for this release: the App Group `group.com.reffi.app` (Reffi App Group) was registered in Certificates, Identifiers & Profiles and assigned to the App IDs `com.reffi.app` and `com.reffi.app.widgets`. Automatic signing enabled the App Groups capability but could not create the group itself, so the first archive failed until the group existed and was assigned. `com.reffi.app.widgets` and `com.reffi.app.watchkitapp` were registered by automatic signing.
+
+Archive: `/tmp/Reffi-1.2-build34.xcarchive`. Logs: `/tmp/reffi-1.2-build34-archive.log` and `/tmp/reffi-1.2-build34-upload.log`. The upload ended with `Upload succeeded` and `EXPORT SUCCEEDED`. Apple processing completed and the build showed as ready to submit, with an app icon and an Apple Watch asset.
+
+Store changes for 1.2: localized What's New from `1.2-WHATS_NEW.md` (en-US and ko); two Apple Watch screenshots in en-US (`watch/`, 416 x 496, Series 11 46 mm simulator with real app data), which App Store Connect also uses for Korean; one paragraph appended to the review notes describing the widget, the Live Activity (starts from Cook this on a recipe ticket), the watch app, and the next-morning reminder. Descriptions, keywords, iPhone screenshots, URLs and review contact were inherited from 1.1.
+
+Open: phone-to-watch sync was confirmed in paired simulators (delivery was slow) but not yet on a real iPhone and Apple Watch.
+
+---
+
 # Submitted App Store 1.1 (33), September 20, 2026
 
 Version 1.1 (33) was submitted for App Review at 7:52 PM Pacific time. App Store Connect confirmed both the review submission and app version as `WAITING_FOR_REVIEW`. Manual release after approval remains selected, so approval will not automatically publish the update.
