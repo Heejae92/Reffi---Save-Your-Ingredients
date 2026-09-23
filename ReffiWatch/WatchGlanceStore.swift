@@ -14,6 +14,18 @@ final class WatchGlanceStore: NSObject, WCSessionDelegate {
 
     override init() {
         super.init()
+        #if DEBUG
+        // QA·스토어 캡처용 — `-glanceFixture <base64 JSON>`이면 폰 동기화 대신 그 요약을 그린다(RUN.md).
+        // 값은 폰 앱이 실제로 발행한 `glance.json`이다(지어낸 콘텐츠가 아니다). 시뮬레이터 페어의
+        // WatchConnectivity가 느려 캡처 시점을 맞출 수 없어서 둔다. 켜진 동안은 동기화를 받지 않는다.
+        let args = ProcessInfo.processInfo.arguments
+        if let i = args.firstIndex(of: "-glanceFixture"), i + 1 < args.count,
+           let data = Data(base64Encoded: args[i + 1]),
+           let fixture = try? JSONDecoder().decode(GlanceSnapshot.self, from: data) {
+            snapshot = fixture
+            return
+        }
+        #endif
         if let data = UserDefaults.standard.data(forKey: Self.cacheKey) {
             snapshot = try? JSONDecoder().decode(GlanceSnapshot.self, from: data)
         }
