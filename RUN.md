@@ -46,6 +46,7 @@ xcrun simctl io booted screenshot reffi-home.png
 새 인자를 추가하면 이 목록도 같이 갱신한다.
 
 - `-privacyView` 개인정보처리방침을 오프라인으로 직접 연다.
+- **워치 앱** `-glanceFixture <base64>` 폰 동기화 대신 그 재고 요약을 그린다(스토어 캡처용). 값은 폰 앱 App Group의 `glance.json`을 base64로: `xcrun simctl launch <watch> com.reffi.app.watchkitapp -glanceFixture "$(base64 < glance.json)"`
 
 **전용 루트 화면**(`ReffiApp.rootContent` — 아래 인자 하나만 주면 앱 대신 그 화면이 뜬다. 위에서부터 우선)
 - `-glyphGallery` 전 글리프 그리드. `-glyphGallery.wilted YES`면 모든 타일을 `.urgent`로 고정해 시듦 A/B 콘택트 시트를 찍는다 · `-titleClipLab` OK단단체 한글·영문 Display/Heading 및 줄 끝 클리핑 확인
