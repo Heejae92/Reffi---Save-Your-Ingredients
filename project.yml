@@ -215,6 +215,7 @@ targets:
       - path: Reffi/DesignSystem/PaperShape.swift
       - path: Reffi/Models/Freshness.swift
       - path: Reffi/Components/FreshnessTag.swift
+      - path: Reffi/Components/ReffiLogo.swift   # 워드마크 — 이미지는 워치 에셋의 다크 SVG
       - path: Reffi/Features/Main/PaperSilhouette.swift
       - path: Reffi/Features/Main/WiltStyle.swift
       - path: Reffi/Features/Main/FoodPaperGrain.swift

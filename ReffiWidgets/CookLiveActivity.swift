@@ -110,7 +110,6 @@ private enum CookMetrics {
     static let compactIcon: CGFloat = 16
     static let expandedIcon: CGFloat = 24
     static let compactTimer: CGFloat = 52
-    static let barHeight: CGFloat = 8
 }
 
 private struct CookLockScreenView: View {
@@ -157,7 +156,7 @@ private struct CookProgress: View {
             }
             if state.stepsTotal > 0 {
                 HStack(spacing: ReffiSpace.s2) {
-                    StepBar(fraction: Double(state.stepsDone) / Double(state.stepsTotal))
+                    CookStepBar(fraction: Double(state.stepsDone) / Double(state.stepsTotal))
                     Text(verbatim: text.stepLabel)
                         .reffiType(.metaText)
                         .foregroundStyle(ReffiColor.ink2)
@@ -175,26 +174,6 @@ private struct CookProgress: View {
                 .tint(ReffiColor.blue)
             }
         }
-    }
-}
-
-/// 단계 진행 막대 — 토글(`PaperToggle`)과 같은 문법: 빈 슬롯은 면 없이 `paperCut` 재단선,
-/// 채운 몫만 `blue` 면. (`PaperToggle` 실측: 카드 위 `sub` 면 트랙은 라이트 1.18·다크 1.06으로 보이지 않았다.)
-/// 외곽은 매끈한 캡슐이다 — 손으로 자른 `PaperRect`의 꼭짓점 지터는 30pt 토글에선 결로 읽히지만
-/// 8pt 막대에선 양 끝을 화살촉처럼 뾰족하게 만들었다(시뮬레이터 캡처).
-private struct StepBar: View {
-    let fraction: Double
-    var body: some View {
-        GeometryReader { proxy in
-            ZStack(alignment: .leading) {
-                Capsule().strokeBorder(ReffiColor.paperCut, lineWidth: 1)
-                Capsule()
-                    .fill(ReffiColor.blue)
-                    .frame(width: proxy.size.width * min(max(fraction, 0), 1))
-            }
-        }
-        .frame(height: CookMetrics.barHeight)
-        .accessibilityHidden(true)
     }
 }
 
