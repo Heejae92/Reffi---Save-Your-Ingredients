@@ -100,6 +100,28 @@ xcrun simctl io booted screenshot reffi-home.png
 - `REFFI_CONTACT_SHEET=1` 요리 아이콘 콘택트 시트 산출 — 없으면 해당 두 @Test는 단언만 하고 렌더·파일 쓰기를 건너뛴다(아래 "검증 상태")
 - `DISH_SHEET_DIR` 시트 저장 디렉터리(없으면 시뮬레이터 tmp)
 
+## 앱 밖 표면 (위젯 · 잠금화면 · 라이브 액티비티 · 워치)
+
+앱이 스토어를 저장할 때마다 `GlancePublisher`가 재고 요약(`Shared/GlanceSnapshot`)을 세 갈래로 보낸다:
+App Group 파일(`group.com.reffi.app/glance.json`) + 위젯 재로드, WatchConnectivity 컨텍스트, 조리 라이브 액티비티.
+
+- **위젯(`ReffiWidgets` 확장)**: "Use first" 위젯 하나가 홈(소·중)과 잠금화면(원형·사각·한 줄)을 모두 낸다.
+  시뮬레이터에서 홈 화면을 길게 눌러 편집 › 위젯 추가 › Reffi. 앱을 한 번 열어야 요약이 생긴다.
+- **라이브 액티비티**: 티켓을 발주(요리 시작)하면 뜨고, 단계 체크마다 갱신, 완료·취소에 사라진다.
+- **워치(`ReffiWatch`, 앱에 임베드)**: **watchOS 플랫폼(시뮬레이터 런타임)이 필요하다.** 워치 앱을 품은
+  `Reffi` 스킴은 플랫폼이 없는 머신에서 iOS 빌드·테스트까지 멈춘다 — 새 머신이면 먼저 설치한다(약 4GB).
+  ```sh
+  xcodebuild -downloadPlatform watchOS
+  ```
+  시뮬레이터 확인은 iPhone과 워치 시뮬레이터를 페어링(`xcrun simctl pair <watch> <phone>`)한 뒤 워치 앱이
+  **폰 앱을 통해** 설치돼야 폰의 `WCSession`이 설치로 인식한다(워치에 직접 `simctl install`만 하면
+  `isWatchAppInstalled = NO`). 시뮬레이터 페어의 WatchConnectivity는 활성화가 걸리는 일이 잦다 —
+  동기화는 실기기에서 확인한다.
+- **아카이브**: 위젯 확장·워치 앱은 `SKIP_INSTALL = YES`(앱 안에 담겨 나간다). 첫 아카이브는
+  `-allowProvisioningUpdates`가 새 번들 ID(`com.reffi.app.widgets`·`com.reffi.app.watchkitapp`)와
+  App Group(`group.com.reffi.app`)을 등록한다. 내보낸 아카이브의 `Products/`에 `Applications`만 있는지 확인.
+  워치 앱이 들어간 빌드를 버전에 붙이면 App Store Connect가 **Apple Watch 스크린샷**을 요구한다(제출 전 준비).
+
 ## OK단단체 준비
 
 공개 저장소에는 폰트 파일 자체를 재배포하지 않는다. 새 체크아웃에서는 XcodeGen 실행 전에 다음 명령으로 앱에 포함할 폰트를 준비한다.
@@ -122,7 +144,7 @@ xcodegen generate
 `Info.plist`는 XcodeGen 생성물이라 직접 고치면 다음 `xcodegen generate`에 덮인다.
 빌드 번호 bump는 세 걸음이다.
 ```sh
-# project.yml › targets.Reffi.settings.base
+# project.yml › settings.base (프로젝트 레벨 — 앱·위젯 확장·워치 앱이 같은 번호를 물려받는다)
 #   MARKETING_VERSION: "1.0"          # 표시 버전 — 스토어에 보이는 값
 #   CURRENT_PROJECT_VERSION: "2"      # 빌드 번호 — 업로드마다 반드시 +1(같은 번호 재업로드는 거부된다)
 xcodegen generate                     # 생성물(.xcodeproj·Info.plist)에 반영
@@ -182,6 +204,9 @@ Reffi/
   Features/Fridge · MyPage · AddIngredient · Onboarding · Auth
   Navigation/RootTabView     메인·냉장고·중앙＋·마이
   Resources/Fonts · ingredient-lexicon.json · recipes seed · Localizable.xcstrings
+Shared/                      앱·위젯·워치 공용 — GlanceSnapshot(재고 요약)·DDayLabel·LanguageBundle·FoodGlyph·CookActivityAttributes
+ReffiWidgets/                위젯 확장 — "Use first" 위젯(홈·잠금화면) + 조리 라이브 액티비티
+ReffiWatch/                  워치 앱 — WatchConnectivity로 받은 재고 요약 목록
 ```
 
 ## 검증 상태
