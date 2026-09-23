@@ -215,6 +215,7 @@ targets:
       - path: Reffi/DesignSystem/ReffiTypography.swift
       - path: Reffi/DesignSystem/ReffiLayout.swift
       - path: Reffi/DesignSystem/PaperShape.swift
+      - path: Reffi/DesignSystem/ReffiMotion.swift   # 조리 게이지 수위 전환(settle)
       - path: Reffi/Models/Freshness.swift
       - path: Reffi/Components/FreshnessTag.swift
       - path: Reffi/Components/ReffiLogo.swift   # 워드마크 — 이미지는 워치 에셋의 다크 SVG

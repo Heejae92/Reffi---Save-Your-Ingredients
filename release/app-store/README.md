@@ -12,6 +12,8 @@ Store changes for 1.2: localized What's New from `1.2-WHATS_NEW.md` (en-US and k
 
 Resubmitted the same day at about 4:25 AM Pacific time to replace the Apple Watch screenshots with marketing versions. 1.2 was removed from review (`Developer Rejected`), the en-US watch screenshots were deleted and replaced, Korean got its own set instead of inheriting en-US, and the same build 34 went back to `Waiting for Review`. Files in `watch/`, uploaded in this order: `en-US-1-use-first.png`, `en-US-2-cooking.png`, `ko-1-use-first.png`, `ko-2-cooking.png`. Each is 416 x 496: a real Series 11 46 mm simulator capture (the watch app with `-glanceFixture`, fed the phone app's own `glance.json`; all four taken in the same minute) in an ink bezel under an OK DanDan headline, with paper-cut glyphs from `site/resources/` picked from that scene's data (tomato and pepper for Shakshuka, mushroom and broccoli for the fridge list). App Store Connect masks watch screenshots to a rounded watch shape, so the lower corners of the glyphs are clipped in its preview.
 
+Next release (not in 1.2): `watch/` now holds screenshots of the redesigned watch cooking page (full-screen water gauge, branch `feature/watch-cook-wave`). The cooking shots use real data with 3 of 5 steps checked ("Step 4 of 5"), and all four were captured in the same minute. The files uploaded for 1.2 (34) show the old paper cook card and are at commit `e8092fe`. Upload the new set only together with a build that contains the gauge.
+
 Open: phone-to-watch sync was confirmed in paired simulators (delivery was slow) but not yet on a real iPhone and Apple Watch.
 
 ---
