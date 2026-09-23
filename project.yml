@@ -10,8 +10,8 @@ options:
 # 부모 앱과 같기를 요구한다). 빌드 번호 bump는 여기 한 줄이다.
 settings:
   base:
-    MARKETING_VERSION: "1.1"
-    CURRENT_PROJECT_VERSION: "33"
+    MARKETING_VERSION: "1.2"
+    CURRENT_PROJECT_VERSION: "34"
 
 packages:
   PhosphorSwift:
