@@ -6,6 +6,13 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
+# 버전 정본 — 앱·위젯 확장·워치 앱이 모두 이 값을 물려받는다(앱스토어는 확장·워치의 버전이
+# 부모 앱과 같기를 요구한다). 빌드 번호 bump는 여기 한 줄이다.
+settings:
+  base:
+    MARKETING_VERSION: "1.2"
+    CURRENT_PROJECT_VERSION: "34"
+
 packages:
   PhosphorSwift:
     path: Vendor/PhosphorSwift
@@ -25,6 +32,12 @@ schemes:
     test:
       config: Debug
       targets: [ReffiTests, ReffiUITests]
+  ReffiWatch:
+    build:
+      targets:
+        ReffiWatch: all
+    run:
+      config: Debug
 
 targets:
   Reffi:
@@ -39,17 +52,25 @@ targets:
           # XcodeGen은 git 무시 목록을 보지 않고 파일시스템을 그대로 훑기 때문에, 추적되지 않는
           # 사본 한 장이 그대로 리소스로 번들된다(실측: pbxproj 참조 4건, 프라이버시 매니페스트 2장).
           - "**/* [0-9].*"
+      # 앱 밖 표면(위젯·워치)과 함께 쓰는 코드 — 재고 요약·D-day 포맷터·라이브 액티비티 속성.
+      - path: Shared
+        excludes:
+          - "**/* [0-9].*"
     dependencies:
       - package: PhosphorSwift
         product: PhosphorSwift
       - package: Supabase
         product: Supabase
+      - target: ReffiWidgets
+      # 워치 앱 임베드 — 워치 앱을 품은 스킴은 watchOS 플랫폼(시뮬레이터 런타임)이 설치된 머신에서만
+      # 빌드된다. 없으면 iOS 빌드·테스트까지 멈추니 `xcodebuild -downloadPlatform watchOS`(RUN.md).
+      - target: ReffiWatch
     info:
       path: Reffi/Info.plist
       properties:
         CFBundleDisplayName: Reffi
         CFBundleName: Reffi
-        # 버전 정본은 아래 settings의 MARKETING_VERSION/CURRENT_PROJECT_VERSION —
+        # 버전 정본은 프로젝트 레벨 settings의 MARKETING_VERSION/CURRENT_PROJECT_VERSION —
         # 여기 명시하지 않으면 xcodegen generate가 기본값(1.0/1)으로 plist를 되돌린다.
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
@@ -58,6 +79,7 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UIApplicationSupportsIndirectInputEvents: true
+        NSSupportsLiveActivities: true   # 조리 세션 라이브 액티비티(ReffiWidgets/CookLiveActivity)
         ITSAppUsesNonExemptEncryption: false
         NSCameraUsageDescription: "Reffi uses the camera to find grocery items on receipts for you to review and add."
         NSMotionUsageDescription: "Reffi uses device motion to move the ingredients on screen as you tilt your phone."
@@ -75,14 +97,18 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.reffi.app
-        # Sign in with Apple — 시뮬레이터(서명 없음)에선 무시되고, 실기기/배포 서명 시 임베드된다.
+        # Sign in with Apple + App Group(위젯과 재고 요약 공유) — 시뮬레이터(서명 없음)에선 무시되고,
+        # 실기기/배포 서명 시 임베드된다.
         CODE_SIGN_ENTITLEMENTS: Reffi/Reffi.entitlements
-        MARKETING_VERSION: "1.1"
-        CURRENT_PROJECT_VERSION: "33"
         SWIFT_VERSION: "5.0"
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGNING_REQUIRED: "NO"
         CODE_SIGNING_ALLOWED: "NO"
+        # 시뮬레이터만 로컬 애드혹 서명("-", 팀 불필요) — 서명이 없으면 엔타이틀먼트가 안 붙어
+        # App Group 컨테이너가 생기지 않고, 위젯이 앱의 재고 요약을 못 읽는다. 기기·배포 빌드는
+        # 위 NO 그대로이고 아카이브 레시피의 CLI 오버라이드가 정식 서명을 건다.
+        CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]: "YES"
+        CODE_SIGN_IDENTITY[sdk=iphonesimulator*]: "-"
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_USER_SCRIPT_SANDBOXING: "YES"
 
@@ -115,5 +141,109 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.reffi.app.uitests
         SWIFT_VERSION: "5.0"
         TEST_TARGET_NAME: Reffi
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGNING_ALLOWED: "NO"
+
+  # 홈 화면·잠금화면 위젯 + 조리 라이브 액티비티. 앱이 App Group에 발행한 재고 요약만 읽는다.
+  # 서체는 파일을 복제하지 않고 앱 번들의 것을 런타임에 등록한다(ReffiWidgetsBundle.HostAppFonts).
+  # 앱과 같은 그림(종이컷 재료·종이 결·신선도 표식)을 그리려고 디자인 시스템 파일을 함께 컴파일한다.
+  ReffiWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: ReffiWidgets
+        excludes:
+          - "Info.plist"
+          - "**/* [0-9].*"
+      - path: Shared
+        excludes:
+          - "**/* [0-9].*"
+      - path: Reffi/DesignSystem/ReffiColor.swift
+      - path: Reffi/DesignSystem/ReffiTypography.swift
+      - path: Reffi/DesignSystem/ReffiLayout.swift
+      - path: Reffi/DesignSystem/PaperShape.swift
+      - path: Reffi/Models/Freshness.swift
+      - path: Reffi/Components/ReffiIcon.swift
+      - path: Reffi/Components/FreshnessTag.swift
+      - path: Reffi/Features/Main/PaperSilhouette.swift
+      - path: Reffi/Features/Main/WiltStyle.swift
+      - path: Reffi/Features/Main/FoodPaperGrain.swift
+      - path: Reffi/Resources/Localizable.xcstrings
+    dependencies:
+      - package: PhosphorSwift
+        product: PhosphorSwift
+    info:
+      path: ReffiWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Reffi
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.reffi.app.widgets
+        CODE_SIGN_ENTITLEMENTS: ReffiWidgets/ReffiWidgets.entitlements
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        # 확장은 앱 안에 담겨 나간다 — 아카이브가 확장을 따로 설치하면(Products/ 최상단에 .appex)
+        # "Generic Xcode Archive"가 되어 App Store 내보내기가 실패한다. XcodeGen 확장 프리셋엔 없다.
+        SKIP_INSTALL: "YES"
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGNING_ALLOWED: "NO"
+        CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]: "YES"   # 앱 타깃과 같은 이유(App Group)
+        CODE_SIGN_IDENTITY[sdk=iphonesimulator*]: "-"
+
+  # 워치 앱(단일 타깃, 앱에 임베드) — 폰이 WatchConnectivity로 보낸 재고 요약을 그린다. 워치는 다른
+  # 기기라 서체를 직접 번들한다(쓰는 굵기만). 빌드하려면 watchOS 플랫폼이 설치돼 있어야 한다(RUN.md).
+  ReffiWatch:
+    type: application
+    platform: watchOS
+    deploymentTarget: "11.0"
+    sources:
+      - path: ReffiWatch
+        excludes:
+          - "Info.plist"
+          - "**/* [0-9].*"
+      - path: Shared
+        excludes:
+          - "**/* [0-9].*"
+      - path: Reffi/DesignSystem/ReffiColor.swift
+      - path: Reffi/DesignSystem/ReffiTypography.swift
+      - path: Reffi/DesignSystem/ReffiLayout.swift
+      - path: Reffi/DesignSystem/PaperShape.swift
+      - path: Reffi/Models/Freshness.swift
+      - path: Reffi/Components/FreshnessTag.swift
+      - path: Reffi/Components/ReffiLogo.swift   # 워드마크 — 이미지는 워치 에셋의 다크 SVG
+      - path: Reffi/Features/Main/PaperSilhouette.swift
+      - path: Reffi/Features/Main/WiltStyle.swift
+      - path: Reffi/Features/Main/FoodPaperGrain.swift
+      - path: Reffi/Resources/Localizable.xcstrings
+      - path: Reffi/Resources/Fonts/Pretendard-Regular.otf
+      - path: Reffi/Resources/Fonts/Pretendard-Medium.otf
+      - path: Reffi/Resources/Fonts/Pretendard-SemiBold.otf
+      - path: Reffi/Resources/Fonts/Pretendard-Bold.otf
+      - path: Reffi/Resources/Fonts/GoogleSansFlex-Regular.ttf
+    info:
+      path: ReffiWatch/Info.plist
+      properties:
+        CFBundleDisplayName: Reffi
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.reffi.app
+        UIAppFonts:
+          - Pretendard-Regular.otf
+          - Pretendard-Medium.otf
+          - Pretendard-SemiBold.otf
+          - Pretendard-Bold.otf
+          - GoogleSansFlex-Regular.ttf
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.reffi.app.watchkitapp
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "4"
         CODE_SIGNING_REQUIRED: "NO"
         CODE_SIGNING_ALLOWED: "NO"

@@ -254,7 +254,7 @@ struct ProfileView: View {
         let settings = await UNUserNotificationCenter.current().notificationSettings()
         if settings.authorizationStatus == .denied {
             alertsEnabled = false
-            ExpiryNotifier.reschedule(for: store.ingredients)
+            ExpiryNotifier.reschedule(for: store.available)
         }
     }
 
@@ -374,7 +374,7 @@ struct ProfileView: View {
                     // 켤 때만 권한 요청 — 거부되면 토글을 되돌리고 안내(§소프트 애스크).
                     Task {
                         if await ExpiryNotifier.requestAuthorization() {
-                            ExpiryNotifier.reschedule(for: store.ingredients)
+                            ExpiryNotifier.reschedule(for: store.available)
                             Analytics.shared.track(.alertsToggled(on: true, hour: alertHour))
                         } else {
                             alertsEnabled = false
@@ -382,7 +382,7 @@ struct ProfileView: View {
                         }
                     }
                 } else {
-                    ExpiryNotifier.reschedule(for: store.ingredients)   // 끄면 대기 알림 제거
+                    ExpiryNotifier.reschedule(for: store.available)   // 끄면 대기 알림 제거
                     // 거부 롤백(위 `alertsEnabled = false`)도 여기로 떨어진다 — 그 경우는 바로 앞의
                     // `notification_permission{granted:false}`로 가른다(`docs/ANALYTICS.md` 이벤트 사전).
                     Analytics.shared.track(.alertsToggled(on: false, hour: alertHour))
@@ -393,12 +393,12 @@ struct ProfileView: View {
                 ReceiptRule()
                 SettingsRow(label: "Time", value: alertHourText) { sheet = .time }
             }
-            // 후속: ExpiryNotifier는 D-0/D-1(오늘·내일 만료)만 발화한다 — 리드데이(D-N) 선택은
-            // 스케줄러가 아직 지원하지 않아 UI에서 뺐다. 리드데이 지원을 넣을 때 칩 UI를 되살린다.
+            // 후속: ExpiryNotifier는 아침 한 장에 D-0·D-1(오늘·내일 만료)과 D+1 확인(어제 지남)만 싣는다 —
+            // 리드데이(D-N) 선택은 스케줄러가 아직 지원하지 않아 UI에서 뺐다. 지원을 넣을 때 칩 UI를 되살린다.
         }
         // 시각 변경(NotifyTimeSheet가 같은 @AppStorage 키를 쓴다)을 실제 스케줄에 반영.
         .onChange(of: alertHour) { _, _ in
-            if alertsEnabled { ExpiryNotifier.reschedule(for: store.ingredients) }
+            if alertsEnabled { ExpiryNotifier.reschedule(for: store.available) }
         }
     }
 

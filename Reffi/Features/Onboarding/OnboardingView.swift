@@ -739,7 +739,7 @@ struct OnboardingView: View {
             Task { @MainActor in
                 // 알림 SSOT = ExpiryNotifier 키. 권한이 나면 임박 알림을 켜고 재스케줄한다.
                 UserDefaults.standard.set(granted, forKey: ExpiryNotifier.enabledKey)
-                if granted { ExpiryNotifier.reschedule(for: store.ingredients) }
+                if granted { ExpiryNotifier.reschedule(for: store.available) }
                 finishWithStamp()
             }
         }

@@ -61,15 +61,11 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     /// 규칙용이고 조회 언어는 `bundle:`이 정한다. 42차 검증에서 빌드 산출물의 ko.lproj 324키 확인.)
     /// `.system`이거나 번들을 못 찾으면 `Bundle.main`으로 폴백해 종전과 동일하게 동작한다.
     static func localizedNow(_ key: String.LocalizationValue, language: AppLanguage = .current) -> String {
-        let bundle: Bundle
-        switch language {
-        case .system: bundle = .main
-        case .en, .ko:
-            if let path = Bundle.main.path(forResource: language.rawValue, ofType: "lproj"),
-               let b = Bundle(path: path) { bundle = b } else { bundle = .main }
-        }
-        return String(localized: key, bundle: bundle)
+        String(localized: key, bundle: LanguageBundle.bundle(for: language.overrideCode))
     }
+
+    /// 기기 언어를 덮어쓰는 언어 코드 — system이면 nil. 앱 밖 표면(위젯·워치·라이브 액티비티)에 싣는 값.
+    var overrideCode: String? { self == .system ? nil : rawValue }
 
     /// `String(localized:)`·`.xcstrings` 번들 리소스가 **다음 실행부터** 이 언어를 쓰게 하는 표준
     /// 오버라이드. system을 고르면 키 자체를 지워 기기 언어 목록을 그대로 따르게 한다.

@@ -17,15 +17,7 @@ struct IngredientBadge: View {
         Button(action: onTap) {
             HStack(spacing: ReffiSpace.s2) {
                 // 신선도 그룹(좌측) — 인디케이터 바 + 남은 기간(D-N)을 하나로 묶는다.
-                HStack(spacing: ReffiSpace.s1) {
-                    RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .fill(f.dark)
-                        .frame(width: 4, height: 14)
-                    Text(verbatim: ingredient.dDayText)
-                        // D-day는 ko에서 "오늘"·"3일"로 흐른다 — 한글 폴백 오버로드(§3.4·42차).
-                        .font(.reffiNum(.meta, for: ingredient.dDayText))
-                        .foregroundStyle(f.dark)
-                }
+                FreshnessTag(freshness: f, text: ingredient.dDayText)
                 Text(verbatim: ingredient.displayName)
                     .reffiType(.badgeLabel)
                     .foregroundStyle(ReffiColor.ink)

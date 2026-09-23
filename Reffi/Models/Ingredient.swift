@@ -1,43 +1,7 @@
 import Foundation
 
-/// 음식 모티프 종류 — 종이컷 실루엣(`PaperSilhouette`)이 이 값으로 단일 쉐입을 그린다.
-enum FoodGlyph: String, Codable, CaseIterable {
-    // 채소
-    case leaf, root, squash, onion, tomato, pepper, mushroom, broccoli, potato, garlic
-    case cucumber, pea, cabbage, chili, pumpkin        // 신규 채소
-    case eggplant, sweetPotato, ginger, seaweed        // v2 신규 채소·해조
-    // 과일
-    case apple, citrus, berry
-    case avocado, banana                               // 신규 과일
-    case grape, watermelon, pineapple, mango           // v2 신규 과일
-    // 단백질
-    case egg, tofu, meat, poultry, fish, shrimp
-    case sausage, bacon                                // v2 신규 육류
-    case crab, squid, clam                             // v2 신규 해산물
-    // 유제품
-    case milk, cheese, bread
-    case yogurt, butter                                // v2 신규 유제품
-    // 곡류·저장식품
-    case rice, noodles, corn                           // 신규 곡류
-    case sauceBottle, can                              // 신규 저장식품
-    case honey, dumpling                               // v2 신규 저장식품·기타
-    case gimbap                                        // v3 요리형(만두 선례) — 재료가 아니라 메뉴 자체가 모티프
-    // Dedicated silhouettes for previously shared or missing ingredients.
-    case scallion, radish, beet, lotusRoot, burdock, enoki, napa, sprout
-    case bokChoy, asparagus, celery, cauliflower, pear, peach, blueberry, cherry
-    case kiwi, melon, orange, lime, salmon, octopus, fishCake, kimchi
-    case riceCake, flour, grains, spice, beans, nuts, walnut, jar
-    case oil, water, coffee, tea, juice, chocolate, olive, driedFruit
-    case cornDog, ricePaper, iceCream
-    case salt, peppercorn, curryPowder, cinnamon, starAnise, wasabi
-    case generic
-
-    /// 톨러런트 디코드 — 미지의 rawValue(향후 케이스 추가·데이터 오염)가 필드 하나로 끝나게
-    /// .generic으로 폴백한다. strict하게 두면 글리프 하나가 스냅샷 전체를 격리시킨다.
-    init(from decoder: Decoder) throws {
-        let raw = try decoder.singleValueContainer().decode(String.self)
-        self = FoodGlyph(rawValue: raw) ?? .generic
-    }
+/// 이름 → 글리프 판정(앱 전용 — 재료 사전에 기댄다). 케이스 선언은 `Shared/FoodGlyph.swift`.
+extension FoodGlyph {
 
     /// 요리형 글리프 키워드 — **메뉴 자체가 모티프**인 완성 요리만 등재한다(재료가 아니라 메뉴가 정체성).
     /// `excludeSuffixes`는 "그 요리에 **쓰는** 재료" 표기를 재료 경로로 되돌려 보내는 가드다.
@@ -355,18 +319,11 @@ struct Ingredient: Identifiable, Codable, Equatable {
     var canFreeze: Bool { canFreeze(asOf: Date()) }
 
     /// 남은 일수 라벨(로컬라이즈). 데이터성 숫자(§3.4).
-    var dDayText: String { (effectiveExpiryIsEstimated ? "≈ " : "") + Self.dDayText(daysLeft: effectiveDaysLeft) }
+    var dDayText: String { DDayLabel.text(daysLeft: effectiveDaysLeft, estimated: effectiveExpiryIsEstimated) }
 
-    /// 앱 전역의 **유일한** D-day 표기 포맷터(§3.4) — 재고 카드·배지·도장·온보딩 데모가 전부 여기를 탄다.
-    /// 화면마다 다른 표기를 손으로 적으면 온보딩이 가르친 표기를 본 앱이 한 번도 쓰지 않는 일이 생긴다
-    /// (실제로 온보딩만 "D-2"였다).
-    static func dDayText(daysLeft: Int) -> String {
-        switch daysLeft {
-        case ..<0: String(localized: "Overdue", comment: "D-day label when past the use-by date")
-        case 0:    String(localized: "Today", comment: "D-day label when expiring today")
-        default:   String(localized: "\(daysLeft)d", comment: "D-day shorthand, e.g. 3d")
-        }
-    }
+    /// 앱 전역 D-day 표기(§3.4) — 재고 카드·배지·도장·온보딩 데모가 전부 여기를 탄다.
+    /// 포맷터 본체는 위젯·워치와 함께 쓰는 `DDayLabel`(Shared)에 있다.
+    static func dDayText(daysLeft: Int) -> String { DDayLabel.text(daysLeft: daysLeft) }
 
     /// 대체 투입 표기(45차) — 오더 티켓·조리 완료 시트·공유 카드가 **같은 문구**를 쓴다.
     /// 대체로 채워진 줄은 missing에서 빠져 Short 줄에도 안 뜨는데, 발주하면 그 재고가 실제로
@@ -382,17 +339,11 @@ struct Ingredient: Identifiable, Codable, Equatable {
     /// 보조기술에는 그대로 쓸 수 없다("3d"는 문자 그대로 "삼디"로 읽히고, 영문 음성은 3D(입체)와 겹친다).
     /// 표기와 문구를 **한 쌍으로** 여기 둔다 — 화면마다 손으로 적으면 한쪽만 고쳐져 둘이 어긋난다.
     var dDayAccessibilityText: String {
-        let value = Self.dDayAccessibilityText(daysLeft: effectiveDaysLeft)
-        return effectiveExpiryIsEstimated ? AppLanguage.localizedNow("Estimated: \(value)") : value
+        DDayLabel.spoken(daysLeft: effectiveDaysLeft, estimated: effectiveExpiryIsEstimated,
+                         bundle: LanguageBundle.bundle(for: AppLanguage.current.overrideCode))
     }
 
-    static func dDayAccessibilityText(daysLeft: Int) -> String {
-        switch daysLeft {
-        case ..<0: String(localized: "Past use-by date", comment: "Spoken D-day label when past the use-by date")
-        case 0:    String(localized: "Expires today", comment: "Spoken D-day label when expiring today")
-        default:   String(localized: "\(daysLeft) days left", comment: "Spoken D-day label, e.g. 3 days left")
-        }
-    }
+    static func dDayAccessibilityText(daysLeft: Int) -> String { DDayLabel.spoken(daysLeft: daysLeft) }
 
     var purchasedText: String { purchasedAt.formatted(date: .abbreviated, time: .omitted) }
     var expiresText: String { effectiveExpiresAt.formatted(date: .abbreviated, time: .omitted) }
