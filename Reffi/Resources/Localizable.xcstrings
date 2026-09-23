@@ -163,16 +163,6 @@
         }
       }
     },
-    "%@. Plan a dish before they turn.": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@. 상하기 전에 뭘 해 먹을지 정해보세요."
-          }
-        }
-      }
-    },
     "%@. Thaw and cook them today.": {
       "localizations": {
         "ko": {
@@ -4353,16 +4343,6 @@
         }
       }
     },
-    "Tomorrow: %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "내일: %@"
-          }
-        }
-      }
-    },
     "Tossed": {
       "localizations": {
         "ko": {
@@ -5937,22 +5917,6 @@
         }
       }
     },
-    "%@. Some dates are estimates. Check the packaging and condition before using.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@. Some dates are estimates. Check the packaging and condition before using."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@. 일부 날짜는 예상치예요. 사용 전에 포장 안내와 상태를 확인해 주세요."
-          }
-        }
-      }
-    },
     "Find recipes with your ingredients": {
       "localizations": {
         "en": {
@@ -6173,6 +6137,171 @@
           "stringUnit": {
             "state": "translated",
             "value": "빠진 재료 추가"
+          }
+        }
+      }
+    },
+    "Use-by date passed": {
+      "comment": "Morning notification title when items passed their use-by date yesterday",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소비기한이 지났어요"
+          }
+        }
+      }
+    },
+    "Check them, then mark Ate or Tossed.": {
+      "comment": "Morning notification action; Ate and Tossed are the in-app button labels",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "확인하고 먹음이나 버림으로 표시해 주세요."
+          }
+        }
+      }
+    },
+    "Plan a dish before they turn.": {
+      "comment": "Morning notification action when items expire tomorrow",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상하기 전에 뭘 해 먹을지 정해보세요."
+          }
+        }
+      }
+    },
+    "Some dates are estimates. Check the packaging and condition before using.": {
+      "comment": "Morning notification action when some dates are estimated",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일부 날짜는 예상치예요. 사용 전에 포장 안내와 상태를 확인해 주세요."
+          }
+        }
+      }
+    },
+    "Tomorrow: %@.": {
+      "comment": "Morning notification sentence listing items expiring tomorrow",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "내일: %@."
+          }
+        }
+      }
+    },
+    "Past use-by: %@.": {
+      "comment": "Morning notification sentence listing items that passed their use-by date yesterday",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "소비기한 지남: %@."
+          }
+        }
+      }
+    },
+    "Use first": {
+      "comment": "Widget and watch header above the list of items to use first; also the widget name",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "먼저 쓸 재료"
+          }
+        }
+      }
+    },
+    "Shows what to use before it goes bad.": {
+      "comment": "Widget gallery description",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "상하기 전에 먼저 쓸 재료를 보여 줘요."
+          }
+        }
+      }
+    },
+    "%lld to use today": {
+      "comment": "Widget count of items whose use-by date is today (items already past are not counted)",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오늘 쓸 재료 %lld개"
+          }
+        }
+      }
+    },
+    "to use today": {
+      "comment": "Widget label under the count of items whose use-by date is today",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "오늘 쓸 재료"
+          }
+        }
+      }
+    },
+    "Open Reffi to see what to use first.": {
+      "comment": "Widget message before the app has shared any data",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reffi를 열면 먼저 쓸 재료가 보여요."
+          }
+        }
+      }
+    },
+    "Nothing to use up right now.": {
+      "comment": "Widget and watch message when there is nothing in the fridge to use",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 먼저 쓸 재료가 없어요."
+          }
+        }
+      }
+    },
+    "All steps checked. Tap Finish cooking in Reffi.": {
+      "comment": "Live Activity message after every step is checked; Finish cooking is the in-app button",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 단계를 마쳤어요. Reffi에서 요리 완료를 눌러 주세요."
+          }
+        }
+      }
+    },
+    "Open Reffi on your iPhone to see what to use first.": {
+      "comment": "Watch message before the phone has shared any data",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iPhone에서 Reffi를 열면 먼저 쓸 재료가 보여요."
+          }
+        }
+      }
+    },
+    "Check the packaging date: %@.": {
+      "comment": "Morning notification sentence listing items whose estimated use-by date passed yesterday",
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "포장에 적힌 날짜를 확인해 주세요: %@."
           }
         }
       }

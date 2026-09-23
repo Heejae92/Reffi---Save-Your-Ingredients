@@ -126,6 +126,10 @@ final class FridgeStore {
     private var failedLoadURL: URL?
     private var clearsRecoveryCopies = false
     private let persists: Bool
+    /// 앱 밖 표면(위젯·워치·라이브 액티비티)으로 요약을 내보내는가 — **앱의 실제 스토어만**.
+    /// 테스트가 임시 경로로 만든 저장 스토어가 시뮬레이터의 진짜 위젯 파일을 덮고 떠 있는
+    /// 라이브 액티비티를 끄지 않게, 기본 경로로 연 스토어(`init()`)에만 켠다.
+    private let publishesGlance: Bool
     private var storageURL = DataOwner.storageURL()
     private let counterCapacity = 6
     /// 냉동 재료는 유예 임박(D-3 이내)에만 작업대로 올라온다 — 오늘의 행동 표면은 '지금 상해가는 것'.
@@ -149,6 +153,7 @@ final class FridgeStore {
     /// Restore saved stock. Read failures preserve the source and block normal access until recovery.
     init(storageURL override: URL? = nil) {
         persists = true
+        publishesGlance = override == nil
         let initialURL = override ?? DataOwner.storageURL()
         storageURL = initialURL
         seedRecipes = RecipeCatalog.loadSeed()
@@ -195,6 +200,7 @@ final class FridgeStore {
          recipes: [Recipe]? = nil,
          history: [RemovalLog] = [], persistenceURL: URL? = nil) {
         persists = persistenceURL != nil
+        publishesGlance = false
         if let persistenceURL { storageURL = persistenceURL }
         seedRecipes = recipes ?? RecipeCatalog.loadSeed()
         seedIDF = IngredientIDF(recipes: seedRecipes)   // 메모리 스토어도 같은 배선 — 테스트가 실경로를 본다
@@ -302,7 +308,8 @@ final class FridgeStore {
         guard !hasLoadError else { return false }
         guard persists else { return true }
         trimHistoryIfNeeded()
-        if reschedulesAlerts { ExpiryNotifier.reschedule(for: ingredients) }
+        if reschedulesAlerts { ExpiryNotifier.reschedule(for: available) }
+        if publishesGlance { GlancePublisher.publish(from: self) }   // 위젯·워치·라이브 액티비티 — 재료 불변 변이(단계 체크)도 싣는다
         let snap = snapshot
         do {
             let data = try JSONEncoder().encode(snap)
@@ -337,6 +344,15 @@ final class FridgeStore {
     @discardableResult
     func retrySave() -> Bool { persist() }
 
+    /// 앱 밖 표면(아침 알림·위젯·워치·라이브 액티비티)을 지금 상태로 다시 맞춘다 — 저장 없이도 바뀌는
+    /// 것들(앱 복귀·언어·시간대)이 부르는 단일 입구. 저장 파일을 못 읽은 상태에선 아무것도 건드리지
+    /// 않는다: 빈 냉장고 기준으로 알림을 걷어내거나 위젯을 비우면 오류 화면의 약속과 어긋난다.
+    func refreshOutOfAppSurfaces() {
+        guard !hasLoadError else { return }
+        ExpiryNotifier.reschedule(for: available)
+        if publishesGlance { GlancePublisher.publish(from: self) }
+    }
+
     nonisolated static func backupURL(for url: URL) -> URL { url.appendingPathExtension("backup") }
 
     var canRestoreBackup: Bool {
@@ -354,10 +370,12 @@ final class FridgeStore {
             let preserved = url.appendingPathExtension("unreadable-" + UUID().uuidString)
             try FileManager.default.copyItem(at: url, to: preserved)
             try data.write(to: url, options: .atomic)
-            restore(snap)
+            // 오류 표시를 먼저 걷는다 — `restore`가 앱 밖 표면으로 다시 발행하는데, 발행은 읽기 실패
+            // 상태에선 멈춰 있다(빈 냉장고로 덮지 않으려고). 순서가 뒤면 복구해도 위젯이 옛 값에 남는다.
             storageURL = url
             failedLoadURL = nil
             hasLoadError = false
+            restore(snap)
         } catch { Self.log.error("Inventory recovery failed; original preserved") }
     }
 
@@ -366,10 +384,10 @@ final class FridgeStore {
         guard let url = failedLoadURL,
               let data = try? Data(contentsOf: url),
               let snap = Self.decodeSnapshot(data) else { return }
-        restore(snap)
         storageURL = url
         failedLoadURL = nil
-        hasLoadError = false
+        hasLoadError = false   // `restoreBackup`과 같은 이유로 `restore`보다 먼저
+        restore(snap)
     }
 
     var snapshot: Snapshot {
@@ -425,7 +443,8 @@ final class FridgeStore {
         userRecipes = snap.userRecipes ?? []
         pendingUndo = nil
         resolveCanonicalIDs()
-        if persists { ExpiryNotifier.reschedule(for: ingredients) }
+        if persists { ExpiryNotifier.reschedule(for: available) }
+        if publishesGlance { GlancePublisher.publish(from: self) }
     }
 
     private func trimHistoryIfNeeded() {

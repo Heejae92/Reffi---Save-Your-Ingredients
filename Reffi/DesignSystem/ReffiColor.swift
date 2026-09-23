@@ -223,9 +223,14 @@ enum ReffiColor {
     /// 프로바이더에선 고르기만 한다(해석마다 색 변환이 돌지 않게).
     static func dynamic(light: (Double, Double, Double), lightAlpha: Double = 1,
                         dark: (Double, Double, Double),  darkAlpha: Double = 1) -> Color {
+        #if os(watchOS)
+        // 워치는 화면이 늘 어둡고 트레이트 프로바이더(동적 UIColor)가 없다 — 다크 값을 고정으로 쓴다.
+        return oklch(dark.0, dark.1, dark.2, darkAlpha)
+        #else
         let l = uiColor(light, lightAlpha)
         let d = uiColor(dark, darkAlpha)
         return Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? d : l })
+        #endif
     }
 
     /// `oklch(L C H / a)` → SwiftUI sRGB `Color`. L·a 0~1, H 도(degree).
@@ -235,10 +240,12 @@ enum ReffiColor {
         return Color(.sRGB, red: c.r, green: c.g, blue: c.b, opacity: alpha)
     }
 
+    #if !os(watchOS)
     private static func uiColor(_ p: (Double, Double, Double), _ alpha: Double) -> UIColor {
         let c = srgbComponents(p.0, p.1, p.2)
         return UIColor(red: CGFloat(c.r), green: CGFloat(c.g), blue: CGFloat(c.b), alpha: CGFloat(alpha))
     }
+    #endif
 
     /// OKLCH → 감마 인코딩된 sRGB 성분(0~1). `oklch()`·`dynamic()`이 공유하는 변환 코어.
     private static func srgbComponents(_ L: Double, _ C: Double, _ H: Double) -> (r: Double, g: Double, b: Double) {

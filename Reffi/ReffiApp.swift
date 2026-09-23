@@ -9,6 +9,7 @@ struct ReffiApp: App {
 
     init() {
         NotificationPresenter.shared.install()   // 포그라운드에서도 알림 배너 표시
+        WatchBridge.shared.activate()             // 워치로 재고 요약을 보낼 세션(없으면 무동작)
         DataOwner.migrateIfNeeded()
         _store = State(initialValue: FridgeStore())
         _profile = State(initialValue: ProfileStore())
@@ -50,7 +51,7 @@ struct ReffiApp: App {
                 .onChange(of: scenePhase) { _, phase in
                     switch phase {
                     case .active:
-                        ExpiryNotifier.reschedule(for: store.ingredients)
+                        store.refreshOutOfAppSurfaces()   // 알림 창을 앞으로 밀고, 첫 실행 뒤에도 위젯·워치 요약을 맞춘다
                         store.promoteUrgent()   // 포그라운드 정렬 — 알림이 가리키는 임박 재료를 작업대로 승격
                         Analytics.shared.sceneDidBecomeActive()   // 세션 판정(30분 규칙) + 밀린 큐 업로드
                     case .background:
@@ -58,6 +59,12 @@ struct ReffiApp: App {
                     default:
                         break
                     }
+                }
+                // 시간대가 바뀌면(여행·수동 변경) 아침 알림의 날짜와 위젯 자정 엔트리가 옛 시간대에 묶인다.
+                // 요약에 시간대가 실려 있어 재발행이 위젯 재로드까지 이어진다. UIKit이 메인에서 보낸다.
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
+                    NSTimeZone.resetSystemTimeZone()   // 프로세스가 캐시한 시스템 시간대를 버리고 새 값으로
+                    store.refreshOutOfAppSurfaces()
                 }
         }
     }
@@ -193,6 +200,9 @@ private struct RootGateView: View {
             // `String(localized:)`로 이미 굳힌 값은 그대로다 — `AppLanguage.applyAppleLanguagesOverride()`가
             // 다음 실행을 위해 별도로 처리한다(정직한 경계는 `AppLanguage.swift` 문서 참고).
             .environment(\.locale, AppLanguage.resolve(stored: languageRaw).resolvedLocale)
+            // 앱 밖 표면(알림·위젯·워치·라이브 액티비티)은 문구를 **보낼 때** 굳히므로, 언어가 바뀌면
+            // 다시 보내야 한다 — 안 그러면 다음 저장이나 앱 복귀까지 옛 언어로 남는다.
+            .onChange(of: languageRaw) { _, _ in store.refreshOutOfAppSurfaces() }
             .onChange(of: auth.accountUserID, initial: true) { _, _ in reconcileDataOwner() }
             .onChange(of: auth.restoring) { _, _ in reconcileDataOwner() }
             .onChange(of: store.hasLoadError) { _, failed in if !failed { reconcileDataOwner() } }

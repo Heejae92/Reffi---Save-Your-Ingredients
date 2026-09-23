@@ -13,32 +13,13 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Reffi</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.reffi.app.auth</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>reffi</string>
-			</array>
-		</dict>
-	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>Reffi uses the camera to find grocery items on receipts for you to review and add.</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Reffi uses device motion to move the ingredients on screen as you tilt your phone.</string>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Regular.otf</string>
@@ -46,18 +27,10 @@
 		<string>Pretendard-SemiBold.otf</string>
 		<string>Pretendard-Bold.otf</string>
 		<string>GoogleSansFlex-Regular.ttf</string>
-		<string>OkDanDan-Bold.ttf</string>
 	</array>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<key>WKApplication</key>
 	<true/>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIColorName</key>
-		<string>LaunchBackground</string>
-	</dict>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
+	<key>WKCompanionAppBundleIdentifier</key>
+	<string>com.reffi.app</string>
 </dict>
 </plist>

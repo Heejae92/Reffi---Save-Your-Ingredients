@@ -16,7 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "Reffi/Resources/Localizable.xcstrings"
-SOURCE = ROOT / "Reffi"
+# 앱 + 앱 밖 표면(공용 코드·위젯 확장·워치 앱) — 셋 다 같은 카탈로그를 번들한다.
+SOURCES = [ROOT / "Reffi", ROOT / "Shared", ROOT / "ReffiWidgets", ROOT / "ReffiWatch"]
 # DEBUG 전용 QA 루트 화면 — 출시 UI가 아니라 번역 대상이 아니다(RUN.md "QA 런치 인자").
 SKIP_FILES = {"ButtonGalleryView.swift", "GlyphGalleryView.swift", "DishGalleryView.swift",
               "TiltLabOverlay.swift", "TitleClipLabView.swift"}
@@ -58,7 +59,7 @@ def norm(s: str) -> str:
 
 def code_literals() -> dict[str, list[str]]:
     found: dict[str, list[str]] = {}
-    for path in sorted(SOURCE.rglob("*.swift")):
+    for path in sorted(p for root in SOURCES for p in root.rglob("*.swift")):
         if path.name in SKIP_FILES:
             continue
         for lineno, line in enumerate(path.read_text().splitlines(), 1):

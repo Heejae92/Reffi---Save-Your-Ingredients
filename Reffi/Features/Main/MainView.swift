@@ -709,7 +709,7 @@ struct MainView: View {
                 alertPromptSeen = true
                 if granted {
                     alertsEnabled = true
-                    ExpiryNotifier.reschedule(for: store.ingredients)
+                    ExpiryNotifier.reschedule(for: store.available)
                 }
             }
         }
