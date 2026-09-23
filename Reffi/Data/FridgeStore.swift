@@ -121,6 +121,15 @@ final class FridgeStore {
     /// 이력 없이도 만들어진다 — 파생 제안이 원천적으로 못 뜨는 그 자리를 메모가 채운다).
     var isPristine: Bool { ingredients.isEmpty && history.isEmpty && manualToBuy.isEmpty }
 
+    /// 첫 등록 시각(§14.9 리텐션 프롬프트) — 재고와 이력이 **둘 다** 비어 있던 상태에서 저장에 성공한
+    /// 입고가 이번 실행에서 있었는가. 알림 제안 다이얼로그(`RetentionPromptHost`)가 이 값을 신호로 받는다.
+    /// 샘플 불러오기는 입고가 아니라서 이 신호를 내지 않는다(`loadSampleData`는 `insert`를 타지 않는다).
+    ///
+    /// **실행 동안 지우지 않는다.** 홈의 알림 배너(`MainView.showAlertPrompt`)가 이 값을 보고 물러선다 —
+    /// 재고와 같은 트랜잭션에서 서는 값이라 배너가 한 프레임도 끼어들지 않는다. 다음 실행부터는 배너
+    /// 쪽의 저장 키(`expiryAlertPromptSeen`)가 같은 일을 이어받는다(다이얼로그가 끝날 때 적는다).
+    private(set) var firstRegisteredAt: Date?
+
     private(set) var hasSaveError = false
     private(set) var hasLoadError = false
     private var failedLoadURL: URL?
@@ -518,6 +527,8 @@ final class FridgeStore {
     private func insert(_ newItems: [Ingredient], capsCounter: Bool, source: AnalyticsEvent.AddSource) -> Bool {
         let newItems = newItems.filter { $0.quantity.isValid }
         guard !newItems.isEmpty else { return false }
+        // 첫 등록 판정은 넣기 **전**의 상태로 한다(위 `firstRegisteredAt`).
+        let isFirstRegistration = ingredients.isEmpty && history.isEmpty
         let lex = IngredientLexicon.shared
         var known = 0   // 사전 캐논에 붙은 수 — 미등재 비율이 곧 사전 커버리지 지표
         for item in newItems {
@@ -543,6 +554,7 @@ final class FridgeStore {
         if capsCounter { replenishCounter() }   // 스캔 — 상한(6)까지 최임박 우선 등재, 나머지는 냉장고에
         guard persist() else { return false }
         track(.ingredientAdd(source: source, count: newItems.count, known: known))
+        if isFirstRegistration { firstRegisteredAt = Date() }
         return true
     }
 

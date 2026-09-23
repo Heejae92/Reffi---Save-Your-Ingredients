@@ -70,6 +70,12 @@ xcrun simctl io booted screenshot reffi-home.png
 
 `-receiptReviewQA`는 `-previewAdd`와 함께 사용한다. 명확한 우유 1L와 수량 확인이 필요한 사과를 영수증 검토 화면에 넣어, 미확인 수량의 저장 차단을 검증한다. DEBUG 빌드에서만 동작한다.
 
+**리텐션 프롬프트**(§14.9 — 첫 등록 뒤 알림 제안 · 사용 2일째부터 위젯 제안)
+- 하네스 인자(`-skipAuth` `-skipOnboarding` `-onboarding.done` `-resetOnboarding` `-uiTestEmptyFridge` `-uiTestSampleFridge`)가 하나라도 있으면 **두 제안은 꺼진다** — 시뮬레이터에 남은 첫 사용일·알림 권한 상태가 실행마다 달라, 제안과 무관한 테스트의 아무 화면에나 다이얼로그가 끼어든다. 정본은 `RetentionPromptHost.suppressed`
+- `-retention.alerts` 알림 제안 · `-retention.widget` 위젯 제안 · `-retention.widgetSteps` 위젯 3단계 — 조건과 무관하게 한 장을 바로 띄운다. 그림은 그때의 재고로 그린다(`-uiTestSampleFridge`와 함께 주면 샘플 재고의 실제 첫 알림·위젯)
+- `-retention.live` 실제 조건으로 켠다(하네스 인자와 함께 줘도). 시뮬레이터의 알림 권한은 테스트가 되돌릴 수 없어 이 인자에선 '아직 안 물음'으로 본다. 위젯 제안을 재현하려면 첫 사용일을 UserDefaults 인자로 덮는다: `-retention.firstUseAt <유닉스 초>`(이틀 전 값이면 홈에서 뜬다 — 이미 위젯을 놓은 시뮬레이터에선 안 뜬다)
+- `-uiTestEmptyFridge`·`-uiTestSampleFridge`는 제안 단계도 새 설치처럼 되돌린다(첫 사용일 = 지금)
+
 **메인 (물리 씬 · 티켓)**
 - `-previewCarousel` 추천 캐러셀 바로 열기 · `-previewAdd` 재료 추가 시트 바로 열기
 - `-cookCarousel` 티켓 덱 자동 오픈(플릭 방향 의미론 UI 테스트가 쓴다). ⚠️ `store.available`(예약 제외 재고)이 비어 있으면 `loadSampleData()`를 부른다 — **추가가 아니라 전체 대체**다: 조리 세션이 모든 재료를 예약 중이거나 냉장고만 비고 이력·장보기 메모가 남은 상태에서 단독으로 주면 그 데이터가 되돌릴 수 없이 지워진다. UI 테스트는 `-uiTestSampleFridge`와 같이 주므로 그 경로에선 무동작
