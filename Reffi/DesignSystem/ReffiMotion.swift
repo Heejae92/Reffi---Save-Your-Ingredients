@@ -38,6 +38,7 @@ enum ReffiMotion {
     /// 뱃지 등장/pop-in — 살짝 오버슈트.
     static var pop: Animation { .spring(response: 0.34, dampingFraction: 0.56) }
     /// 행 reflow — 토글·추가로 뱃지 줄이 다시 흐를 때, 부드럽게.
+    /// 워치 조리 게이지 수위(§13.11)도 이 스프링을 탄다: 단계를 체크하면 물이 한 번 절제되게 출렁이며 선다.
     static var settle: Animation { .spring(response: 0.50, dampingFraction: 0.74) }
     /// 통통 프레스 — 버튼 누름(0.96→1 오버슈트).
     static var bouncyPress: Animation { .spring(response: 0.25, dampingFraction: 0.55) }
