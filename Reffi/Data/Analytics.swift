@@ -1,7 +1,6 @@
 import Foundation
 import os
 import SwiftUI
-import Supabase
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -205,32 +204,44 @@ enum AnalyticsValue: Codable, Equatable {
 /// 행동 계측 파이프라인 — 앱 안의 **유일한** 이벤트 출구.
 ///
 /// 설계(정본은 `docs/ANALYTICS.md`):
-/// - **1st-party.** 서드파티 SDK 없이 이미 쓰는 Supabase에 `analytics_events` 한 테이블로 쌓는다.
-///   사용자 id는 Supabase Auth의 uid(익명 세션 포함)라 별도 식별자를 만들지 않고, 게스트가 가입해도
-///   같은 uid가 이어져 리텐션 코호트가 끊기지 않는다. `user_id`는 서버가 `auth.uid()`로 채운다 —
-///   클라이언트는 보내지 않고 보낼 수도 없다(컬럼 권한 없음).
+/// - **출구는 Google Analytics(Firebase).** 계정이 없는 앱이라 Supabase 경로(JWT 필요)는 더 이상 쓸 수 없고,
+///   오너 결정(2026-09)으로 GA4로 보낸다. 이벤트 사전·세션 규칙·옵트아웃은 이 파이프라인이 그대로 쥐고,
+///   Firebase를 아는 코드는 `GoogleAnalyticsSink` 하나다. 식별자는 Firebase의 앱 인스턴스 ID뿐이고
+///   광고 식별자는 링크조차 하지 않는다(`FirebaseAnalyticsCore`).
 /// - **세션 = 30분 규칙.** 마지막 활동으로부터 30분 안의 복귀는 같은 세션(GA4와 같은 정의). 새 세션마다
 ///   `session_start`, 백그라운드 진입마다 `app_background{seconds}` — 세션 길이는 그 최댓값이다.
 /// - **오프라인 우선.** 이벤트는 먼저 로컬 큐(JSON, 상한 1000)에 쓰이고 포그라운드·백그라운드·20건 누적·
 ///   로그인 시점에 100건씩 업로드된다. 실패하면 큐에 남고 60초 뒤 재시도한다. `(install_id, seq)`가
 ///   유니크라 재전송은 서버에서 중복 제거된다(`ignoreDuplicates`).
-/// - **옵트아웃.** 프로필 › App › "Share usage data"를 끄면 큐를 비우고 그 즉시 아무것도 올리지 않는다.
-///   "Erase this device"는 install id까지 새로 발급한다.
-/// - **채널 분리.** DEBUG 빌드는 `channel = 'debug'`로 올라가고 서버 뷰는 `release`만 집계한다 —
-///   개발·시뮬레이터 세션이 지표를 오염시키지 않는다. 유닛 테스트 호스트에서는 아예 꺼진다.
+/// - **옵트아웃(기본 켜짐).** 프로필 › App › "Share usage data"를 끄면 큐를 비우고 그 즉시 아무것도 올리지
+///   않으며 Firebase 쪽 식별자도 재발급한다. "Erase this device"는 install id까지 새로 발급한다.
+/// - **채널 분리.** DEBUG 빌드는 `-analyticsDebug` 인자가 없으면 아예 올리지 않는다 — 개발·시뮬레이터
+///   세션이 GA 지표를 오염시키지 않게. 인자를 주면 `channel = 'debug'` 사용자 속성으로 구분된다.
+///   유닛 테스트 호스트에서는 아예 꺼진다.
 @MainActor
 final class Analytics {
 
-    /// This release does not collect or transmit usage events, including an old opt-in queue.
     static let shared: Analytics = {
-        let analytics = Analytics(defaults: .standard, queueURL: Analytics.defaultQueueURL,
-                                  uploader: Analytics.supabaseUploader, canUpload: { false }, killSwitch: true)
-        analytics.setEnabled(false)
-        return analytics
+        let args = ProcessInfo.processInfo.arguments
+        let underXCTest = NSClassFromString("XCTestCase") != nil
+        #if DEBUG
+        let debugAllowed = args.contains("-analyticsDebug")
+        #else
+        let debugAllowed = true
+        #endif
+        // build 27(2026-09-07)이 실행마다 옛 키에 false를 써 두었다 — 옵트아웃 모델의 기본값은 새 키가 든다.
+        UserDefaults.standard.removeObject(forKey: Analytics.legacyEnabledKey)
+        return Analytics(defaults: .standard, queueURL: Analytics.defaultQueueURL,
+                         uploader: Analytics.googleAnalyticsUploader,
+                         canUpload: { GoogleAnalyticsSink.isConfigured },
+                         killSwitch: underXCTest || args.contains("-analyticsOff") || !debugAllowed,
+                         flushesEagerly: true)
     }()
 
-    /// 공유 토글의 키. 미설정은 꺼짐이다.
-    static let enabledKey = "analytics.enabled"
+    /// 공유 토글의 키. **미설정은 켜짐**(옵트아웃 모델, 오너 결정 2026-09-19). 옵트인이던 시절의 키
+    /// `analytics.enabled`는 build 27 시작 코드가 모든 설치에 false를 써 놓아 재사용할 수 없다.
+    static let enabledKey = "analytics.enabled.v2"
+    static let legacyEnabledKey = "analytics.enabled"
     nonisolated static let log = Logger(subsystem: "com.reffi.app", category: "analytics")
 
     static let sessionTimeout: TimeInterval = 30 * 60
@@ -239,7 +250,8 @@ final class Analytics {
     static let flushThreshold = 20
     static let retryDelay: TimeInterval = 60
 
-    /// 업로드 행 — `public.analytics_events` 컬럼과 1:1(snake_case). `user_id`는 없다(서버 기본값).
+    /// 업로드 행 — 사전의 이벤트 한 건 + 실행 컨텍스트(snake_case). GA 출구는 이 중 `name`·`props`만 옮기고
+    /// `install_id`·`session_id`·`seq`·`occurred_at`는 기기 밖으로 내보내지 않는다(`GoogleAnalyticsSink.event(for:)`).
     struct Row: Encodable, Equatable {
         let install_id: String
         let session_id: String
@@ -303,6 +315,8 @@ final class Analytics {
 
     typealias Uploader = @MainActor ([Row]) async throws -> Void
     typealias BackgroundRunner = @MainActor (@escaping @MainActor () async -> Void) -> Void
+    /// 수집 스위치 — 토글이 SDK에 전달되는 순서(SDK 정지·식별자 재발급 → 로컬 큐 비움)를 테스트가 고정할 수 있게 주입한다.
+    typealias CollectionSwitch = @MainActor (Bool) -> Void
 
     private let defaults: UserDefaults
     private let queueURL: URL?
@@ -311,6 +325,10 @@ final class Analytics {
     private let now: () -> Date
     private let killSwitch: Bool
     private let backgroundRunner: BackgroundRunner
+    private let collectionSwitch: CollectionSwitch
+    /// 행마다 곧바로 올린다 — GA는 자체 디스크 큐와 배치 전송을 가지므로 여기서 모아 둘 이유가 없고,
+    /// 모아 두면 GA가 찍는 시각이 발생 시각이 아니라 전송 시각이 된다. 테스트·서버 업로더는 기본(false).
+    private let flushesEagerly: Bool
     let context: Context
 
     private(set) var queue: [Queued] = []
@@ -330,16 +348,21 @@ final class Analytics {
          now: @escaping () -> Date = Date.init,
          killSwitch: Bool = false,
          context: Context = .current(),
-         backgroundRunner: @escaping BackgroundRunner = Analytics.uiKitBackgroundRunner) {
+         backgroundRunner: @escaping BackgroundRunner = Analytics.uiKitBackgroundRunner,
+         flushesEagerly: Bool = false,
+         collectionSwitch: @escaping CollectionSwitch = { GoogleAnalyticsSink.setCollectionEnabled($0) }) {
         self.defaults = defaults
+        self.collectionSwitch = collectionSwitch
         self.queueURL = queueURL
         self.uploader = uploader
         self.canUpload = canUpload
         self.now = now
         self.killSwitch = killSwitch
+        self.flushesEagerly = flushesEagerly
         self.context = context
         self.backgroundRunner = backgroundRunner
-        queue = (defaults.object(forKey: Self.enabledKey) as? Bool == true) ? Self.loadQueue(from: queueURL) : []
+        // 미설정 = 켜짐(옵트아웃 모델)이라 큐도 그 기준으로 복원한다 — 옵트인 시절 큐는 build 27이 이미 비웠다.
+        queue = (defaults.object(forKey: Self.enabledKey) as? Bool ?? true) ? Self.loadQueue(from: queueURL) : []
         // 프로세스가 죽었다 살아나도 30분 규칙은 이어진다 — 마지막 세션을 복원해 두고 판정은 ensureSession이.
         if let raw = defaults.string(forKey: Key.sessionID), let id = UUID(uuidString: raw) {
             sessionID = id
@@ -352,8 +375,12 @@ final class Analytics {
 
     /// 명시적으로 공유를 켰고 킬스위치가 없을 때만 기록한다.
     var isEnabled: Bool {
-        !killSwitch && (defaults.object(forKey: Self.enabledKey) as? Bool ?? false)
+        !killSwitch && (defaults.object(forKey: Self.enabledKey) as? Bool ?? true)
     }
+
+    /// 킬스위치(테스트 호스트·`-analyticsOff`·`-analyticsDebug` 없는 DEBUG)로 잠긴 상태 — 프로필 토글이 이걸 보고
+    /// 비활성 표시를 해, QA가 "켜져 있는데 왜 안 올라가지"를 겪지 않게 한다.
+    var isLockedOff: Bool { killSwitch }
 
     /// 설치 식별자 — 기기가 아니라 **이 설치**의 id. 재설치·"Erase this device"로 바뀐다.
     /// 서버 중복 제거 키(`install_id, seq`)의 절반이라 user id와 무관하게 안정적이어야 한다.
@@ -371,13 +398,14 @@ final class Analytics {
         guard isEnabled else { return }
         if case .sessionStart = event {} else { ensureSession() }
         append(event)
-        if queue.count >= Self.flushThreshold { flushSoon() }
+        if flushesEagerly || queue.count >= Self.flushThreshold { flushSoon() }
     }
 
     /// 화면 노출 — 같은 화면의 연속 기록은 접는다(탭 토글 왕복·커버 재등장을 두 번 세지 않게).
     func screen(_ screen: AnalyticsEvent.Screen) {
         guard isEnabled else { return }
         ensureSession()
+        defer { if flushesEagerly, !queue.isEmpty { flushSoon() } }   // 접힌 화면이라도 새 세션의 session_start는 보낸다
         guard currentScreen != screen else { return }
         currentScreen = screen
         append(.screenView(screen))
@@ -409,9 +437,12 @@ final class Analytics {
     func setEnabled(_ on: Bool) {
         generation += 1
         defaults.set(on, forKey: Self.enabledKey)
+        collectionSwitch(on)   // SDK 먼저: 끌 때는 정지+식별자 재발급이 큐 비우기보다 앞선다
         if on {
+            GoogleAnalyticsSink.setUserProperties(from: context)   // 껐다 켜면 SDK가 사용자 속성을 비운 뒤라 다시 건다
             sessionID = nil
             ensureSession()
+            if flushesEagerly { flushSoon() }
         } else {
             queue = []
             saveQueue()
@@ -436,6 +467,7 @@ final class Analytics {
         lastActiveAt = nil
         currentScreen = nil
         clearSession()
+        GoogleAnalyticsSink.resetIdentifier()   // 실제로 서버에 나가는 식별자(앱 인스턴스 ID)까지 새로
     }
 
     /// 큐는 계정 경계를 넘지 않는다. 이전 설치의 소유자 없는 큐도 최초 인증 때 폐기한다.
@@ -575,26 +607,10 @@ final class Analytics {
 
     // MARK: 기본 배선
 
-    /// Supabase 업로더 — `(install_id, seq)` 충돌은 무시(재전송 멱등), 응답 본문은 받지 않는다
-    /// (`returning: .minimal` — 이 테이블엔 SELECT 권한이 없어 representation을 요청하면 실패한다).
-    static func supabaseUploader(_ rows: [Row]) async throws {
-        guard let session = AuthStore.client.auth.currentSession, !session.isExpired,
-              UserDefaults.standard.string(forKey: "analytics.accountID") == session.user.id.uuidString else {
-            throw URLError(.userAuthenticationRequired)
-        }
-        var request = URLRequest(url: AuthStore.supabaseURL.appendingPathComponent("rest/v1/analytics_events")
-            .appending(queryItems: [URLQueryItem(name: "on_conflict", value: "install_id,seq")]))
-        request.httpMethod = "POST"
-        request.setValue(AuthStore.anonKey, forHTTPHeaderField: "apikey")
-        // Capture the token before the first suspension point; an account switch cannot relabel this batch.
-        request.setValue("Bearer " + session.accessToken, forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("resolution=ignore-duplicates,return=minimal", forHTTPHeaderField: "Prefer")
-        request.httpBody = try JSONEncoder().encode(rows)
-        let (_, response) = try await URLSession.shared.data(for: request)
-        guard let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
+    /// Google Analytics 업로더 — 행을 GA 이벤트로 옮긴다(`GoogleAnalyticsSink.event(for:)`). Firebase가
+    /// 설정되지 않았으면(설정 파일 없음) 던져서 큐에 남긴다 — `canUpload`가 먼저 막으므로 보통은 오지 않는다.
+    static func googleAnalyticsUploader(_ rows: [Row]) async throws {
+        try GoogleAnalyticsSink.upload(rows)
     }
 
     /// 백그라운드 유예 안에서 작업을 끝낸다(약 30초). UIKit 없는 환경(테스트)은 즉시 실행 러너를 주입.

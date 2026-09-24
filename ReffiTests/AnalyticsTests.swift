@@ -57,13 +57,56 @@ struct AnalyticsTests {
                   backgroundRunner: { work in Task { await work() } })
     }
 
-    @Test func freshInstallRequiresOptIn() {
+    /// 옵트아웃 모델(2026-09-19) — 키가 없으면 켜짐. 옛 옵트인 키(`legacyEnabledKey`)에 남은 false는 무시된다.
+    @Test func freshInstallCollectsUntilOptOut() {
         let defaults = freshDefaults()
         defaults.removeObject(forKey: Analytics.enabledKey)
+        defaults.set(false, forKey: Analytics.legacyEnabledKey)
         let analytics = make(defaults: defaults)
         analytics.track(.screenView(.home))
-        #expect(!analytics.isEnabled)
-        #expect(analytics.queue.isEmpty)
+        #expect(analytics.isEnabled)
+        #expect(analytics.queue.map(\.name) == ["session_start", "screen_view"])
+    }
+
+    /// 즉시 전송 모드(GA 배선) — 행마다 flush가 걸려 배치 임계(20)를 기다리지 않는다. 명시적 `flush()` 없이
+    /// 큐가 비는지를 본다(음성 대조군: 같은 조건에 `flushesEagerly: false`면 큐가 남는다).
+    @Test func eagerFlushUploadsEachEventWithoutExplicitFlush() async {
+        let capture = Capture()
+        func make(eager: Bool) -> Analytics {
+            Analytics(defaults: freshDefaults(), queueURL: nil,
+                      uploader: { rows in capture.batches.append(rows) },
+                      canUpload: { true }, now: { Date(timeIntervalSince1970: 1_800_000_000) },
+                      context: Self.context, backgroundRunner: { work in Task { await work() } },
+                      flushesEagerly: eager)
+        }
+        let eager = make(eager: true)
+        eager.track(.ingredientPin(on: true))
+        for _ in 0..<50 where !eager.queue.isEmpty { await Task.yield() }
+        #expect(eager.queue.isEmpty)
+        #expect(capture.batches.flatMap { $0 }.map(\.name) == ["session_start", "ingredient_pin"])
+
+        let lazy = make(eager: false)
+        lazy.track(.ingredientPin(on: true))
+        for _ in 0..<50 { await Task.yield() }
+        #expect(lazy.queue.count == 2)   // 임계(20) 아래라 스스로는 올리지 않는다
+    }
+
+    /// 토글 → SDK 순서: 끌 때 SDK 정지(식별자 재발급)가 먼저 가고 그다음 로컬 큐가 비워진다. 켤 때도 SDK가 먼저다.
+    @Test func optOutStopsSdkBeforeClearingQueue() {
+        var calls: [(on: Bool, queueCountAtCall: Int)] = []
+        var probe: Analytics!
+        probe = Analytics(defaults: freshDefaults(), queueURL: nil,
+                          uploader: { _ in }, canUpload: { false },
+                          now: { Date(timeIntervalSince1970: 1_800_000_000) }, context: Self.context,
+                          backgroundRunner: { work in Task { await work() } },
+                          collectionSwitch: { on in calls.append((on, probe.queue.count)) })
+        probe.track(.ingredientPin(on: true))
+        #expect(probe.queue.count == 2)
+        probe.setEnabled(false)
+        probe.setEnabled(true)
+        #expect(calls.map(\.on) == [false, true])
+        #expect(calls[0].queueCountAtCall == 2)   // 큐는 SDK 정지 뒤에 비워진다
+        #expect(probe.queue.map(\.name) == ["session_start"])
     }
 
     @Test func identityResetDuringUploadPreservesNewEvents() async {

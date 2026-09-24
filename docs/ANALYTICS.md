@@ -1,27 +1,116 @@
 # Reffi usage analytics
 
-## Current release, 2026-09-07
+## Current release, 2026-09-19: Google Analytics (Firebase)
 
-Production usage collection is disabled. `Analytics.shared` has a permanent kill switch and `canUpload` returns false. Startup disables the pipeline and clears older unsent queues. Settings no longer offers Share usage data. New installations have no server Auth session. Existing sessions also cannot upload new events.
+Both operators agreed to collect usage statistics again, this time through Google Analytics for Firebase. Collection is **on by default** and can be turned off in Profile > App > Share usage data (opt-out). Turning it off clears the local queue, stops the Firebase SDK and resets the Firebase app-instance identifier.
 
-The injectable pipeline and its tests remain as historical implementation. Server tables are retained for existing-account deletion and earlier records, not new collection. The privacy manifest no longer declares ProductInteraction or Analytics purposes. Email/UserID functionality declarations remain for existing-account authentication and deletion.
+What changed in code:
 
-The following sections document the previous, inactive pipeline. They are not instructions to enable collection or a description of this release. Restoring collection requires an explicit product decision, accurate notice and any necessary consent.
+- `Reffi/Data/GoogleAnalyticsSink.swift` is the only file that knows Firebase. `ReffiApp.init` calls `configureIfAvailable`, which configures Firebase only when `GoogleService-Info.plist` is in the bundle; otherwise the app runs with analytics off and logs a notice. The pipeline's `canUpload` follows `GoogleAnalyticsSink.isConfigured`.
+- `Analytics.shared` uses `googleAnalyticsUploader` with `flushesEagerly: true`, so each event reaches Firebase as it happens (Firebase keeps its own offline queue and batches uploads). DEBUG builds do not send anything unless launched with `-analyticsDebug`; `-analyticsOff` and the XCTest host still disable everything.
+- The event dictionary below is unchanged. `session_start` is not forwarded (Firebase collects it automatically with the same 30-minute rule); `screen_view` is sent as the reserved `screen_view` event with `screen_name`; other reserved names get the `reffi_` prefix; Bool properties become 1/0; names and values are clamped to the 40/100-character limits. `app_language` and `channel` are user properties. See `GoogleAnalyticsSinkTests`.
+- The consent key moved to `analytics.enabled.v2` because build 27 wrote `false` into the old key on every launch. The old key is removed at startup.
+- Only `FirebaseAnalyticsCore` is linked (pinned with `exactVersion`). No advertising identifier is collected and no App Tracking Transparency prompt is shown. Info.plist sets `FirebaseAutomaticScreenReportingEnabled = NO`, `FIREBASE_ANALYTICS_COLLECTION_ENABLED = NO` (the SDK starts disabled and the app enables it from the user's choice, so a QA reinstall cannot leak `first_open`) and `GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS = NO`. `GoogleAnalyticsSink.applyConsent` denies ad storage, ad user data and ad personalization in code, so the "not tracking" declaration does not depend on a console setting. `-ObjC` is set in Other Linker Flags as the SDK requires.
+- Identifier evidence (2026-09-20, built app): neither `GoogleAppMeasurement` nor `FirebaseAnalytics` in 12.19.2 contains `identifierForVendor`/IDFV strings, `AdSupport`, `AppTrackingTransparency` or the IdentitySupport framework, so the only identifier sent is the Firebase app-instance ID. Those two frameworks ship no `PrivacyInfo.xcprivacy`, so `Reffi/PrivacyInfo.xcprivacy` conservatively declares the required-reason APIs Google has published for that SDK (file timestamp C617.1, system boot time 35F9.1, disk space E174.1); a string scan of the binary found no use of them, and the first TestFlight upload (ITMS-91053/91061 emails) is the final check.
+- "Erase this device" and account deletion call `resetAnalyticsData()` as well, so the Firebase app-instance ID (the only identifier that reaches Google) is reissued. The privacy screen shows that identifier read-only ("Usage statistics identifier") so a user can quote it in a deletion request; it is what the GA4 User Deletion API needs.
+- The privacy notice (app and website, effective September 19, 2026) and `PrivacyInfo.xcprivacy` (ProductInteraction, CoarseLocation, DeviceID for analytics, not linked, not tracking) describe this collection. Ingredient names, receipt text, custom recipe titles, nicknames and allergy entries are still never sent.
 
-## Historical pipeline reference
+Owner setup (once):
+
+1. Firebase console: create a project, add an iOS app with bundle ID `com.reffi.app`, download `GoogleService-Info.plist` and place it at `Reffi/GoogleService-Info.plist` on every machine that builds TestFlight/App Store archives. The file is ignored by Git. Run `xcodegen generate` after placing it so it enters the bundle; a build-phase warning reports when it is missing.
+2. Firebase console > Project settings > Integrations: link the project to the Google Analytics property the operators will read. In Google Analytics, Admin > Data settings > Data retention: set 14 months to match the notice. Admin > Data collection: keep Google signals and ads personalization off.
+3. App Store Connect > App Privacy: declare Product Interaction, Coarse Location and Device ID under Analytics, not linked to the user, not used for tracking. Keep Email Address and User ID as before for existing-account support.
+4. Verify on a device with the release build: launch with `-analyticsDebug -FIRDebugEnabled` on a Debug build to see events in Firebase DebugView, then confirm the production stream receives `screen_view` and `ingredient_add` within 24 hours.
+
+The Supabase `analytics_events` table and views below are no longer written to; they remain only for deletion of records from earlier versions. The rest of this document describes the event dictionary and the pipeline, which still apply.
+
+### GA4 콘솔 설정 목록 (2026-09-20, 코드 아님 — 속성 555114715에서 한 번 실행)
+
+코드가 보내는 이벤트·속성은 아래 §3 사전 그대로다. GA4는 **등록한 시점부터**만 매개변수를 보고서에 쓰므로, 첫 정식 빌드가 나가기 전에 한 번에 해 둔다. 진입: https://analytics.google.com/analytics/web/#/a408810223p555114715/admin
+
+**1. 보고 ID** — 관리 › 데이터 표시 › 보고 ID → **기기 기반**. (User-ID·Google 신호를 쓰지 않으므로 혼합 방식은 의미가 없고 기준선이 흔들린다.)
+
+**2. 데이터 보관** — 관리 › 데이터 수집 및 수정 › 데이터 보관 → 이벤트 데이터 **14개월**, "새 활동 시 사용자 데이터 재설정" 켬. 방침 문구(14개월)와 같아야 한다.
+
+**3. 데이터 수집** — 같은 묶음 › 데이터 수집 → Google 신호 데이터 수집 **꺼짐 유지**, 광고 개인 최적화 허용 **끔**(속성 전체). 끄면 DebugView의 `non_personalized_ads = 0` 표시가 사라진다.
+
+**4. 개발자 트래픽 제외** — 같은 묶음 › 데이터 필터 → "개발자 트래픽" 필터를 **활성**으로. `-FIRDebugEnabled`로 띄운 세션(DebugView용)이 보고서에서 빠진다. 참고로 DEBUG 빌드는 `-analyticsDebug`가 없으면 아예 보내지 않는다.
+
+**5. 주요 이벤트(전환)** — 관리 › 데이터 표시 › 이벤트 › 주요 이벤트 탭 › 새 주요 이벤트 → 이름을 그대로 입력(아직 수신 전이어도 등록된다).
+
+| 주요 이벤트 | 뜻 |
+|---|---|
+| `onboarding_complete` | 온보딩 통과(건너뛰기 포함, `skipped`로 가른다) |
+| `ingredient_add` | 재고 등록(첫 가치 순간) |
+| `ticket_fire` | 레시피 발주(핵심 루프 진입) |
+| `cook_finish` | 조리 완료(핵심 루프 완주) |
+| `receipt_scan` | 영수증 스캔 사용(차별 기능) |
+
+**6. 맞춤 정의** — 관리 › 데이터 표시 › 맞춤 정의. 이름은 매개변수 이름과 같게 두고 범위는 표기대로. 한도는 이벤트 범위 측정기준 50·측정항목 50이라 1차만 먼저 넣는다.
+
+1차 · 이벤트 범위 **측정기준**(문자열/불리언 매개변수. 불리언은 앱이 1/0으로 보낸다)
+
+| 매개변수 | 쓰는 이벤트 | 값 |
+|---|---|---|
+| `source` | ingredient_add, receipt_scan, video_open, tobuy_add | manual/receipt/restock, camera/photos, cook/empty_deck, memo/missing |
+| `outcome` | ingredient_decide | ate/tossed |
+| `surface` | ingredient_decide | badge/zone/fridge/other |
+| `recipe` | ticket_pass, ticket_fire, cook_finish, cook_cancel | 시드 슬러그 또는 custom |
+| `household` | onboarding_complete | one/two/family/large |
+| `skipped` | onboarding_complete | 1/0 |
+| `glyph` | ingredient_decide | 재료 글리프(닫힌 enum) |
+| `kind` | undo | fired/finished/ate/tossed/removed/memo_removed |
+| `via` | tobuy_remove | skip/swipe |
+| `action` | recipe_custom | create/edit/delete |
+| `to` | language_change | system/en/ko |
+| `on` | ingredient_pin, alerts_toggled | 1/0 |
+| `granted` | notification_permission | 1/0 |
+| `frozen` | ingredient_decide | 1/0 |
+
+1차 · 이벤트 범위 **측정항목**(숫자 매개변수, 단위 "표준")
+
+| 매개변수 | 쓰는 이벤트 |
+|---|---|
+| `count` | ingredient_add, tobuy_add |
+| `known` | ingredient_add |
+| `days_left` | ingredient_decide, ingredient_freeze |
+| `used`, `missing`, `substituted`, `urgent` | ticket_fire (`used`는 cook_finish도) |
+| `leftovers`, `steps_done`, `steps_total`, `minutes` | cook_finish (`minutes`는 cook_cancel도) |
+| `tickets`, `pinned`, `at_risk` | deck_open |
+| `passes` | ticket_pass |
+| `pages`, `candidates`, `matched` | receipt_scan |
+| `seconds` | app_background |
+| `cuisines` | onboarding_complete |
+
+사용자 범위 **측정기준**(사용자 속성)
+
+| 사용자 속성 | 값 |
+|---|---|
+| `app_language` | 앱 언어(system이면 기기 언어 코드) |
+| `channel` | release / debug |
+
+2차(필요해지면): `renamed`(ingredient_edit), `cold`(session_start는 GA 자동 수집이라 미전송, 생략), `alerts`(onboarding_complete), `hour`(alerts_toggled), `opened`·`still_sealed`(sealed_check), `anonymous`·`provider`(auth_*, 현재 미사용).
+
+**7. 탐색 분석(보고서)** — 탐색 › 유입경로 탐색 분석으로 아래 순서를 저장해 둔다(개방형 유입경로, 기간 30일).
+`first_open → onboarding_complete → ingredient_add → deck_open → ticket_fire → cook_finish`
+보조: 영수증 `receipt_scan → ingredient_add{source=receipt}`, 유지 `ingredient_decide{outcome=ate}` 대 `tossed` 비율(§4의 낭비율과 같은 정의).
+
+**8. 확인** — 설정 뒤 실기기 릴리스 빌드에서 이벤트가 24시간 안에 실시간·보고서에 보이는지, DebugView 세션이 보고서에서 빠졌는지(4번) 확인한다.
+
+## Pipeline reference
 
 ## 0. 한눈에
 
 | 항목 | 결정 |
 |---|---|
-| 방식 | **1st-party.** 서드파티 SDK 없이, 이미 쓰는 Supabase에 이벤트 테이블 하나(`public.analytics_events`)로 쌓는다 |
-| 사용자 식별 | Supabase Auth **uid**(익명 세션 포함). 게스트가 가입해도 같은 uid가 이어져 코호트가 끊기지 않는다 |
+| 방식 | **Google Analytics(Firebase).** 파이프라인은 그대로 두고 출구만 `GoogleAnalyticsSink`로 바꿨다(2026-09-19). 옛 Supabase 테이블은 이전 기록 삭제용으로만 남는다 |
+| 사용자 식별 | Firebase **앱 인스턴스 ID**(무작위, 앱 단위). 공유를 끄거나 "Erase this device"를 하면 재발급. 파이프라인의 install id·세션 id는 Google에 보내지 않는다 |
 | 세션 | 마지막 활동 후 **30분** 무활동이면 새 세션(GA4와 같은 정의) |
-| 저장·전송 | 기기 큐(JSON, 상한 1000) → 포그라운드·백그라운드·20건 누적·로그인 시점에 100건씩 업로드, 실패 시 60초 뒤 재시도 |
+| 저장·전송 | 행마다 즉시 Firebase SDK로 넘긴다(`flushesEagerly`). 오프라인 큐·배치 전송·재시도는 SDK가 맡는다. 기기 큐(JSON, 상한 1000)는 SDK가 설정되지 않았을 때의 완충일 뿐이다 |
 | 개인정보 | 재료 이름·구매처·닉네임·이메일은 **싣지 않는다**. 글리프(닫힌 enum)·건수·일수·시드 레시피 슬러그까지만 |
-| 옵트아웃 | 프로필 › App › **Share usage data** 토글(기본 꺼짐, 명시적 선택 후 켬). 끄면 큐까지 비운다. "Erase this device"는 install id도 새로 발급 |
-| 개발 오염 방지 | DEBUG 빌드는 `channel = 'debug'`로 올라가고 지표 뷰는 `release`만 집계. 유닛 테스트 호스트에선 아예 꺼짐(`-analyticsOff`도 동일) |
-| 지표 | `analytics.*` 뷰(대시보드 SQL Editor에서 바로 조회). DAU/WAU/MAU·끈끈함, D1~D30·W1~W8 리텐션, 핵심 루프, 퍼널, 세션, 화면, 스캔 품질, 낭비 글리프 |
+| 옵트아웃 | 프로필 › App › **Share usage data** 토글(**기본 켜짐**, 끄면 큐를 비우고 Firebase 앱 인스턴스 ID를 재발급). "Erase this device"·계정 삭제도 install id와 앱 인스턴스 ID를 함께 새로 발급 |
+| 개발 오염 방지 | DEBUG 빌드는 `-analyticsDebug` 없이는 아무것도 보내지 않는다. 보내면 `channel = 'debug'` 사용자 속성으로 구분되고 GA "개발자 트래픽" 필터로 보고서에서 뺀다. 유닛 테스트 호스트에선 아예 꺼짐(`-analyticsOff`도 동일) |
+| 지표 | GA4 표준 보고서(활성 사용자·유지·세션·화면) + 주요 이벤트·맞춤 정의·유입경로 탐색(아래 "GA4 콘솔 설정 목록"). 옛 `analytics.*` 뷰는 이전 기록 전용 |
 
 ## 1. 왜 이렇게 측정하나
 
@@ -44,6 +133,8 @@ Reffi의 존재 이유는 "냉장고 속 재료를 **버리기 전에 오늘 먹
 서드파티(Firebase·Amplitude 등)를 쓰지 않은 이유: 이미 Supabase가 붙어 있어 사용자 id를 새로 만들 필요가
 없고(익명→가입 승계가 그대로 코호트 연속성이 된다), 데이터가 우리 프로젝트 안에 남으며, 앱 스토어
 프라이버시 신고 항목이 늘지 않는다. 필요해지면 `analytics_events`를 그대로 외부 도구로 내보내면 된다.
+
+> **이하 §2, §4~§9는 Supabase 파이프라인 시절의 기록이다(현재 미사용, 이전 기록 삭제 절차에만 참고).** 현행은 위 "Current release" 절과 §3 이벤트 사전이다.
 
 ## 2. 식별자와 세션
 

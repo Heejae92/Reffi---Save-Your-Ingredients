@@ -47,7 +47,7 @@ Validation: 652 unit tests passed (633 Swift Testing + 19 XCTest). Seven distinc
 
 Existing work on manual first registration, 14 recipes with 100 bilingual ingredient amounts, safe matching, current-language YouTube search and artwork was preserved. See `RECIPE_CONTENT.md`. No new commit, archive, or TestFlight upload has been made for these fixes.
 
-Removing sign-in also required preserving the current local owner after a legacy session expires, so saved stock does not become inaccessible. Existing-account deletion is retained; no existing accounts were deleted during this change. Production usage collection is disabled for all sessions, and old unsent queues are cleared. The local-only approach was communicated while the optional telemetry preference question awaited a reply.
+Removing sign-in also required preserving the current local owner after a legacy session expires, so saved stock does not become inaccessible. Existing-account deletion is retained; no existing accounts were deleted during this change. Usage collection was disabled in build 27; on 2026-09-19 both operators agreed to collect usage statistics through Google Analytics for Firebase (on by default, opt-out in Profile > App). See `docs/ANALYTICS.md` for the owner setup (Firebase project, `GoogleService-Info.plist` on the build machine, App Store privacy answers) that must be completed before the next TestFlight build.
 
 ### Verification in this change
 

@@ -13,14 +13,14 @@ Updated 2026-09-07 for the account-free release. Operators: Jongmin Lee and Heej
 `PrivacyView` is available offline from the small settings footer. It includes an effective date, the supplied homepage, eight English/Korean sections, privacy contact and provider links. The old review-draft heading is removed. The notice follows actual behavior:
 
 - Fridge, recipes, receipt recognition, preferences and allergy filtering stay on the device.
-- New accounts, email login, password recovery and usage analytics are unavailable.
+- New accounts, email login and password recovery are unavailable. Usage statistics are collected through Google Analytics for Firebase from the build that ships the September 19, 2026 notice (on by default, opt-out in Profile > App, no advertising identifier).
 - Camera/photo selection and local notifications are optional. Manual entry remains available.
 - Videos sends a current-language search to YouTube on user action; names entered by the user can appear in search terms. The website uses Vercel and privacy inquiries use Gmail.
 - Earlier Supabase accounts and records can still exist. The primary database is in Seoul; this does not prove that every provider log or support operation stays there. Existing-account deletion, local erase and app deletion have different scopes.
 - Local data stays accessible if a prior session expires. Server requests remain authenticated and use HTTPS.
 - The notice states purpose-based inquiry retention, rights, children, safeguards and policy updates without inventing provider log-deletion deadlines or guaranteeing absolute security.
 
-The privacy manifest matches the removal of analytics. Legacy Email/UserID functionality remains declared. App Store Connect privacy answers must be reviewed for this release.
+The privacy manifest declares Product Interaction, Coarse Location and Device ID for analytics (not linked, not tracking) alongside the legacy Email/UserID functionality entries. App Store Connect privacy answers must match: Analytics purpose for those three types, no tracking.
 
 ## Public website
 
